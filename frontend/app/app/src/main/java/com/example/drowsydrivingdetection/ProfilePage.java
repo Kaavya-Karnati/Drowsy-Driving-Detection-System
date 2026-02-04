@@ -1,7 +1,9 @@
 package com.example.drowsydrivingdetection;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -15,6 +17,9 @@ public class ProfilePage extends AppCompatActivity {
     EditText name, email, age, experience, drivingHours, otherCondition;
     CheckBox cbNarcolepsy, cbSleepApnea, cbInsomnia, cbAlerts;
     Button btnSave;
+
+    // Anthony
+    Button skipButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,25 @@ public class ProfilePage extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
 
         btnSave.setOnClickListener(v -> saveProfile());
+
+        // Skip button
+        skipSignup();
+        //
+    }
+
+    private void skipSignup() {
+        // Skip button
+        skipButton = findViewById(R.id.skipButton);
+
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent cameraIntent = new Intent(ProfilePage.this, cameraView.class);
+                startActivity(cameraIntent);
+
+            }
+        });
     }
 
     private void saveProfile() {
@@ -64,6 +88,9 @@ public class ProfilePage extends AppCompatActivity {
         editor.putBoolean("profileCompleted", true);
 
         editor.apply();
+
+
+        //
 
         Toast.makeText(this,
                 "Profile saved successfully!",
