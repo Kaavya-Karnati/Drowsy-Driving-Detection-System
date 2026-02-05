@@ -1,8 +1,5 @@
 package com.example.drowsydrivingdetection;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -13,10 +10,13 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -48,97 +48,9 @@ public class ModelPage extends AppCompatActivity {
     private ExecutorService cameraExecutor;
 
     //Fps calculation attributes
-    private long lastProcessTime = 0;
     private int frameCount = 0;
     private long fpsStartTime = 0;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_model);
-
-        previewView = findViewById(R.id.cameraView);
-        capturedView = findViewById(R.id.capturedView);
-        statusText = findViewById(R.id.statusText);
-        fps = findViewById(R.id.fps);
-
-        cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
-        //dedicated to camera frame processing (different thread for better performance)
-
-        if (this.hasCameraPermission()) {
-            startCamera();
-        } else {
-            requestCameraPermission();
-        }
-
-    }
-
-    private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED;
-        //return true if camera permission is granted by user
-    }
-
-    private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{Manifest.permission.CAMERA},
-                CAMERA_CODE
-        );
-    }
-
-    private void startCamera(){
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
-                ProcessCameraProvider.getInstance(this);
-
-        cameraProviderFuture.addListener(() -> {
-            try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
-
-                Preview preview = new Preview.Builder().build();
-
-                preview.setSurfaceProvider(previewView.getSurfaceProvider());
-                //connecting the mobile camera to previewView or the screen
-
-                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                        .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build();
-                //Gives every camera frame in ImageProxy object
-
-                //now to process each frame
-                imageAnalysis.setAnalyzer(cameraExecutor, image ->  {
-                    try{
-                        processFrame(image);
-                    } catch (Exception err) {
-
-                    } finally {
-                        image.close();
-                    }
-                    //cameraX pushes frames into analyze, runs on the camera executor thread set up
-                    //in background, each frame is processed once at a time
-                });
-
-                CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
-                cameraProvider.unbindAll(); //clear old camera uses(better to do to prevent crashes)
-
-                cameraProvider.bindToLifecycle(
-                        this,
-                        cameraSelector,
-                        preview,
-                        imageAnalysis
-                ); //camera starts automatically and stops when activity is destroyed
-                //(no manual clean up to close the activity/camera needed)
-
-            } catch (ExecutionException | InterruptedException e) {
-                Toast.makeText(this, "Camera failed: " + e.getMessage(),
-                        Toast.LENGTH_SHORT).show(); //display the reason camera didn't start
-            }
-        }, ContextCompat.getMainExecutor(this));
-    }
+    private ModelLoader modelLoader;
 
     @Override
     public void onRequestPermissionsResult(int reqCode,
@@ -158,13 +70,113 @@ public class ModelPage extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_model);
+
+        previewView = findViewById(R.id.cameraView);
+        capturedView = findViewById(R.id.capturedView);
+        statusText = findViewById(R.id.statusText);
+        fps = findViewById(R.id.fps);
+
+        cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
+        //dedicated to camera frame processing (different thread for better performance)
+
+        this.loadModel();
+
+        if (this.hasCameraPermission()) {
+            startCamera();
+        } else {
+            requestCameraPermission();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraExecutor.shutdown();
+        //added in order to shutdown the background thread separate from the activity thread
+
+        if (modelLoader != null) {
+            modelLoader.close();
+        }
+    }
+
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.CAMERA},
+                CAMERA_CODE
+        );
+    }
+
+    private void startCamera() {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(this);
+
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+
+                Preview preview = new Preview.Builder().build();
+
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+                //connecting the mobile camera to previewView or the screen
+
+                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                        .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+                //Gives every camera frame in ImageProxy object
+
+                //now to process each frame
+                imageAnalysis.setAnalyzer(cameraExecutor, image -> {
+                    try {
+                        processFrame(image);
+                    } catch (Exception err) {
+                        Log.e("ImageAnalysis", "Frame processing error", err);
+                    } finally {
+                        image.close();
+                    }
+                    //cameraX pushes frames into analyze, runs on the camera executor thread set up
+                    //in background, each frame is processed once at a time
+                });
+
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+                cameraProvider.unbindAll(); //clear old camera uses(better to do to prevent crashes)
+
+                cameraProvider.bindToLifecycle(
+                        this,
+                        cameraSelector,
+                        preview,
+                        imageAnalysis
+                ); //camera starts automatically and stops when activity is destroyed
+                //(no manual clean up to close the activity/camera needed)
+
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("CameraX", "Camera failed", e);
+                Toast.makeText(this, "Camera error", Toast.LENGTH_SHORT).show();
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+
     @SuppressLint("UnsafeOptInUsageError")
-    private void processFrame(ImageProxy img){
+    private void processFrame(ImageProxy img) {
         //Convert ImageProxy obj -> Bitmap (used primarily for ml models)
         Bitmap bitmap = imageProxyToBitmap(img);
 
         if (bitmap != null) {
-            this.calculateFPS();
+            this.updateFPSCounter();
 
             runOnUiThread(() -> {
                 capturedView.setImageBitmap(bitmap);
@@ -204,7 +216,7 @@ public class ModelPage extends AppCompatActivity {
     }
 
     private Bitmap rotateBitmap(Bitmap bitmap, int rotationDegrees) {
-        //need to rotate images to pass them in the right orientation to the yolo model
+        // Rotate images to ensure model receives good oriented frames (front camera is often mirrored)
         if (rotationDegrees == 0) return bitmap;
 
         Matrix matrix = new Matrix();
@@ -214,32 +226,42 @@ public class ModelPage extends AppCompatActivity {
                 bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
-    private void calculateFPS() {
+    private void updateFPSCounter() {
         frameCount++;
-        long currentTime = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
 
         if (fpsStartTime == 0) {
-            fpsStartTime = currentTime;
+            fpsStartTime = now;
         }
 
-        long elapsedTime = currentTime - fpsStartTime;
+        long elapsed = now - fpsStartTime;
 
-        // Update FPS every second
-        if (elapsedTime >= 1000) {
-            final int fps_count = (int) (frameCount * 1000.0 / elapsedTime);
-            runOnUiThread(() -> fps.setText("FPS: " + fps_count));
+        if (elapsed >= 1000) {
+            int calculatedFps = (int) (frameCount * 1000.0 / elapsed);
+            runOnUiThread(() -> fps.setText("FPS: " + calculatedFps));
 
-            // Reset counters
             frameCount = 0;
-            fpsStartTime = currentTime;
+            fpsStartTime = now;
         }
+
         //gives the real time processing FPS
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cameraExecutor.shutdown();
-        //added in order to shutdown the background thread separate from the activity thread
+
+    private void loadModel() {
+        this.statusText.setText("Loading model");
+
+        new Thread(() -> {
+            modelLoader = new ModelLoader(this);
+
+            runOnUiThread(() -> {
+                if (modelLoader.isLoaded()) {
+                    statusText.setText("Model Loaded");
+                    Log.d("Model ready: ", String.valueOf(modelLoader.getLabels().size()));
+                } else {
+                    statusText.setText("Model failed to load");
+                }
+            });
+        }).start();
     }
 }
