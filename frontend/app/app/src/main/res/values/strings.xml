@@ -13,4 +13,6 @@
     <string name="narcolepsy">Narcolepsy</string>
     <string name="health_information">Health Information</string>
     <string name="create_your_profile">Create Your Profile</string>
+    <string name="profile">Profile</string>
+    <string name="model">Model</string>
 </resources>
