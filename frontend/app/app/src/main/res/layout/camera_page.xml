@@ -24,4 +24,11 @@
         android:text="Return"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/my_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
