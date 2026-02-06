@@ -50,7 +50,6 @@ public class ProfilePage extends AppCompatActivity {
 
         // Skip button
         skipSignup();
-        //
     }
 
     private void skipSignup() {
@@ -61,9 +60,10 @@ public class ProfilePage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                // I commented this out because I couldn't get a fix working, so if it sounds like it's clicking a lot... it is -Anthony
+                // view.setEnabled(false); // Disables extra clicking
                 Intent cameraIntent = new Intent(ProfilePage.this, cameraView.class);
                 startActivity(cameraIntent);
-
             }
         });
     }
