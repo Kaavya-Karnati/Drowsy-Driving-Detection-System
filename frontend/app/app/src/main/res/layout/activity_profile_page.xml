@@ -2,14 +2,17 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:paddingBottom="96dp">
 
+        <!-- TITLE -->
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
@@ -21,68 +24,96 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- BASIC INFO -->
-        <EditText
-            android:id="@+id/name"
+        <!-- NAME -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:hint="@string/full_name"
-            android:minHeight="48dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/email"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- EMAIL -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:minHeight="48dp"
-            app:layout_constraintTop_toBottomOf="@id/name"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/nameLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/age"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- AGE -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ageLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="@string/age"
-            android:inputType="number"
-            android:minHeight="48dp"
-            app:layout_constraintTop_toBottomOf="@id/email"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/emailLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- DRIVING INFO -->
-        <EditText
-            android:id="@+id/experience"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- DRIVING EXPERIENCE -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/experienceLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="@string/driving_experience_years"
-            android:inputType="number"
-            android:minHeight="48dp"
-            app:layout_constraintTop_toBottomOf="@id/age"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/ageLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/drivingHours"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/experience"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- DRIVING HOURS -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/drivingHoursLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="@string/average_driving_hours_per_day"
-            android:inputType="numberDecimal"
-            android:minHeight="48dp"
-            app:layout_constraintTop_toBottomOf="@id/experience"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/experienceLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- HEALTH INFO -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/drivingHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- HEALTH TITLE -->
         <TextView
             android:id="@+id/healthTitle"
             android:layout_width="wrap_content"
@@ -91,9 +122,10 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/drivingHours"
+            app:layout_constraintTop_toBottomOf="@id/drivingHoursLayout"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- CHECKBOXES -->
         <CheckBox
             android:id="@+id/cbNarcolepsy"
             android:layout_width="wrap_content"
@@ -118,33 +150,41 @@
             app:layout_constraintTop_toBottomOf="@id/cbSleepApnea"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/otherCondition"
+        <!-- OTHER CONDITION -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/otherConditionLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:hint="@string/other_condition"
-            android:minHeight="48dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/cbInsomnia"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- SETTINGS -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/otherCondition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ALERTS -->
         <CheckBox
             android:id="@+id/cbAlerts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enable_drowsiness_alerts"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/otherCondition"
+            app:layout_constraintTop_toBottomOf="@id/otherConditionLayout"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- SAVE BUTTON -->
         <Button
             android:id="@+id/btnSave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/save_profile"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
+            android:paddingVertical="16dp"
             app:layout_constraintTop_toBottomOf="@id/cbAlerts"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

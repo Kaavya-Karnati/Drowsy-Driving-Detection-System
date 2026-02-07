@@ -44,6 +44,20 @@ public class ProfilePage extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveProfile());
     }
 
+    private void clearFields() {
+        name.setText("");
+        email.setText("");
+        age.setText("");
+        experience.setText("");
+        drivingHours.setText("");
+        otherCondition.setText("");
+
+        cbNarcolepsy.setChecked(false);
+        cbSleepApnea.setChecked(false);
+        cbInsomnia.setChecked(false);
+        cbAlerts.setChecked(false);
+    }
+
     private void saveProfile() {
         SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -68,5 +82,7 @@ public class ProfilePage extends AppCompatActivity {
         Toast.makeText(this,
                 "Profile saved successfully!",
                 Toast.LENGTH_SHORT).show();
+
+        clearFields();
     }
 }

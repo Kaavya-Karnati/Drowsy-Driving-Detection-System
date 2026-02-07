@@ -13,4 +13,9 @@
     <string name="narcolepsy">Narcolepsy</string>
     <string name="health_information">Health Information</string>
     <string name="create_your_profile">Create Your Profile</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="app_logo">App Logo</string>
 </resources>

@@ -15,12 +15,19 @@
         android:theme="@style/Theme.DrowsyDrivingDetection"
         tools:targetApi="31">
 
+        <!-- Profile Page -->
         <activity
             android:name=".ProfilePage"
             android:exported="false" />
 
+        <!-- Registration Page -->
         <activity
-            android:name=".MainActivity"
+            android:name=".RegistrationActivity"
+            android:exported="false" />
+
+        <!-- Login Page -->
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
 
             <intent-filter>
