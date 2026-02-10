@@ -1,7 +1,9 @@
 package com.example.drowsydrivingdetection;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -15,28 +17,61 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-// Necessary if using List function but it's not necessary and we only use one camera so -Anthony
+// Tensorflow imports
+import org.tensorflow.lite.Interpreter;
 
+// Java imports
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class cameraView extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     // Tag for logging (Named after the class) -Anthony
     private static final String TAG = "cameraView: ";
 
-    // Removed returnButton because you can just click back! -Anthony
-    // Button returnButton;
+    // Helper function for loading model (https://blog.tensorflow.org/2018/03/using-tensorflow-lite-on-android.html)
+    private MappedByteBuffer loadModelFile(String modelName) throws IOException{
+            AssetFileDescriptor fileDescriptor = getAssets().openFd(modelName);
+            FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+            FileChannel fileChannel = inputStream.getChannel();
+            long startOffset = fileDescriptor.getStartOffset();
+            long declaredLength = fileDescriptor.getDeclaredLength();
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        }
 
     // OpenCV camera + variables
     private CameraBridgeViewBase OpenCVCamera;
     // Mat mRGBA;
 
+    // Interpreter and information for TFLite (most likely need to save for later since we're doing our dashboard?)
+    protected Interpreter tflite;
+    private int imageW = 640;
+    private int imageH = 640; // defaults for our dataset
+    private boolean modelStarted = false;
+    private ByteBuffer imageInputBuffer;
 
+    // determines how many threads device has, later this is passed into the model for maximum performance
+    int availableThreads = Runtime.getRuntime().availableProcessors();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
+        //System.out.println("total cores:" + availableThreads);
 
+        // Load model
+        Interpreter.Options interpreterSettings = new Interpreter.Options();
+        interpreterSettings.setNumThreads(availableThreads); // increase depending on device, gotta find a function that pulls that?
+        try {
+            tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // OpenCV loader
         if (OpenCVLoader.initLocal()) {
             Log.d(TAG,"OpenCV successfully loaded.");
         } else {
@@ -70,23 +105,6 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         }
         OpenCVCamera.setCameraPermissionGranted();
     }
-
-    /* Return button functionality (Hiding because we can just click the back button -Anthony)
-    private void returnToScreen(){
-        returnButton = findViewById(R.id.returnButton);
-
-        returnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                finish();
-
-            }
-        });
-    }
-
-     */
-
 
     @Override // If camera is not in focused view (aka if you minimize the app), disable camera
     public void onPause()
