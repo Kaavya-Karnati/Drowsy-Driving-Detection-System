@@ -36,6 +36,9 @@ dependencies {
     implementation libs.constraintlayout
 
     implementation(files("libs/OpenCV-release.aar")) // .aar file for openCV
+    implementation '\'org.tensorflow:tensorflow-lite:+\''
+    implementation libs.litert// tflite implementation
+
 	
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
