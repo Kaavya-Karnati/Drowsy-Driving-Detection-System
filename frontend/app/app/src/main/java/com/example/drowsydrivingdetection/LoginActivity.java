@@ -3,35 +3,43 @@ package com.example.drowsydrivingdetection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+
 public class LoginActivity extends AppCompatActivity {
 
-    EditText username, password;
-    Button loginBtn, registerBtn;
+    TextInputEditText emailInput, passwordInput;
+    MaterialButton btnContinue, btnGuestSignIn, btnGoogleSignIn;
+    TextView signUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        loginBtn = findViewById(R.id.loginBtn);
-        registerBtn = findViewById(R.id.registerBtn);
+        // Connect to new XML IDs
+        emailInput = findViewById(R.id.emailIDHint);
+        passwordInput = findViewById(R.id.passwordInput);
+        btnContinue = findViewById(R.id.btnContinue);
+        btnGuestSignIn = findViewById(R.id.btnGuestSignIn);
+        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+        signUp = findViewById(R.id.signUp);
 
-        loginBtn.setOnClickListener(v -> {
+        // LOGIN BUTTON (Continue)
+        btnContinue.setOnClickListener(v -> {
+
             SharedPreferences prefs = getSharedPreferences("info_stuff", MODE_PRIVATE);
 
             String savedU = prefs.getString("username", null);
             String savedP = prefs.getString("password", null);
 
-            String inputU = username.getText().toString().trim();
-            String inputP = password.getText().toString().trim();
+            String inputU = emailInput.getText().toString().trim();
+            String inputP = passwordInput.getText().toString().trim();
 
             if (savedU == null || savedP == null) {
                 Toast.makeText(this, "Account does not exist", Toast.LENGTH_SHORT).show();
@@ -43,12 +51,24 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProfilePage.class));
                 finish();
             } else {
-                Toast.makeText(this, "Wrong username or password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Wrong email or password", Toast.LENGTH_SHORT).show();
             }
         });
 
-        registerBtn.setOnClickListener(v ->
+        //
+        signUp.setOnClickListener(v ->
                 startActivity(new Intent(this, RegistrationActivity.class))
         );
+
+        // Guest login
+        btnGuestSignIn.setOnClickListener(v -> {
+            Toast.makeText(this, "Continuing as Guest", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, ProfilePage.class));
+        });
+
+        // Google sign in (placeholder for now)
+        btnGoogleSignIn.setOnClickListener(v -> {
+            Toast.makeText(this, "Google Sign-In not implemented yet", Toast.LENGTH_SHORT).show();
+        });
     }
 }
