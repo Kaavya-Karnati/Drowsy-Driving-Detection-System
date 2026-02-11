@@ -108,5 +108,9 @@
     <string name="FAQAnswer3">No! Our intention for this application is to provide alerts to those who may fall asleep during drives.</string>
     <string name="FAQQuestion4">Do you store any photos of users?</string>
     <string name="FAQAnswer4">No, all images and recordings are directly processed on your device, and never reach our servers. Your data is yours.</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="enter_your_email">Enter your email to sign up for this app</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
 
 </resources>
