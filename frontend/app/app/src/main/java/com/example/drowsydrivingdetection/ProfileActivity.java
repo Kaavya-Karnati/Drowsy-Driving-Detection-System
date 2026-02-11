@@ -1,0 +1,108 @@
+package com.example.drowsydrivingdetection;
+
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
+public class ProfileActivity extends NavActivity {
+
+    private TextView userName;
+    private TextView userEmail;
+    private Button btnUpload;
+    private Button btnChange;
+    private SwitchMaterial switchNarcolepsy;
+    private SwitchMaterial switchSleepApnea;
+    private SwitchMaterial switchInsomnia;
+    private SwitchMaterial switchAuditoryAlerts;
+    private SwitchMaterial switchVisualAlerts;
+    private TextView auditoryAlertsCount;
+    private TextView visualAlertsCount;
+
+    private SharedPreferences sharedPreferences;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.logged_in_profile_page);
+
+        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+
+        initializeViews();
+        setupBottomNavigation();
+        loadUserData();
+        setupListeners();
+    }
+
+    private void initializeViews() {
+        userName = findViewById(R.id.userName);
+        userEmail = findViewById(R.id.userEmail);
+        btnUpload = findViewById(R.id.btnUpload);
+        btnChange = findViewById(R.id.btnChange);
+        switchNarcolepsy = findViewById(R.id.switchNarcolepsy);
+        switchSleepApnea = findViewById(R.id.switchSleepApnea);
+        switchInsomnia = findViewById(R.id.switchInsomnia);
+        switchAuditoryAlerts = findViewById(R.id.switchAuditoryAlerts);
+        switchVisualAlerts = findViewById(R.id.switchVisualAlerts);
+        auditoryAlertsCount = findViewById(R.id.auditoryAlertsCount);
+        visualAlertsCount = findViewById(R.id.visualAlertsCount);
+    }
+
+    private void loadUserData() {
+        // Load user data from SharedPreferences
+        userName.setText(sharedPreferences.getString("userName", "Nirav P"));
+        userEmail.setText(sharedPreferences.getString("userEmail", "nrpatel370@gmail.com"));
+
+        // Load switch states
+        switchNarcolepsy.setChecked(sharedPreferences.getBoolean("narcolepsy", false));
+        switchSleepApnea.setChecked(sharedPreferences.getBoolean("sleepApnea", false));
+        switchInsomnia.setChecked(sharedPreferences.getBoolean("insomnia", false));
+        switchAuditoryAlerts.setChecked(sharedPreferences.getBoolean("auditoryAlerts", true));
+        switchVisualAlerts.setChecked(sharedPreferences.getBoolean("visualAlerts", true));
+
+        // Load alert counts
+        auditoryAlertsCount.setText(sharedPreferences.getString("auditoryCount", "00"));
+        visualAlertsCount.setText(sharedPreferences.getString("visualCount", "--"));
+    }
+
+    private void setupListeners() {
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProfileActivity.this, "Upload profile picture", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProfileActivity.this, "Change profile picture", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Save switch states when changed
+        switchNarcolepsy.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("narcolepsy", isChecked).apply();
+        });
+
+        switchSleepApnea.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("sleepApnea", isChecked).apply();
+        });
+
+        switchInsomnia.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("insomnia", isChecked).apply();
+        });
+
+        switchAuditoryAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("auditoryAlerts", isChecked).apply();
+        });
+
+        switchVisualAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("visualAlerts", isChecked).apply();
+        });
+    }
+}

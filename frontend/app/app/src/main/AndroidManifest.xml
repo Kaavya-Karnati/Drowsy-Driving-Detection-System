@@ -34,6 +34,27 @@
 
         </activity>
 
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".FaqActivity"
+            android:exported="true">
+
+        </activity>
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".ModelActivity2"
+            android:exported="true">
+        </activity>
+
 
         <activity
             android:name=".MainActivity"

@@ -1,27 +1,11 @@
 package com.example.drowsydrivingdetection;
 
+
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MainActivity extends NavActivity {
+public class HomeActivity extends NavActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//    }
-
-//    public void openCamera(View view) {
-//        startActivity(new Intent(this, ModelPage.class));
-//    }
-//
-//    public void loadOpenCV(View view) {
-//        startActivity(new Intent(this, OpenCV.class));
-//    }
-//
-//    public void openProfile(View view) {
-//        startActivity(new Intent(this, ProfilePage.class));
-//    }
     private TextView alertCountNumber;
     private TextView auditoryAlertEmail;
     private TextView visualAlertEmail;
@@ -44,6 +28,4 @@ public class MainActivity extends NavActivity {
         auditoryAlertEmail.setText("email@fakedomain.net");
         visualAlertEmail.setText("email@fakedomain.net");
     }
-
-
 }
