@@ -99,4 +99,14 @@
     <string name="start">START</string>
     <string name="stop">STOP</string>
 
+    <!-- FAQ PAGE -->
+    <string name="FAQAnswer1">No, an account is not necessary to use our app. However, user features like alert records, preferences, and health information are only available to registered users.</string>
+    <string name="FAQQuestion1">Do I need an account?</string>
+    <string name="FAQQuestion2">How do you detect drowsy driving?</string>
+    <string name="FAQAnswer2">We use a in-house trained YOLOv8 model to detect user facial features, such as closed eyes and yawning.</string>
+    <string name="FAQQuestion3">Is this app considered a medical device?</string>
+    <string name="FAQAnswer3">No! Our intention for this application is to provide alerts to those who may fall asleep during drives.</string>
+    <string name="FAQQuestion4">Do you store any photos of users?</string>
+    <string name="FAQAnswer4">No, all images and recordings are directly processed on your device, and never reach our servers. Your data is yours.</string>
+
 </resources>
