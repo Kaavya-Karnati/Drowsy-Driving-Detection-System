@@ -54,8 +54,11 @@ public class ProfileActivity extends NavActivity {
 
     private void loadUserData() {
         // Load user data from SharedPreferences
-        userName.setText(sharedPreferences.getString("userName", "Nirav P"));
-        userEmail.setText(sharedPreferences.getString("userEmail", "nrpatel370@gmail.com"));
+        String firstName = sharedPreferences.getString("userFirstName", "");
+        String lastName = sharedPreferences.getString("userLastName", "");
+        String fullName = sharedPreferences.getString("userName", firstName + " " + lastName);
+        userName.setText(fullName);
+        userEmail.setText(sharedPreferences.getString("userEmail", "default@gmail.com"));
 
         // Load switch states
         switchNarcolepsy.setChecked(sharedPreferences.getBoolean("narcolepsy", false));
