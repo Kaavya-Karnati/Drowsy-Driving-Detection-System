@@ -1,12 +1,17 @@
 package com.example.drowsydrivingdetection;
 
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class ProfileActivity extends NavActivity {
@@ -15,6 +20,7 @@ public class ProfileActivity extends NavActivity {
     private TextView userEmail;
     private Button btnUpload;
     private Button btnChange;
+    private Button btnLogout;
     private SwitchMaterial switchNarcolepsy;
     private SwitchMaterial switchSleepApnea;
     private SwitchMaterial switchInsomnia;
@@ -43,6 +49,7 @@ public class ProfileActivity extends NavActivity {
         userEmail = findViewById(R.id.userEmail);
         btnUpload = findViewById(R.id.btnUpload);
         btnChange = findViewById(R.id.btnChange);
+        btnLogout = findViewById(R.id.btnLogout);
         switchNarcolepsy = findViewById(R.id.switchNarcolepsy);
         switchSleepApnea = findViewById(R.id.switchSleepApnea);
         switchInsomnia = findViewById(R.id.switchInsomnia);
@@ -87,6 +94,14 @@ public class ProfileActivity extends NavActivity {
             }
         });
 
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
+        });
+
+
         // Save switch states when changed
         switchNarcolepsy.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPreferences.edit().putBoolean("narcolepsy", isChecked).apply();
@@ -108,4 +123,41 @@ public class ProfileActivity extends NavActivity {
             sharedPreferences.edit().putBoolean("visualAlerts", isChecked).apply();
         });
     }
+
+    private void handleLogout() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Only clear login session, not account credentials
+        editor.remove("isLoggedIn");
+        editor.remove("isGuest");
+        editor.apply();
+
+        Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+        // Navigate to sign-in page
+        Intent intent = new Intent(ProfileActivity.this, SignInActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleLogout();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
 }
