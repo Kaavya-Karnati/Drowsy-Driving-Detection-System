@@ -52,6 +52,8 @@ public class ModelPage extends AppCompatActivity {
     private long fpsStartTime = 0;
     private ModelLoader modelLoader;
 
+    private YOLODetector yoloDetector;
+
     @Override
     public void onRequestPermissionsResult(int reqCode,
                                            @NonNull String[] permissions,
@@ -178,9 +180,18 @@ public class ModelPage extends AppCompatActivity {
         if (bitmap != null) {
             this.updateFPSCounter();
 
+            YOLODetector.DetectionResult result = yoloDetector.detect(bitmap);
+            updateFPSCounter();
+
+
             runOnUiThread(() -> {
                 capturedView.setImageBitmap(bitmap);
-                statusText.setText("Processing frames");
+                String info = String.format(
+                        "Detections: %d | Inference: %dms",
+                        result.numDetections,
+                        result.inferenceTime
+                );
+                statusText.setText(info);
             });
         }
     }
@@ -257,6 +268,11 @@ public class ModelPage extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (modelLoader.isLoaded()) {
                     statusText.setText("Model Loaded");
+                    yoloDetector = new YOLODetector(
+                            modelLoader.getInterpreter(),
+                            modelLoader.getLabels(),
+                            modelLoader.getInputSize()
+                    );
                     Log.d("Model ready: ", String.valueOf(modelLoader.getLabels().size()));
                 } else {
                     statusText.setText("Model failed to load");

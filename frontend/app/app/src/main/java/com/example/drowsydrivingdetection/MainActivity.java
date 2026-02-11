@@ -18,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ModelPage.class));
     }
 
+    public void loadOpenCV(View view) {
+        startActivity(new Intent(this, OpenCV.class));
+    }
+
     public void openProfile(View view) {
         startActivity(new Intent(this, ProfilePage.class));
     }
