@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +33,10 @@ public class ModelActivity2 extends NavActivity {
 
         setupBottomNavigation();
         setupButtonListeners();
+    }
+
+    public void openCamera(View view) {
+        startActivity(new Intent(this, ModelPage.class));
     }
 
     private void setupButtonListeners() {
