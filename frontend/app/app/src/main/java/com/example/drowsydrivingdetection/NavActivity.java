@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -14,9 +15,12 @@ public class NavActivity extends AppCompatActivity {
     protected FrameLayout faqLogo;
     protected ImageView profileLogo;
 
+    protected SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
     }
 
     protected void setupBottomNavigation() {
@@ -83,11 +87,31 @@ public class NavActivity extends AppCompatActivity {
     }
 
     private void navigateToProfile() {
-        if (!(this instanceof ProfileActivity)) {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+        // Ensure SharedPreferences is initialized
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+        }
+
+        // Check if user is registered or guest
+        boolean isGuest = sharedPreferences.getBoolean("isGuest", true);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        if (!isLoggedIn || isGuest) {
+            // Navigate to non-registered profile page
+            if (!(this instanceof ProfileNonRegisteredActivity)) {
+                Intent intent = new Intent(this, ProfileNonRegisteredActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        } else {
+            // Navigate to registered profile page
+            if (!(this instanceof ProfileActivity)) {
+                Intent intent = new Intent(this, ProfileActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
         }
     }
 }
