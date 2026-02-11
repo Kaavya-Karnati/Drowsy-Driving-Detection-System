@@ -70,7 +70,7 @@
 
                     <!-- Name -->
                     <TextView
-                        android:id="@+id/tvUserName"
+                        android:id="@+id/userName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_semibold"
@@ -84,7 +84,7 @@
 
                     <!-- Email -->
                     <TextView
-                        android:id="@+id/tvUserEmail"
+                        android:id="@+id/userEmail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -94,7 +94,7 @@
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvUserName" />
+                        app:layout_constraintTop_toBottomOf="@id/userName" />
 
                     <!-- Alert Driver Badge -->
                     <TextView
@@ -113,7 +113,7 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvUserEmail" />
+                        app:layout_constraintTop_toBottomOf="@id/userEmail" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -406,7 +406,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvAuditoryAlertsCount" />
+                        app:layout_constraintTop_toBottomOf="@id/auditoryAlertsCount" />
 
                     <TextView
                         android:id="@+id/tvAlertRecordsTitle"
@@ -428,13 +428,13 @@
                         android:text="@string/auditory_alerts"
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
-                        app:layout_constraintEnd_toStartOf="@id/tvAuditoryAlertsCount"
+                        app:layout_constraintEnd_toStartOf="@id/auditoryAlertsCount"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvAlertRecordsTitle" />
 
 
                     <TextView
-                        android:id="@+id/tvAuditoryAlertsCount"
+                        android:id="@+id/auditoryAlertsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
