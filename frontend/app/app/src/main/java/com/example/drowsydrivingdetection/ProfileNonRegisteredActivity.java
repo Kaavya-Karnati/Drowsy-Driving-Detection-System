@@ -2,6 +2,7 @@ package com.example.drowsydrivingdetection;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -60,13 +61,22 @@ public class ProfileNonRegisteredActivity extends NavActivity {
         btnRegisterHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigateToSignIn();
+                navigateToRegistration();
             }
         });
     }
 
-    private void navigateToSignIn() {
-        Intent intent = new Intent(ProfileNonRegisteredActivity.this, SignInActivity.class);
+    private void navigateToRegistration() {
+        // Clear guest session
+        SharedPreferences sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("isLoggedIn");
+        editor.remove("isGuest");
+        editor.apply();
+
+        Intent intent = new Intent(ProfileNonRegisteredActivity.this, RegistrationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
 }
