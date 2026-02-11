@@ -113,4 +113,13 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
 
+    <!-- Alerts page -->
+    <string name="AlertDashboard">Alert Dashboard</string>
+    <string name="AuditoryAlert">Auditory Alert</string>
+    <string name="AuditoryAlertTotal">5 alerts</string>
+    <string name="VisualAlert">Visual Alert</string>
+    <string name="VisualAlertTotal">1 alert</string>
+    <string name="pastMonth">in the past month</string>
+    <string name="AlertChart1">Alerts Chart</string>
+
 </resources>

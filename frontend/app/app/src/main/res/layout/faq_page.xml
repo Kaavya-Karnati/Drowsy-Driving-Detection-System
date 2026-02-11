@@ -56,8 +56,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
+
         app:cardBackgroundColor="@android:color/white"
+
 
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +66,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="4dp">
 
@@ -76,8 +77,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:text="@string/FAQQuestion1"
+                android:fontFamily="@font/inter_semibold"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topBar"
                 expandableTextView:layout_constraintStart_toStartOf="parent" />
@@ -85,9 +86,11 @@
             <TextView
                 android:id="@+id/FAQA1"
                 android:layout_width="367dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +107,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="12dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard1"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +114,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="95dp"
             android:orientation="vertical"
             android:padding="4dp">
 
@@ -123,6 +125,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:text="@string/FAQQuestion2"
+                android:fontFamily="@font/inter_semibold"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -135,6 +138,8 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +156,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="12dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard2"
         app:layout_constraintStart_toStartOf="parent"
@@ -171,7 +175,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="@string/FAQQuestion3"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/inter_semibold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topBar"
                 expandableTextView:layout_constraintStart_toStartOf="parent" />
@@ -179,9 +183,11 @@
             <TextView
                 android:id="@+id/FAQA3"
                 android:layout_width="367dp"
-                android:layout_height="48dp"
+                android:layout_height="70dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -198,7 +204,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="12dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard3"
         app:layout_constraintStart_toStartOf="parent"
@@ -206,7 +211,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="110dp"
             android:orientation="vertical"
             android:padding="4dp">
 
@@ -218,7 +223,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="@string/FAQQuestion4"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/inter_semibold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topBar"
                 expandableTextView:layout_constraintStart_toStartOf="parent" />
@@ -226,9 +231,11 @@
             <TextView
                 android:id="@+id/FAQA4"
                 android:layout_width="367dp"
-                android:layout_height="48dp"
+                android:layout_height="66dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
+                android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

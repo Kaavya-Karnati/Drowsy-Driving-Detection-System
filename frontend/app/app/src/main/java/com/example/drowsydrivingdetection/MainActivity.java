@@ -54,8 +54,8 @@ public class MainActivity extends NavActivity {
 
     private void loadHomeData() {
         alertCountNumber.setText("45,678 Alerts");
-        auditoryAlertEmail.setText("email@fakedomain.net");
-        visualAlertEmail.setText("email@fakedomain.net");
+        auditoryAlertEmail.setText("+20 % from last month");
+        visualAlertEmail.setText("-5% from last month");
     }
 
 
