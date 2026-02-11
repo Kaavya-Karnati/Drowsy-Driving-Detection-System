@@ -121,5 +121,7 @@
     <string name="VisualAlertTotal">1 alert</string>
     <string name="pastMonth">in the past month</string>
     <string name="AlertChart1">Alerts Chart</string>
+    <string name="already_registered_login_here">Already Registered? Login Here</string>
+    <string name="password_req"><![CDATA[Password must contain:\n• At least 8 characters\n• At least one digit (0-9)\n• At least one special character (!@#$%^&*)]]></string>
 
 </resources>

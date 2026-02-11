@@ -4,11 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -17,10 +20,15 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText email;
     private TextInputEditText password;
     private TextInputEditText confirmPassword;
+    private TextView backToLogin;
     private Button btnRegister;
     private Button btnGoogleSignIn;
 
     private SharedPreferences sharedPreferences;
+
+    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
+    private static final int MIN_PASSWORD_LENGTH = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,7 @@ public class RegistrationActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.confirmPassword);
         btnRegister = findViewById(R.id.Register);
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+        backToLogin = findViewById(R.id.backToLogIn);
     }
 
     private void setupListeners() {
@@ -61,6 +70,13 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleGoogleSignIn();
+            }
+        });
+
+        backToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToSignIn();
             }
         });
     }
@@ -105,10 +121,8 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate password length
-        if (password.length() < 8) {
-            Toast.makeText(this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
-            this.password.requestFocus();
+        // Validate password
+        if (!isPasswordValid(password)) {
             return;
         }
 
@@ -199,4 +213,33 @@ public class RegistrationActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    private boolean isPasswordValid(String password) {
+        // Check minimum length
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            Toast.makeText(this, "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long",
+                    Toast.LENGTH_SHORT).show();
+            this.password.requestFocus();
+            return false;
+        }
+
+        // Check for at least one digit
+        if (!DIGIT_PATTERN.matcher(password).matches()) {
+            Toast.makeText(this, "Password must contain at least one digit (0-9)",
+                    Toast.LENGTH_SHORT).show();
+            this.password.requestFocus();
+            return false;
+        }
+
+        // Check for at least one special character
+        if (!SPECIAL_CHAR_PATTERN.matcher(password).matches()) {
+            Toast.makeText(this, "Password must contain at least one special character (!@#$%^&*)",
+                    Toast.LENGTH_SHORT).show();
+            this.password.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
 }

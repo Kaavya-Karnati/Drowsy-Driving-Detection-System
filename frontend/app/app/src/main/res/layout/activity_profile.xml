@@ -112,24 +112,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnMonitorData" />
 
-    <TextView
-        android:id="@+id/termsPolicy"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        android:fontFamily="@font/inter"
-        android:gravity="center"
-        android:text="@string/already_registered"
-        android:textColor="#828282"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnRegisterHere"
-        app:layout_constraintVertical_bias="0.0" />
-
     <!-- Bottom navbar -->
     <include
         android:id="@+id/bottomNavigation"
