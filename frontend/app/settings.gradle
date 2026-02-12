@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Drowsy Driving Detection"
 include ':app'
-include ':opencv'
