@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 // OpenCV imports
@@ -44,6 +45,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
     // OpenCV camera + variables
     private CameraBridgeViewBase OpenCVCamera;
+    private static final int CAMERA_PERMISSION = 1;
     // Mat mRGBA;
 
     // Interpreter and information for TFLite (most likely need to save for later since we're doing our dashboard?)
@@ -95,15 +97,33 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         // returnToScreen();
     }
 
+
+
     // Request permission for camera (if not already accepted)
     // If you need to test, just hold down on the app and click App Info and in permissions just disable it if you already had it -Anthony
     private void getCameraPermissions() {
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){ // Check if permission is granted
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1); // If not, request it
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION); // If not, request it
         } else {
             OpenCVCamera.setCameraPermissionGranted(); // If it is, tell OpenCV's camera that we have permission to use it
+            OpenCVCamera.enableView();
         }
-        OpenCVCamera.setCameraPermissionGranted();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // Check request code from getCameraPermissions() to see which one it is. If we implement the Google Maps API we could also change these to check for more than just camera -Anthony
+        if (requestCode == CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                OpenCVCamera.setCameraPermissionGranted();
+                OpenCVCamera.enableView();
+            } else {
+                Toast.makeText(this, "Camera permission required", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override // If camera is not in focused view (aka if you minimize the app), disable camera
@@ -121,7 +141,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        if (OpenCVCamera != null){
+        if (OpenCVCamera != null && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             OpenCVCamera.enableView();
         }
     }
