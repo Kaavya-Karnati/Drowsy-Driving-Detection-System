@@ -12,6 +12,7 @@ public class ModelActivity2 extends NavActivity {
     private Button btnWakeUp;
     private Button btnStart;
     private Button btnStop;
+    private Button OpenCVModel;
 
     private View indicatorGreen;
     private View indicatorRed;
@@ -25,6 +26,7 @@ public class ModelActivity2 extends NavActivity {
         btnWakeUp = findViewById(R.id.btnWakeUp);
         btnStart = findViewById(R.id.btnStart);
         btnStop = findViewById(R.id.btnStop);
+        OpenCVModel = findViewById(R.id.openCVButton);
         indicatorGreen = findViewById(R.id.statusIndicatorGreen);
         indicatorRed = findViewById(R.id.statusIndicatorRed);
 
@@ -44,6 +46,17 @@ public class ModelActivity2 extends NavActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(ModelActivity2.this, "Wake Up Alert Triggered!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        OpenCVModel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // I commented this out because I couldn't get a fix working, so if it sounds like it's clicking a lot... it is -Anthony
+                // view.setEnabled(false); // Disables extra clicking
+                Intent cameraIntent = new Intent(ModelActivity2.this, cameraView.class);
+                startActivity(cameraIntent);
             }
         });
 

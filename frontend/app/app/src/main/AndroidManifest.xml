@@ -67,6 +67,8 @@
             android:name=".RegistrationActivity"
             android:exported="true" />
 
+        <activity android:name=".cameraView" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
