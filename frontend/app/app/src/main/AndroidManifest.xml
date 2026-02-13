@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.drowsydrivingdetection">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,6 +23,53 @@
             android:exported="false" />
 
         <activity
+            android:name=".ModelPage"
+            android:exported="true">
+
+        </activity>
+
+        <activity
+            android:name=".OpenCV"
+            android:exported="true">
+
+        </activity>
+
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".FaqActivity"
+            android:exported="true">
+
+        </activity>
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".ModelActivity2"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".SignInActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ProfileNonRegisteredActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".RegistrationActivity"
+            android:exported="true" />
+
+        <activity android:name=".cameraView" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 
@@ -29,6 +79,11 @@
             </intent-filter>
 
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
 
     </application>
 
