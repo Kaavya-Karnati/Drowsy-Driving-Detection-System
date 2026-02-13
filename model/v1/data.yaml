@@ -1,0 +1,13 @@
+train: dataset/images/train
+val: dataset/images/val
+test: dataset/images/test
+
+nc: 3
+names: ['close', 'open', 'yawn']
+
+roboflow:
+  workspace: ntutee-project
+  project: drowsiness-driver
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/ntutee-project/drowsiness-driver/dataset/1

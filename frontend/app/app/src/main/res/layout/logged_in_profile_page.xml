@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp">
+
+            <!-- Profile Title -->
+            <TextView
+                android:id="@+id/profileTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="48dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="@string/profile"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Profile Picture -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profilePicture"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_profile_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileTitle"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+            <!-- Profile Info Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profileInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/profilePicture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profilePicture"
+                app:layout_constraintTop_toTopOf="@id/profilePicture"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:padding="16dp">
+
+                    <!-- Name -->
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Nirav P"
+                        android:textColor="@android:color/black"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Email -->
+                    <TextView
+                        android:id="@+id/userEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/email_hint"
+                        android:textColor="#828282"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/userName" />
+
+                    <!-- Alert Driver Badge -->
+                    <TextView
+                        android:id="@+id/alertDriverBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/alert_driver_badge"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="12dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/alert_driver"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/userEmail" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Upload Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpload"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="11dp"
+                android:backgroundTint="@android:color/white"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/upload_icon"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profilePicture"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp" />
+
+            <!-- Change Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChange"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@android:color/black"
+                android:fontFamily="@font/inter_medium"
+                android:text="@string/change"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:cornerRadius="8dp"
+                app:layout_constraintStart_toEndOf="@id/btnUpload"
+                app:layout_constraintTop_toBottomOf="@id/profilePicture" />
+
+
+            <!-- Health Information Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/healthInformation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnUpload"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:padding="20dp">
+
+                    <!-- Health Information Title -->
+                    <TextView
+                        android:id="@+id/tvHealthInformationTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Health Information"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Narcolepsy -->
+                    <TextView
+                        android:id="@+id/narcolepsyLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/narcolepsy"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/switchNarcolepsy"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvHealthInformationTitle" />
+
+                    <!-- Narcolepsy Switch -->
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchNarcolepsy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:checked="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvHealthInformationTitle"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_track_color" />
+
+                    <!-- Sleep Apnea Label -->
+
+                    <TextView
+                        android:id="@+id/sleepApneaLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="40dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/sleep_apnea"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/switchSleepApnea"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/narcolepsyLabel" />
+
+                    <!-- Sleep Apnea Switch -->
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchSleepApnea"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:checked="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switchNarcolepsy"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_track_color" />
+
+                    <!-- Insomnia Label -->
+
+                    <TextView
+                        android:id="@+id/tvInsomniaLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="36dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/insomnia"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/switchInsomnia"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/sleepApneaLabel" />
+
+
+                    <!-- Insomnia Switch -->
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchInsomnia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:checked="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switchSleepApnea"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_track_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Alert Preferences Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/alertPreferences"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/healthInformation"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:padding="20dp">
+
+                    <!-- Alert Preferences Title -->
+                    <TextView
+                        android:id="@+id/alertPreferencesTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="@string/alert_preferences"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/auditoryAlertsLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/auditory_alerts"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/switchAuditoryAlerts"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/alertPreferencesTitle" />
+
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchAuditoryAlerts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:checked="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/alertPreferencesTitle"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_track_color" />
+
+                    <!-- Visual Alerts Label -->
+
+                    <TextView
+                        android:id="@+id/visualAlertsLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="40dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/visual_alerts"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/switchVisualAlerts"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/auditoryAlertsLabel" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchVisualAlerts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:checked="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switchAuditoryAlerts"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_track_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Alert Records Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/alertRecords"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/alertPreferences"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/visualAlertsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="@string/zero"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/auditoryAlertsCount" />
+
+                    <TextView
+                        android:id="@+id/tvAlertRecordsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/alert_records"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvAuditoryAlertsRecordLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/auditory_alerts"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/auditoryAlertsCount"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvAlertRecordsTitle" />
+
+
+                    <TextView
+                        android:id="@+id/auditoryAlertsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="@string/twenty"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvAlertRecordsTitle" />
+
+                    <TextView
+                        android:id="@+id/tvVisualAlertsRecordLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/visual_alerts"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/visualAlertsCount"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvAuditoryAlertsRecordLabel" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:text="Logout"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#F44336"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                app:layout_constraintTop_toBottomOf="@id/alertRecords"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/bottomNavigation"
+        layout="@layout/bottom_nav_bar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
