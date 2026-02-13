@@ -1,14 +1,15 @@
 package com.example.drowsydrivingdetection;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,13 +26,16 @@ import org.tensorflow.lite.Interpreter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 
 public class cameraView extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     // Tag for logging (Named after the class) -Anthony
     private static final String TAG = "cameraView: ";
+    private TextView detectionText;
 
     // Helper function for loading model (https://blog.tensorflow.org/2018/03/using-tensorflow-lite-on-android.html)
     private MappedByteBuffer loadModelFile(String modelName) throws IOException{
@@ -55,6 +59,10 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
 
+    // TFLite buffers
+    private float[][][] outputBuffer;
+    private int[] outputTensor;
+
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
 
@@ -73,6 +81,22 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
             throw new RuntimeException(e);
         }
 
+        // TFLite setup
+        int[] inputTensor = tflite.getInputTensor(0).shape();
+        outputTensor = tflite.getOutputTensor(0).shape();
+
+        // Change width/height based on camera input
+        imageH = inputTensor[1];
+        imageW = inputTensor[2];
+
+        // Set image buffer to store the size of the image
+        imageInputBuffer = ByteBuffer.allocateDirect(4 * imageW * imageH * 3);
+        imageInputBuffer.order(ByteOrder.nativeOrder());
+        // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
+
+        // Create buffer to store confident predictions
+        outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
+
         // OpenCV loader
         if (OpenCVLoader.initLocal()) {
             Log.d(TAG,"OpenCV successfully loaded.");
@@ -86,6 +110,8 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_cameraview);
 
+        detectionText = findViewById(R.id.detectionText);
+
         // Sets OpenCVCamera to my_camera in camera_page.xml
         OpenCVCamera = findViewById(R.id.my_camera);
         getCameraPermissions();
@@ -98,6 +124,26 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     }
 
 
+    // Convert bitmap to buffer (https://stackoverflow.com/questions/55777086/converting-bitmap-to-bytebuffer-float-in-tensorflow-lite-android)
+    private void bitmapToBuffer(Bitmap bitmap, ByteBuffer buffer) {
+        buffer.rewind();
+
+        int[] imageValues = new int[imageW * imageH];
+        bitmap.getPixels(imageValues, 0, imageW, 0, 0, imageW, imageH);
+
+        int pixel = 0;
+        for (int i = 0; i < imageH; i++){
+            for (int j = 0; j < imageW; j++){
+                int value = imageValues[pixel++];
+
+                buffer.putFloat(((value>> 16) & 0xFF) / 255.f);
+                buffer.putFloat(((value>> 8) & 0xFF) / 255.f);
+                buffer.putFloat((value & 0xFF) / 255.f);
+            }
+        }
+
+        buffer.rewind();
+    }
 
     // Request permission for camera (if not already accepted)
     // If you need to test, just hold down on the app and click App Info and in permissions just disable it if you already had it -Anthony
@@ -154,6 +200,11 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         if (OpenCVCamera != null){
             OpenCVCamera.disableView();
         }
+
+        if (tflite != null){
+            tflite.close();
+            tflite = null;
+        }
     }
 
     @Override
@@ -168,7 +219,12 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame cvCameraViewFrame) {
-        return cvCameraViewFrame.rgba();
+        Mat rgba = cvCameraViewFrame.rgba();
+
+        // Gotta resize the frame to WxH before passing into model for inference
+        // Also, it already lags as is, so we should probably not run inference on every single frame to save performance
+
+        return rgba;
     }
 
 }

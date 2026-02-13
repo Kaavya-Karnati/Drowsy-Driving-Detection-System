@@ -1,9 +1,7 @@
 package com.example.drowsydrivingdetection;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -15,11 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfilePage extends AppCompatActivity {
 
     EditText name, email, age, experience, drivingHours, otherCondition;
-    CheckBox cbNarcolepsy, cbSleepApnea, cbInsomnia, cbAlerts;
+    CheckBox narcolepsy, sleepApnea, insomnia, alerts;
     Button btnSave;
-
-    // Anthony
-    Button skipButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,45 +22,26 @@ public class ProfilePage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile_page);
 
-        // BASIC INFO
+
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         age = findViewById(R.id.age);
 
-        // DRIVING INFO
+
         experience = findViewById(R.id.experience);
         drivingHours = findViewById(R.id.drivingHours);
 
-        // HEALTH INFO
-        cbNarcolepsy = findViewById(R.id.cbNarcolepsy);
-        cbSleepApnea = findViewById(R.id.cbSleepApnea);
-        cbInsomnia = findViewById(R.id.cbInsomnia);
+
+        narcolepsy = findViewById(R.id.cbNarcolepsy);
+        sleepApnea = findViewById(R.id.cbSleepApnea);
+        insomnia = findViewById(R.id.cbInsomnia);
         otherCondition = findViewById(R.id.otherCondition);
 
-        // SETTINGS
-        cbAlerts = findViewById(R.id.cbAlerts);
+
+        alerts = findViewById(R.id.cbAlerts);
         btnSave = findViewById(R.id.btnSave);
 
         btnSave.setOnClickListener(v -> saveProfile());
-
-        // Skip button
-        skipSignup();
-    }
-
-    private void skipSignup() {
-        // Skip button
-        skipButton = findViewById(R.id.skipButton);
-
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // I commented this out because I couldn't get a fix working, so if it sounds like it's clicking a lot... it is -Anthony
-                // view.setEnabled(false); // Disables extra clicking
-                Intent cameraIntent = new Intent(ProfilePage.this, cameraView.class);
-                startActivity(cameraIntent);
-            }
-        });
     }
 
     private void saveProfile() {
@@ -79,18 +55,15 @@ public class ProfilePage extends AppCompatActivity {
         editor.putFloat("drivingHours",
                 Float.parseFloat(drivingHours.getText().toString()));
 
-        editor.putBoolean("narcolepsy", cbNarcolepsy.isChecked());
-        editor.putBoolean("sleepApnea", cbSleepApnea.isChecked());
-        editor.putBoolean("insomnia", cbInsomnia.isChecked());
+        editor.putBoolean("narcolepsy", narcolepsy.isChecked());
+        editor.putBoolean("sleepApnea", sleepApnea.isChecked());
+        editor.putBoolean("insomnia", insomnia.isChecked());
         editor.putString("otherCondition", otherCondition.getText().toString());
 
-        editor.putBoolean("alertsEnabled", cbAlerts.isChecked());
+        editor.putBoolean("alertsEnabled", alerts.isChecked());
         editor.putBoolean("profileCompleted", true);
 
         editor.apply();
-
-
-        //
 
         Toast.makeText(this,
                 "Profile saved successfully!",

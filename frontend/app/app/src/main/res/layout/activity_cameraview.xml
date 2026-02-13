@@ -16,4 +16,17 @@
         opencv:camera_id="any"/>
     <!-- following the opencv docs to put 'any', but most likely we should specify later on -->
 
+    <!-- we can hide this afterwords, just for dev purposes -->
+    <TextView
+        android:id="@+id/detectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#66000000"
+        android:padding="8dp"
+        android:text="Drowsy%: "
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
