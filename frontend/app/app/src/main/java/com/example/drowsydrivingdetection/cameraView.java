@@ -17,7 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 // OpenCV imports
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 // Tensorflow imports
 import org.tensorflow.lite.Interpreter;
@@ -30,6 +33,14 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+
+/*
+This entire file needs to be restructured (refactored?) because I've kinda just been adding and adding
+without properly cleaning it up. Splitting it up will follow NFR 3.3.4 Maintainability in our SRS (which I just wrote!)
+Once I get the OpenCV -> Bitmap -> TFLite -> Post Processing/extraction pipeline fixed, I will clean this up, I just would
+rather have it actually working rather than cleaning up all my code just to delete it again later because it was
+wrong in the first place -Anthony
+ */
 
 public class cameraView extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -62,6 +73,8 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     // TFLite buffers
     private float[][][] outputBuffer;
     private int[] outputTensor;
+    private Bitmap modelBitmap;
+    private Mat resizedRGBA;
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
@@ -122,7 +135,6 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
         // returnToScreen();
     }
-
 
     // Convert bitmap to buffer (https://stackoverflow.com/questions/55777086/converting-bitmap-to-bytebuffer-float-in-tensorflow-lite-android)
     private void bitmapToBuffer(Bitmap bitmap, ByteBuffer buffer) {
@@ -214,15 +226,29 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
     @Override
     public void onCameraViewStarted(int i, int i1) {
-
+        // Create a resized RGB matrix that we can use whenever the camera is created
+        // Also I don't know if we're supposed to use createBitmap or createScaledBitmap,
+        // we can change it once we get the actual model post-processing working
+        resizedRGBA = new Mat();
+        modelBitmap = Bitmap.createBitmap(imageW, imageH, Bitmap.Config.ARGB_8888);
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame cvCameraViewFrame) {
         Mat rgba = cvCameraViewFrame.rgba();
 
-        // Gotta resize the frame to WxH before passing into model for inference
-        // Also, it already lags as is, so we should probably not run inference on every single frame to save performance
+        Imgproc.resize(rgba, resizedRGBA, new Size(imageW, imageH));
+
+        Utils.matToBitmap(resizedRGBA, modelBitmap);
+        bitmapToBuffer(modelBitmap, imageInputBuffer);
+
+        tflite.run(imageInputBuffer, outputBuffer);
+
+        /*
+        - Still need to process the frames that are taken from the camera
+        - Also we need to probably reduce the amount of times we check the frame, I'm getting
+        like 7 fps right now - Anthony
+         */
 
         return rgba;
     }
