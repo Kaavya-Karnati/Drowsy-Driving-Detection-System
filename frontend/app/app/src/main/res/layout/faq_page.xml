@@ -49,63 +49,72 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
+    <!-- There is most likely a way to fix this where it doesn't have like a million CardView's,
+    but that's for later! -Anthony -->
+    <!-- FAQ Question 1 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/faqCard1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
-
         app:cardBackgroundColor="@android:color/white"
-
-
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/FAQQ1"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/FAQQuestion1"
-                android:fontFamily="@font/inter_semibold"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topBar"
-                expandableTextView:layout_constraintStart_toStartOf="parent" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/FAQQ1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/FAQQuestion1"
+                    android:fontFamily="@font/inter_semibold"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/topBar"
+                    expandableTextView:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/FAQQ1Arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_down"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/FAQA1"
-                android:layout_width="367dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:visibility="gone"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- FAQ Question 2 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/faqCard2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard1"
@@ -114,47 +123,57 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="95dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/FAQQ2"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/FAQQuestion2"
-                android:fontFamily="@font/inter_semibold"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topBar"
-                expandableTextView:layout_constraintStart_toStartOf="parent" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/FAQQ2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/FAQQuestion2"
+                    android:fontFamily="@font/inter_semibold"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/topBar"
+                    expandableTextView:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/FAQQ2Arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_down"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/FAQA2"
-                android:layout_width="367dp"
-                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer2"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:visibility="gone"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- FAQ Question 3 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/faqCard3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard2"
@@ -165,44 +184,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/FAQQ3"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/FAQQuestion3"
-                android:textSize="16sp"
-                android:fontFamily="@font/inter_semibold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topBar"
-                expandableTextView:layout_constraintStart_toStartOf="parent" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/FAQQ3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/FAQQuestion3"
+                    android:fontFamily="@font/inter_semibold"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/topBar"
+                    expandableTextView:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/FAQQ3Arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_down"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/FAQA3"
-                android:layout_width="367dp"
-                android:layout_height="70dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer3"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:visibility="gone"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- FAQ Question 4 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/faqCard4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardBackgroundColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/faqCard3"
@@ -211,73 +241,50 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/FAQQ4"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/FAQQuestion4"
-                android:textSize="16sp"
-                android:fontFamily="@font/inter_semibold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topBar"
-                expandableTextView:layout_constraintStart_toStartOf="parent" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/FAQQ4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/FAQQuestion4"
+                    android:fontFamily="@font/inter_semibold"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/topBar"
+                    expandableTextView:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/FAQQ4Arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_down"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/FAQA4"
-                android:layout_width="367dp"
-                android:layout_height="66dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/FAQAnswer4"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:visibility="gone"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <!-- FAQ Section -->
-
-
-    <!-- TO BE FIXED, EXPANDABLE CONTAINERS -Anthony
-    <com.ms.square.android.expandabletextview.ExpandableTextView
-        android:id="@+id/expand_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        expandableTextView:animDuration="100"
-        expandableTextView:maxCollapsedLines="5">
-
-        <!- simple text view
-        <TextView
-            android:id="@+id/FAQ1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textColor="#666666"
-            android:textSize="16sp" />
-
-        <!- expandable ImageButton
-        <ImageButton
-            android:id="@id/expand_collapse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent" />
-
-    </com.ms.square.android.expandabletextview.ExpandableTextView>
-    -->
 
 
     <!-- Bottom Navbar -->
