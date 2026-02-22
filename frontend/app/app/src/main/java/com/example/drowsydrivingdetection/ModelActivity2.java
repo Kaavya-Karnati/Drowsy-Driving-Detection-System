@@ -41,6 +41,11 @@ public class ModelActivity2 extends NavActivity {
         startActivity(new Intent(this, ModelPage.class));
     }
 
+    public void openAlert(View view) {
+        startActivity(new Intent(this, AlertActivity.class));
+    }
+
+
     private void setupButtonListeners() {
         btnWakeUp.setOnClickListener(new View.OnClickListener() {
             @Override
