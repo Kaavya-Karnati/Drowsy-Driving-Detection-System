@@ -11,22 +11,29 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
+
 public class SignInActivity extends AppCompatActivity {
+
 
     private TextInputEditText username;
     private TextInputEditText password;
     private Button btnContinue;
     private Button btnGuestSignIn;
     private TextView tvCreateAccount;
+    private TextView forgotPassword;
+
 
     private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+
 
         // Check if user is already logged in
         if (isUserLoggedIn()) {
@@ -37,13 +44,16 @@ public class SignInActivity extends AppCompatActivity {
         setupListeners();
     }
 
+
     private void initializeViews() {
         username = findViewById(R.id.emailIDInput);
         password = findViewById(R.id.passwordInput);
         btnContinue = findViewById(R.id.btnContinue);
         btnGuestSignIn = findViewById(R.id.btnGuestSignIn);
         tvCreateAccount = findViewById(R.id.signUp);
+        forgotPassword = findViewById(R.id.forgotPassword);
     }
+
 
     private void setupListeners() {
         btnContinue.setOnClickListener(new View.OnClickListener() {
@@ -61,22 +71,35 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+
         tvCreateAccount.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 navigateToRegistration();
-             }
+            @Override
+            public void onClick(View v) {
+                navigateToRegistration();
+            }
+        });
+
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
         });
     }
+
 
     private void handleEmailSignIn() {
         String username = this.username.getText().toString().trim();
         String password = this.password.getText().toString().trim();
 
+
         if (username.isEmpty()) {
             Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show();
             return;
         }
+
 
         if (password.isEmpty()) {
             Toast.makeText(this, "Please enter your password", Toast.LENGTH_SHORT).show();
@@ -95,7 +118,9 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
+
         String storedEmail = sharedPreferences.getString("registered_email", null);
+
 
         if (storedEmail == null) {
             // No user registered yet
@@ -115,6 +140,7 @@ public class SignInActivity extends AppCompatActivity {
         // Retrieve stored hash
         String storedHash = sharedPreferences.getString("password_hash", null);
 
+
         if (storedHash == null) {
             Toast.makeText(this, "Account error. Please register again.", Toast.LENGTH_SHORT).show();
             return;
@@ -127,9 +153,11 @@ public class SignInActivity extends AppCompatActivity {
             String lastName = sharedPreferences.getString("userLastName", "");
             String fullName = (firstName + " " + lastName).trim();
 
+
             if (fullName.isEmpty()) {
                 fullName = "User";
             }
+
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("isLoggedIn", true);
@@ -138,6 +166,7 @@ public class SignInActivity extends AppCompatActivity {
             editor.putString("userName", fullName);
             editor.apply();
 
+
             Toast.makeText(this, "Sign in successful!", Toast.LENGTH_SHORT).show();
             navigateToHome();
         } else {
@@ -145,6 +174,8 @@ public class SignInActivity extends AppCompatActivity {
             Toast.makeText(this, "Incorrect password. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
+
+
     private void handleGuestSignIn() {
         // Save guest mode
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -156,13 +187,16 @@ public class SignInActivity extends AppCompatActivity {
         editor.putString("userLastName", "User");
         editor.apply();
 
+
         Toast.makeText(this, "Continuing as guest", Toast.LENGTH_SHORT).show();
         navigateToHome();
     }
 
+
     private boolean isUserLoggedIn() {
         return sharedPreferences.getBoolean("isLoggedIn", false);
     }
+
 
     private void navigateToHome() {
         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
@@ -170,6 +204,7 @@ public class SignInActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
     private void navigateToRegistration() {
         Intent intent = new Intent(SignInActivity.this, RegistrationActivity.class);

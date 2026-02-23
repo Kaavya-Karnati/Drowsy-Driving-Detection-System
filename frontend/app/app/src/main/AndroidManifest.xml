@@ -24,36 +24,27 @@
 
         <activity
             android:name=".ModelPage"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".OpenCV"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".HomeActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".FaqActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".ProfileActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".ModelActivity2"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
 
         <activity
             android:name=".SignInActivity"
@@ -67,7 +58,17 @@
             android:name=".RegistrationActivity"
             android:exported="true" />
 
-        <activity android:name=".cameraView" />
+        <activity
+            android:name=".cameraView"
+            android:exported="true" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
@@ -83,7 +84,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
 
     </application>
 

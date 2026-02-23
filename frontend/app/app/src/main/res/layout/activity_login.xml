@@ -7,10 +7,12 @@
     android:background="@android:color/white"
     android:fillViewport="true">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp">
+
 
         <!-- Page Title -->
         <TextView
@@ -27,6 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <ImageView
             android:id="@+id/app_logo"
             android:layout_width="150dp"
@@ -38,6 +41,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvAppTitle" />
+
+
 
 
         <!-- Username Label -->
@@ -55,6 +60,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/app_logo" />
 
+
         <!-- Username Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailID"
@@ -68,6 +74,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailIDLabel">
 
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailIDInput"
                 android:layout_width="match_parent"
@@ -78,7 +85,9 @@
                 android:padding="16dp"
                 android:textSize="16sp" />
 
+
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Password Label -->
         <TextView
@@ -94,6 +103,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailID" />
 
+
         <!-- Password Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password"
@@ -108,6 +118,7 @@
             app:layout_constraintTop_toBottomOf="@id/passwordLabel"
             app:passwordToggleEnabled="true">
 
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordInput"
                 android:layout_width="match_parent"
@@ -118,7 +129,9 @@
                 android:padding="16dp"
                 android:textSize="16sp" />
 
+
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Forgot Password -->
         <TextView
@@ -137,6 +150,7 @@
             app:layout_constraintTop_toBottomOf="@+id/password"
             app:layout_constraintVertical_bias="1.0" />
 
+
         <!-- Continue Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnContinue"
@@ -153,6 +167,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/forgotPassword" />
 
+
         <View
             android:id="@+id/dividerLeft"
             android:layout_width="0dp"
@@ -164,6 +179,7 @@
             app:layout_constraintEnd_toStartOf="@id/loginOr"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnContinue" />
+
 
         <!-- Or Divider -->
         <TextView
@@ -179,6 +195,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnContinue" />
 
+
         <View
             android:id="@+id/dividerRight"
             android:layout_width="0dp"
@@ -190,6 +207,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/loginOr"
             app:layout_constraintTop_toBottomOf="@id/btnContinue" />
+
 
         <!-- Continue as Guest Button -->
         <!--
@@ -223,6 +241,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+
         <!-- Sign Up -->
         <!--
         <TextView
@@ -240,6 +259,7 @@
             app:layout_constraintTop_toBottomOf="@+id/termsPolicy"
             app:layout_constraintVertical_bias="0.603" /> -->
 
+
         <TextView
             android:id="@+id/signUp"
             android:layout_width="wrap_content"
@@ -252,6 +272,7 @@
             app:layout_constraintTop_toBottomOf="@id/btnGuestSignIn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
 
         <!-- Terms and Privacy Text -->
         <!--
@@ -272,6 +293,7 @@
             app:layout_constraintTop_toBottomOf="@id/signUp"
             app:layout_constraintVertical_bias="0.152" /> -->
 
+
         <TextView
             android:id="@+id/termsPolicy"
             android:layout_width="0dp"
@@ -287,6 +309,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </ScrollView>
