@@ -24,8 +24,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
-    private static final Pattern UPPERCASE_PATTERN = Pattern.compile(".*[A-Z].*");
-    private static final Pattern LOWERCASE_PATTERN = Pattern.compile(".*[a-z].*");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,17 +82,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        if (!UPPERCASE_PATTERN.matcher(pass1).matches()) {
-            Toast.makeText(this, "Password must contain at least one uppercase letter", Toast.LENGTH_SHORT).show();
-            newPassword.requestFocus();
-            return;
-        }
-
-        if (!LOWERCASE_PATTERN.matcher(pass1).matches()) {
-            Toast.makeText(this, "Password must contain at least one lowercase letter", Toast.LENGTH_SHORT).show();
-            newPassword.requestFocus();
-            return;
-        }
 
         if (!DIGIT_PATTERN.matcher(pass1).matches()) {
             Toast.makeText(this, "Password must contain at least one digit (0-9)", Toast.LENGTH_SHORT).show();
