@@ -1,9 +1,13 @@
 package com.example.drowsydrivingdetection;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -29,7 +33,7 @@ public class AlertActivity extends AppCompatActivity {
 
         //setting on click events on buttons
         audioAlert.setOnClickListener(v -> playAudioAlert());
-//        visualAlert.setOnClickListener(v -> showVisualAlert());
+        visualAlert.setOnClickListener(v -> showVisualAlert());
     }
 
     private void playAudioAlert() {
@@ -51,6 +55,41 @@ public class AlertActivity extends AppCompatActivity {
         } catch (Exception err) { //for now catching all errors TODO:better error handling
             err.printStackTrace();
         }
+    }
+
+    private void showVisualAlert() {
+        handler.removeCallbacksAndMessages(null);
+        //cancel any pending auto-hide
+
+        visualAlertPopup.setAlpha(0f);
+        visualAlertPopup.setVisibility(View.VISIBLE);
+        //make popup text view visible
+
+        // Fade the popup in
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(visualAlertPopup, "alpha", 0f, 1f);
+        //turning the opacity to 1
+        fadeIn.setDuration(400);
+        fadeIn.start();
+
+        //let's us run a task after a delay (get rid of popup after 3 seconds)
+        //similar to setTimeout from Javascript
+        handler.postDelayed(() -> {
+            ObjectAnimator fadeOut = ObjectAnimator.ofFloat(visualAlertPopup, "alpha", 1f, 0f);
+            //turning the opacity to 0
+
+            fadeOut.setDuration(600);
+            fadeOut.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    visualAlertPopup.setVisibility(View.GONE);
+                }
+            });
+            //override the animation end fuction to set the popup to "gone"
+            //or disappear from the XML
+
+            fadeOut.start();
+        }, 3000);
+
     }
 
     @Override
