@@ -2,8 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/breakPopUpBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/time_for_a_break"
+        app:layout_constraintBottom_toTopOf="@id/audioAlert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.918"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
         android:id="@+id/audioAlert"
@@ -45,6 +59,33 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Bottom navbar -->
+
+    <ImageView
+        android:id="@+id/breakPopUp"
+        android:layout_width="138dp"
+        android:layout_height="168dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/break_popup_with_text"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/visualAlert"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <ImageView
+        android:id="@+id/closePopup"
+        android:layout_width="43dp"
+        android:layout_height="36dp"
+        android:src="@drawable/cross"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.222"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/visualAlert"
+        app:layout_constraintVertical_bias="0.268" />
+
     <include
         android:id="@+id/bottomNavigation"
         layout="@layout/bottom_nav_bar"

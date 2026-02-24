@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class AlertActivity extends AppCompatActivity {
     private TextView visualAlertPopup;
     private MediaPlayer mediaPlayer;
+    private ImageView breakPopup;
+    private ImageView closePopup;
     private Handler handler = new Handler(Looper.getMainLooper()); //associated with a single thread and that thread's message queue
     /** There are two main uses for a Handler:
      * (1) to schedule messages and runnables to be executed at some point in the future; and
@@ -29,11 +32,17 @@ public class AlertActivity extends AppCompatActivity {
         //populating UI elements
         Button audioAlert = findViewById(R.id.audioAlert);
         Button visualAlert = findViewById(R.id.visualAlert);
+        Button breakPopupBtn = findViewById(R.id.breakPopUpBtn);
         visualAlertPopup = findViewById(R.id.visualAlertPopUp);
+        breakPopup = findViewById(R.id.breakPopUp);
+        closePopup = findViewById(R.id.closePopup);
+
 
         //setting on click events on buttons
         audioAlert.setOnClickListener(v -> playAudioAlert());
         visualAlert.setOnClickListener(v -> showVisualAlert());
+        breakPopupBtn.setOnClickListener(v -> showBreakPopup());
+        closePopup.setOnClickListener(v -> closeBreakPopup());
     }
 
     private void playAudioAlert() {
@@ -90,6 +99,30 @@ public class AlertActivity extends AppCompatActivity {
             fadeOut.start();
         }, 3000);
 
+    }
+
+    private void showBreakPopup() {
+        handler.removeCallbacksAndMessages(null);
+        //cancel any pending auto-hide
+
+        breakPopup.setAlpha(0f);
+        breakPopup.setVisibility(View.VISIBLE);
+        closePopup.setVisibility(View.VISIBLE);
+        //make popup text view visible
+        //make close image view visible
+
+        // Fade the popup in
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(breakPopup, "alpha", 0f, 1f);
+        //turning the opacity to 1
+        fadeIn.setDuration(400);
+        fadeIn.start();
+
+    }
+
+    private void closeBreakPopup() {
+        breakPopup.setAlpha(1f);
+        breakPopup.setVisibility(View.GONE);
+        closePopup.setVisibility(View.GONE);
     }
 
     @Override
