@@ -175,6 +175,17 @@ UI redesigned to match Figma/Image - Kaavya
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Password Requirements -->
+        <TextView
+            android:id="@+id/tvPasswordRequirements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/password_req"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="24dp" />
+
 
         <!-- Confirm Password -->
         <com.google.android.material.textfield.TextInputLayout
@@ -253,16 +264,7 @@ UI redesigned to match Figma/Image - Kaavya
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <!-- Password Requirements -->
-        <TextView
-            android:id="@+id/tvPasswordRequirements"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/password_req"
-            android:textSize="16sp"
-            android:textColor="#666666"
-            android:lineSpacingExtra="2dp"
-            android:layout_marginBottom="24dp" />
+
 
 
         <!-- Continue Button -->
