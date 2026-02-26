@@ -69,6 +69,8 @@
 
         <activity android:name=".cameraView" />
 
+        <activity android:name=".AlertsDashboard" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
