@@ -75,6 +75,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     private int[] outputTensor;
     private Bitmap modelBitmap;
     private Mat resizedRGBA;
+    private int[] imageValues;
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
@@ -140,7 +141,6 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     private void bitmapToBuffer(Bitmap bitmap, ByteBuffer buffer) {
         buffer.rewind();
 
-        int[] imageValues = new int[imageW * imageH];
         bitmap.getPixels(imageValues, 0, imageW, 0, 0, imageW, imageH);
 
         int pixel = 0;
@@ -166,6 +166,21 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
             OpenCVCamera.setCameraPermissionGranted(); // If it is, tell OpenCV's camera that we have permission to use it
             OpenCVCamera.enableView();
         }
+    }
+
+    // Update drowsy UI based on awake or sleep
+    public void updateUIAwakeOrDrowsy(float confidence) {
+        String detectionTextUpdate = "TBD";
+        if (confidence >= .8) {// We're shooting for 80% accuracy here
+            detectionTextUpdate = "Asleep";
+        } else {
+            detectionTextUpdate = "Awake";
+        }
+
+        String finalDetectionTextUpdate = detectionTextUpdate;
+        runOnUiThread(() -> {
+            detectionText.setText("Driver is currently: " + finalDetectionTextUpdate);
+        });
     }
 
     @Override
@@ -231,6 +246,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         // we can change it once we get the actual model post-processing working
         resizedRGBA = new Mat();
         modelBitmap = Bitmap.createBitmap(imageW, imageH, Bitmap.Config.ARGB_8888);
+        imageValues = new int[imageW * imageH]; // only initialize once instead of every frame
     }
 
     @Override
@@ -244,12 +260,9 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
         tflite.run(imageInputBuffer, outputBuffer);
 
-        /*
-        - Still need to process the frames that are taken from the camera
-        - Also we need to probably reduce the amount of times we check the frame, I'm getting
-        like 7 fps right now - Anthony
-         */
+        float highestConfidenceScore = outputBuffer[0][4][1]; // Need to iterate through them all
 
+        updateUIAwakeOrDrowsy(highestConfidenceScore);
         return rgba;
     }
 
