@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 
 /*
 This entire file needs to be restructured (refactored?) because I've kinda just been adding and adding
@@ -260,7 +259,22 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
         tflite.run(imageInputBuffer, outputBuffer);
 
-        float highestConfidenceScore = outputBuffer[0][4][1]; // Need to iterate through them all
+        /* Keeps track of the highest confidence score from the model, then iterates
+        thru the entire output buffer [0][4][i] (which is 8400)
+        If the confidence score is greater than .8 (set in the updateUIAwake function)
+        then it changes the onscreen text from awake to asleep
+
+        I don't know if it does yawning yet (I need to clean this up so I can add debugging)
+        but based on what Nirav sent I can prob change that to look at it (maybe that's why there's
+        two shapes? Not sure)
+         */
+        float highestConfidenceScore = 0;
+        for (int i = 0; i < outputTensor[2]; i++){
+            float currentConfidenceScore = outputBuffer[0][4][i];
+            if (currentConfidenceScore > highestConfidenceScore){
+                highestConfidenceScore = currentConfidenceScore;
+            }
+        }
 
         updateUIAwakeOrDrowsy(highestConfidenceScore);
         return rgba;
