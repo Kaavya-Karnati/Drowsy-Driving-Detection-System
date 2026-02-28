@@ -172,9 +172,12 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         String detectionTextUpdate = "TBD";
         if (confidence >= .8) {// We're shooting for 80% accuracy here
             detectionTextUpdate = "Asleep";
+            Log.i(TAG, detectionTextUpdate + "%: " + confidence * 100); // logging
         } else {
             detectionTextUpdate = "Awake";
+            Log.i(TAG, detectionTextUpdate + "%: " + (confidence * 100)); // logging
         }
+
 
         String finalDetectionTextUpdate = detectionTextUpdate;
         runOnUiThread(() -> {
