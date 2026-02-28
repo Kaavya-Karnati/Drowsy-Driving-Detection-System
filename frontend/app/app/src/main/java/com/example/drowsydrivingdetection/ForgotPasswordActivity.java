@@ -23,6 +23,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private TextInputEditText answer3;
     private Button btnVerify;
     private TextView backToLogin;
+    private TextView errorBanner;
 
     private SharedPreferences sharedPreferences;
 
@@ -49,6 +50,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         answer3 = findViewById(R.id.fpAnswer3);
         btnVerify = findViewById(R.id.btnVerify);
         backToLogin = findViewById(R.id.backToLogin);
+        errorBanner = findViewById(R.id.errorBanner);
     }
 
     private void setupListeners() {
@@ -196,8 +198,36 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             editor.putInt(attemptKey, attempts);
             editor.apply();
             int remaining = max - attempts;
-            Toast.makeText(this, "Incorrect answers. " + remaining + " attempts remaining.", Toast.LENGTH_SHORT).show();
+            showError("Wrong answer! " + remaining + " attempts remaining.");
         }
+    }
+
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
     }
 
     private void navigateToResetPassword() {

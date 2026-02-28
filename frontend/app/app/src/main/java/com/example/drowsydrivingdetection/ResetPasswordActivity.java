@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +20,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private TextInputEditText newPassword;
     private TextInputEditText confirmPassword;
     private Button btnReset;
+    private TextView passBanner;
 
     private SharedPreferences sharedPreferences;
 
@@ -41,6 +44,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         newPassword = findViewById(R.id.newPassword);
         confirmPassword = findViewById(R.id.confirmPassword);
         btnReset = findViewById(R.id.btnReset);
+        passBanner = findViewById(R.id.passBanner);
     }
 
     private void setupListeners() {
@@ -106,9 +110,30 @@ public class ResetPasswordActivity extends AppCompatActivity {
         editor.putString("password_hash", hashedPassword);
         editor.apply();
 
-        Toast.makeText(this, "Password successfully reset!", Toast.LENGTH_LONG).show();
+        showPass("Password Was Changed!");
 
         navigateToSignIn();
+    }
+
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                passBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.setVisibility(View.GONE);
+                                navigateToSignIn();
+                            }
+                        });
+            }
+        }, 100000);
     }
 
     private void navigateToSignIn() {
