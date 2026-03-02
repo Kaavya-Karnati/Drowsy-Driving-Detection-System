@@ -55,7 +55,7 @@ public class ModelActivity2 extends NavActivity {
 
                 // I commented this out because I couldn't get a fix working, so if it sounds like it's clicking a lot... it is -Anthony
                 // view.setEnabled(false); // Disables extra clicking
-                Intent cameraIntent = new Intent(ModelActivity2.this, cameraView.class);
+                Intent cameraIntent = new Intent(ModelActivity2.this, OpenCV.class);
                 startActivity(cameraIntent);
             }
         });
