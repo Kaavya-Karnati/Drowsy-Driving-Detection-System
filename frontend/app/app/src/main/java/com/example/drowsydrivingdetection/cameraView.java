@@ -68,6 +68,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     private int imageH = 640; // defaults for our dataset
     private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
+    private double expectedConfidenceLevel = 0.8; // Our expected confidence before triggering an alert is .8
 
     // TFLite buffers
     private float[][][] outputBuffer;
@@ -85,29 +86,13 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         super.onCreate(savedInstanceState);
         //System.out.println("total cores:" + availableThreads);
 
-        // Load model
-        Interpreter.Options interpreterSettings = new Interpreter.Options();
-        interpreterSettings.setNumThreads(availableThreads); // increase depending on device, gotta find a function that pulls that?
         try {
-            tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
+            TFLiteSetup();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        // TFLite setup
-        int[] inputTensor = tflite.getInputTensor(0).shape();
-        outputTensor = tflite.getOutputTensor(0).shape();
-
-        // Change width/height based on camera input
-        imageH = inputTensor[1];
-        imageW = inputTensor[2];
-
-        // Set image buffer to store the size of the image
-        imageInputBuffer = ByteBuffer.allocateDirect(4 * imageW * imageH * 3);
-        imageInputBuffer.order(ByteOrder.nativeOrder());
-        // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
-
-        // Create buffer to store confident predictions
+        // Create buffer to store confidence predictions
         outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
 
         // OpenCV loader
@@ -134,6 +119,30 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         OpenCVCamera.setCvCameraViewListener(this);
 
         // returnToScreen();
+    }
+
+    private void TFLiteSetup() throws IOException {
+        Interpreter.Options interpreterSettings = new Interpreter.Options();
+        interpreterSettings.setNumThreads(availableThreads); // Increase threads used based on device
+
+        try {
+            tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // TFLite setup
+        int[] inputTensor = tflite.getInputTensor(0).shape();
+        outputTensor = tflite.getOutputTensor(0).shape();
+
+        // Change width/height based on camera input
+        imageH = inputTensor[1];
+        imageW = inputTensor[2];
+
+        // Set image buffer to store the size of the image
+        imageInputBuffer = ByteBuffer.allocateDirect(4 * imageW * imageH * 3);
+        imageInputBuffer.order(ByteOrder.nativeOrder());
+        // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
     }
 
     // Convert bitmap to buffer (https://stackoverflow.com/questions/55777086/converting-bitmap-to-bytebuffer-float-in-tensorflow-lite-android)
@@ -170,11 +179,11 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     // Update drowsy UI based on awake or sleep
     public void updateUIAwakeOrDrowsy(float confidence) {
         String detectionTextUpdate = "TBD";
-        if (confidence >= .8) {// We're shooting for 80% accuracy here
+        if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy here
             detectionTextUpdate = "Asleep";
             Log.i(TAG, detectionTextUpdate + "%: " + confidence * 100); // logging
         } else {
-            detectionTextUpdate = "Awake";
+            detectionTextUpdate = "Awake (%: " + (confidence * 100);
             Log.i(TAG, detectionTextUpdate + "%: " + (confidence * 100)); // logging
         }
 
