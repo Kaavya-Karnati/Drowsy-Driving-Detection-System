@@ -41,6 +41,10 @@ public class ModelActivity2 extends NavActivity {
         startActivity(new Intent(this, ModelPage.class));
     }
 
+    public void openCV(View view) {
+        startActivity(new Intent(this, OpenCV.class));
+    }
+
     public void openAlert(View view) {
         startActivity(new Intent(this, AlertActivity.class));
     }
