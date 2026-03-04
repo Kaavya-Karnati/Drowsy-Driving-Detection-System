@@ -67,7 +67,7 @@
             android:name=".RegistrationActivity"
             android:exported="true" />
 
-        <activity android:name=".cameraView" />
+        <activity android:name=".AlertsDashboard" />
 
         <activity
             android:name=".AlertActivity"
