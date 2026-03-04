@@ -122,11 +122,13 @@
             <!-- Upload Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUpload"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="11dp"
                 android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:cornerRadius="8dp"
@@ -393,7 +395,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#FFFFFF"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:onClick="onAlertRecordsClicked">
 
                     <TextView
                         android:id="@+id/visualAlertsCount"

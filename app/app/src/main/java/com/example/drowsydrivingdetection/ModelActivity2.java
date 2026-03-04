@@ -41,6 +41,15 @@ public class ModelActivity2 extends NavActivity {
         startActivity(new Intent(this, ModelPage.class));
     }
 
+    public void openCV(View view) {
+        startActivity(new Intent(this, OpenCV.class));
+    }
+
+    public void openAlert(View view) {
+        startActivity(new Intent(this, AlertActivity.class));
+    }
+
+
     private void setupButtonListeners() {
         btnWakeUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +64,7 @@ public class ModelActivity2 extends NavActivity {
 
                 // I commented this out because I couldn't get a fix working, so if it sounds like it's clicking a lot... it is -Anthony
                 // view.setEnabled(false); // Disables extra clicking
-                Intent cameraIntent = new Intent(ModelActivity2.this, cameraView.class);
+                Intent cameraIntent = new Intent(ModelActivity2.this, OpenCV.class);
                 startActivity(cameraIntent);
             }
         });

@@ -123,5 +123,7 @@
     <string name="AlertChart1">Alerts Chart</string>
     <string name="already_registered_login_here">Already Registered? Login Here</string>
     <string name="password_req"><![CDATA[Password must contain:\n• At least 8 characters\n• At least one digit (0-9)\n• At least one special character (!@#$%^&*)]]></string>
+    <string name="play_audio_alert">Play Audio Alert</string>
+    <string name="show_visual_alert">Show Visual Alert</string>
 
 </resources>
