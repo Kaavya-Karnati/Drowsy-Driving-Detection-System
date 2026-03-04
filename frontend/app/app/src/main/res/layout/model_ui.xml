@@ -168,14 +168,27 @@
                 android:id="@+id/openCVButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="openCamera"
-                android:text="@string/model"
+                android:onClick="openCV"
+                android:text="@string/opencv"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.191"
-                app:layout_constraintStart_toEndOf="@+id/statusIndicatorRed"
+                app:layout_constraintHorizontal_bias="0.542"
+                app:layout_constraintStart_toEndOf="@+id/coffeeIcon"
                 app:layout_constraintTop_toBottomOf="@+id/button2"
-                app:layout_constraintVertical_bias="0.04" />
+                app:layout_constraintVertical_bias="0.045" />
+
+            <Button
+                android:id="@+id/alertButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="openAlert"
+                android:text="@string/alert_driver"
+                app:layout_constraintBottom_toTopOf="@+id/btnWakeUp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.577"
+                app:layout_constraintStart_toEndOf="@+id/coffeeIcon"
+                app:layout_constraintTop_toBottomOf="@+id/openCVButton"
+                app:layout_constraintVertical_bias="0.193" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

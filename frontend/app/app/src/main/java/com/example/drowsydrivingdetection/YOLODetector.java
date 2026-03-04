@@ -19,7 +19,7 @@ public class YOLODetector {
     private float[][][] outputArray;
     //array to store predictions
 
-    public YOLODetector(Interpreter interpreter, List<String> classes, int inputSize){
+    public YOLODetector(Interpreter interpreter, List<String> classes, int inputSize) {
         this.interpreter = interpreter;
         this.classes = classes;
         this.inputSize = inputSize;
@@ -51,25 +51,48 @@ public class YOLODetector {
 
         }
 
-        private int countDetections(float[][][] rawOutput) {
+        private int countDetections(float[][][] output) {
             int count = 0;
+            if (output == null || output.length == 0) return 0;
 
-            if (rawOutput == null || rawOutput.length == 0) {
-                return 0;
+            // Check output format
+            int dim1 = output[0].length;     // Either 7 or 8400
+            int dim2 = output[0][0].length;  // Either 8400 or 7
+
+            boolean isTransposed = (dim1 < 100);  // If dim1 is small (7), it's transposed
+
+            if (isTransposed) {
+                // Format: [1, 7, 8400] - transposed
+                int numDetections = dim2;  // 8400
+                int numClasses = 3;        // close, open, yawn
+
+                for (int i = 0; i < numDetections; i++) {
+                    float maxScore = 0;
+                    // Check class scores at indices [4][i], [5][i], [6][i]
+                    for (int c = 0; c < numClasses; c++) {
+                        float score = output[0][4 + c][i];
+                        maxScore = Math.max(maxScore, score);
+                    }
+                    if (maxScore > 0.5f) {
+                        count++;
+                    }
+                }
+            } else {
+                // Format: [1, 8400, 7] - standard
+                int numDetections = dim1;  // 8400
+
+                for (int i = 0; i < numDetections; i++) {
+                    float maxScore = 0;
+                    // Check class scores at indices [i][4], [i][5], [i][6]
+                    for (int j = 4; j < Math.min(output[0][i].length, 7); j++) {
+                        maxScore = Math.max(maxScore, output[0][i][j]);
+                    }
+                    if (maxScore > 0.5f) {
+                        count++;
+                    }
+                }
             }
 
-            //nested for loop to get the total no. of detection > 0.5
-            for (int i = 0; i < rawOutput[0].length; i++) {
-                float maxScore = 0;
-
-                for (int j = 4; j < rawOutput[0][i].length; j++) {
-                    maxScore = Math.max(maxScore, rawOutput[0][i][j]);
-                }
-
-                if (maxScore > 0.5f) {
-                    count++;
-                }
-            }
             return count;
         }
 
@@ -83,8 +106,9 @@ public class YOLODetector {
         ByteBuffer inputBuffer = bitmapToByteBuffer(resizedBitmap);
 
         this.interpreter.run(inputBuffer, this.outputArray);
-
         long inferenceTime = System.currentTimeMillis() - startTime;
+
+        logDetections(outputArray, 0.1f);
 
         return new DetectionResult(this.outputArray, inferenceTime);
 
@@ -112,5 +136,92 @@ public class YOLODetector {
         return byteBuffer;
     }
 
+    private void logDetections(float[][][] output, float confidenceThreshold) {
+        if (output == null || output.length == 0) {
+            Log.d(TAG, "No output from model");
+            return;
+        }
+
+        int dim1 = output[0].length;
+        int dim2 = output[0][0].length;
+        boolean isTransposed = (dim1 < 100);
+
+        Log.d(TAG, "Model output shape: [1, " + dim1 + ", " + dim2 + "]");
+        Log.d(TAG, "Format: " + (isTransposed ? "TRANSPOSED [1, 7, 8400]" : "STANDARD [1, 8400, 7]"));
+
+        int detectionCount = 0;
+
+        if (isTransposed) {
+            // Transposed: [1, 7, 8400]
+            int numDetections = dim2;
+
+            for (int i = 0; i < numDetections; i++) {
+                float cx = output[0][0][i];
+                float cy = output[0][1][i];
+                float w = output[0][2][i];
+                float h = output[0][3][i];
+
+                float maxScore = 0;
+                int maxClassIndex = -1;
+
+                for (int j = 0; j < classes.size(); j++) {
+                    float score = output[0][4 + j][i];
+                    if (score > maxScore) {
+                        maxScore = score;
+                        maxClassIndex = j;
+                    }
+                }
+
+                if (maxScore > confidenceThreshold) {
+                    detectionCount++;
+                    String className = classes.get(maxClassIndex);
+                    Log.d(TAG, String.format(
+                            "Detection #%d: Class='%s' (%.3f) | BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                            detectionCount, className, maxScore, cx, cy, w, h
+                    ));
+                }
+            }
+        } else {
+            // Standard: [1, 8400, 7]
+            int numDetections = dim1;
+
+            for (int i = 0; i < numDetections; i++) {
+                float[] prediction = output[0][i];
+
+                float cx = prediction[0];
+                float cy = prediction[1];
+                float w = prediction[2];
+                float h = prediction[3];
+
+                float maxScore = 0;
+                int maxClassIndex = -1;
+
+                for (int j = 4; j < Math.min(prediction.length, 4 + classes.size()); j++) {
+                    if (prediction[j] > maxScore) {
+                        maxScore = prediction[j];
+                        maxClassIndex = j - 4;
+                    }
+                }
+
+                if (maxScore > confidenceThreshold) {
+                    detectionCount++;
+                    String className = (maxClassIndex >= 0 && maxClassIndex < classes.size())
+                            ? classes.get(maxClassIndex)
+                            : "unknown";
+
+                    Log.d(TAG, String.format(
+                            "Detection #%d: Class='%s' (%.3f) | BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                            detectionCount, className, maxScore, cx, cy, w, h
+                    ));
+                }
+            }
+        }
+
+        if (detectionCount == 0) {
+            Log.d(TAG, "No detections above threshold " + confidenceThreshold);
+        } else {
+            Log.d(TAG, "Total detections: " + detectionCount);
+        }
+    }
 
 }

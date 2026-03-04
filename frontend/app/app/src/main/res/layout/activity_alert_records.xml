@@ -50,6 +50,7 @@
 
 
  <!-- Statistics -->
+    <!-- Statistics -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/statCard1"
         android:layout_width="0dp"

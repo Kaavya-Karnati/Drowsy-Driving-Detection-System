@@ -1,11 +1,16 @@
 package com.example.drowsydrivingdetection;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.imageview.ShapeableImageView;
+
 public class FaqActivity extends NavActivity {
+
+    private ShapeableImageView profileIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +84,22 @@ public class FaqActivity extends NavActivity {
                 }
             }
         });
+        profileIcon = findViewById(R.id.profileIcon);
 
         setupBottomNavigation();
+        loadProfilePicture();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadProfilePicture();
+    }
+
+    private void loadProfilePicture() {
+        String profilePhoto = sharedPreferences.getString("profilePhotoUri", null);
+        if(profilePhoto != null){
+            profileIcon.setImageURI(Uri.parse(profilePhoto));
+        }
     }
 }

@@ -16,7 +16,6 @@ public class SignInActivity extends AppCompatActivity {
     private TextInputEditText username;
     private TextInputEditText password;
     private Button btnContinue;
-    private Button btnGoogleSignIn;
     private Button btnGuestSignIn;
     private TextView tvCreateAccount;
 
@@ -42,7 +41,6 @@ public class SignInActivity extends AppCompatActivity {
         username = findViewById(R.id.emailIDInput);
         password = findViewById(R.id.passwordInput);
         btnContinue = findViewById(R.id.btnContinue);
-        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         btnGuestSignIn = findViewById(R.id.btnGuestSignIn);
         tvCreateAccount = findViewById(R.id.signUp);
     }
@@ -55,12 +53,6 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleGoogleSignIn();
-            }
-        });
 
         btnGuestSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,26 +145,6 @@ public class SignInActivity extends AppCompatActivity {
             Toast.makeText(this, "Incorrect password. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
-    private void handleGoogleSignIn() {
-        // TODO: Implement Google Sign-In
-        Toast.makeText(this, "Google Sign-In coming soon!", Toast.LENGTH_SHORT).show();
-        String demoEmail = "user@gmail.com";
-        String demoFirstName = "Google";
-        String demoLastName = "User";
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", true);
-        editor.putBoolean("isGuest", false);
-        editor.putString("userEmail", demoEmail);
-        editor.putString("userFirstName", demoFirstName);
-        editor.putString("userLastName", demoLastName);
-        editor.putString("userName", demoFirstName + " " + demoLastName);
-        editor.putBoolean("isGoogleSignIn", true);
-        editor.apply();
-
-        navigateToHome();
-    }
-
     private void handleGuestSignIn() {
         // Save guest mode
         SharedPreferences.Editor editor = sharedPreferences.edit();

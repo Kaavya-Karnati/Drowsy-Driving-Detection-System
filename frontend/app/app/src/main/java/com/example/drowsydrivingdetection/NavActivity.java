@@ -2,6 +2,7 @@ package com.example.drowsydrivingdetection;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -9,11 +10,13 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.imageview.ShapeableImageView;
+
 public class NavActivity extends AppCompatActivity {
     protected ImageView homeLogo;
     protected ImageView modelLogo;
     protected FrameLayout faqLogo;
-    protected ImageView profileLogo;
+    protected ShapeableImageView profileLogo;
 
     protected SharedPreferences sharedPreferences;
 
@@ -21,6 +24,15 @@ public class NavActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload profile picture every time activity becomes visible
+        if (profileLogo != null) {
+            loadProfilePictureInNavBar();
+        }
     }
 
     protected void setupBottomNavigation() {
@@ -57,6 +69,7 @@ public class NavActivity extends AppCompatActivity {
             }
         });
 
+        loadProfilePictureInNavBar();
     }
 
     private void navigateToHome() {
@@ -112,6 +125,13 @@ public class NavActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
+        }
+    }
+
+    private void loadProfilePictureInNavBar() {
+        String profilePhoto = sharedPreferences.getString("profilePhotoUri", null);
+        if(profilePhoto != null){
+            profileLogo.setImageURI(Uri.parse(profilePhoto));
         }
     }
 }
