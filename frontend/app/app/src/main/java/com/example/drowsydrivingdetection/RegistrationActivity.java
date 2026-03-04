@@ -22,7 +22,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText confirmPassword;
     private TextView backToLogin;
     private Button btnRegister;
-    private Button btnGoogleSignIn;
 
     private SharedPreferences sharedPreferences;
 
@@ -54,7 +53,6 @@ public class RegistrationActivity extends AppCompatActivity {
         password = findViewById(R.id.Rpassword);
         confirmPassword = findViewById(R.id.confirmPassword);
         btnRegister = findViewById(R.id.Register);
-        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         backToLogin = findViewById(R.id.backToLogIn);
     }
 
@@ -63,13 +61,6 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleRegistration();
-            }
-        });
-
-        btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleGoogleSignIn();
             }
         });
 
@@ -172,28 +163,6 @@ public class RegistrationActivity extends AppCompatActivity {
         editor.apply();
 
         Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-        navigateToHome();
-    }
-
-    private void handleGoogleSignIn() {
-        // TODO: Implement Google Sign-In SDK
-        Toast.makeText(this, "Google Sign-In coming soon!", Toast.LENGTH_SHORT).show();
-
-        // For demo purposes
-        String demoEmail = "user@gmail.com";
-        String demoFirstName = "Google";
-        String demoLastName = "User";
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", true);
-        editor.putBoolean("isGuest", false);
-        editor.putString("userEmail", demoEmail);
-        editor.putString("userFirstName", demoFirstName);
-        editor.putString("userLastName", demoLastName);
-        editor.putString("userName", demoFirstName + " " + demoLastName);
-        editor.putBoolean("isGoogleSignIn", true);
-        editor.apply();
-
         navigateToHome();
     }
 
