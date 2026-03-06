@@ -10,6 +10,8 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,6 +55,9 @@ public class ModelPage extends AppCompatActivity {
     private ModelLoader modelLoader;
 
     private YOLODetector yoloDetector;
+    private DrowsinessTracker drowsinessTracker;
+    private boolean audioAlertTriggered = false;
+    private boolean visualAlertTriggered = false;
 
     @Override
     public void onRequestPermissionsResult(int reqCode,
@@ -81,6 +86,8 @@ public class ModelPage extends AppCompatActivity {
         capturedView = findViewById(R.id.capturedView);
         statusText = findViewById(R.id.statusText);
         fps = findViewById(R.id.fps);
+
+        this.drowsinessTracker = new DrowsinessTracker();
 
         cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
         //dedicated to camera frame processing (different thread for better performance)
@@ -178,19 +185,15 @@ public class ModelPage extends AppCompatActivity {
         Bitmap bitmap = imageProxyToBitmap(img);
 
         if (bitmap != null) {
-            this.updateFPSCounter();
+            CleanDetectionResult result = yoloDetector.detectAndParse(bitmap);
+            drowsinessTracker.addFrame(result);
+            checkAndTriggerAlerts();
 
-            YOLODetector.DetectionResult result = yoloDetector.detect(bitmap);
             updateFPSCounter();
-
 
             runOnUiThread(() -> {
                 capturedView.setImageBitmap(bitmap);
-                String info = String.format(
-                        "Detections: %d | Inference: %dms",
-                        result.numDetections,
-                        result.inferenceTime
-                );
+                String info = result.toString() + "\n" + drowsinessTracker.getDrowsinessLevel();
                 statusText.setText(info);
             });
         }
@@ -279,5 +282,37 @@ public class ModelPage extends AppCompatActivity {
                 }
             });
         }).start();
+    }
+
+    private void checkAndTriggerAlerts() {
+        //check for possibility of audio alert (eyes closed for 3 or more seconds)
+        if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
+            triggerAudioAlert();
+            audioAlertTriggered = true;
+        } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
+            //if eyes open again before the 3 second window, we dismiss the alert
+            audioAlertTriggered = false;
+            Log.d("TAG", "Audio alert dismissed since eyes opened");
+        }
+
+        //check for visual alert (3 yawns) Tentative for now, could be reduced/increased
+        if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
+            triggerVisualAlert();
+            visualAlertTriggered = true;
+
+            //auto-reset visual alert after showing
+            //(so it can trigger again later)
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                visualAlertTriggered = false;
+            }, 5000);  // Reset after 5 seconds
+        }
+    }
+
+    private void triggerAudioAlert() {
+        Log.e("AUDIO ALERT", "AUDIO ALERT");
+    }
+
+    private void triggerVisualAlert() {
+        Log.e("VISUAL ALERT", "VISUAL ALERT");
     }
 }
