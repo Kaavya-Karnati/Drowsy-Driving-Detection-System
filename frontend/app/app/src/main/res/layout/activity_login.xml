@@ -14,6 +14,7 @@
         android:padding="24dp">
 
 
+
         <!-- Page Title -->
         <TextView
             android:id="@+id/tvAppTitle"
@@ -167,6 +168,41 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/forgotPassword" />
 
+        <TextView
+            android:id="@+id/passBanner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="Password was Changed!"
+            android:background="@drawable/pass_banner_background"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btnContinue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <TextView
+            android:id="@+id/errorBanner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="Wrong answer! Please try again!"
+            android:background="@drawable/error_banner_background"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/passBanner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 
         <View
             android:id="@+id/dividerLeft"
@@ -178,7 +214,7 @@
             app:layout_constraintBottom_toBottomOf="@id/loginOr"
             app:layout_constraintEnd_toStartOf="@id/loginOr"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnContinue" />
+            app:layout_constraintTop_toBottomOf="@id/errorBanner" />
 
 
         <!-- Or Divider -->
@@ -193,7 +229,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnContinue" />
+            app:layout_constraintTop_toBottomOf="@id/errorBanner" />
 
 
         <View
@@ -206,7 +242,7 @@
             app:layout_constraintBottom_toBottomOf="@id/loginOr"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/loginOr"
-            app:layout_constraintTop_toBottomOf="@id/btnContinue" />
+            app:layout_constraintTop_toBottomOf="@id/errorBanner" />
 
 
         <!-- Continue as Guest Button -->
@@ -274,6 +310,10 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
 
+
+
+
+
         <!-- Terms and Privacy Text -->
         <!--
         <TextView
@@ -308,6 +348,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

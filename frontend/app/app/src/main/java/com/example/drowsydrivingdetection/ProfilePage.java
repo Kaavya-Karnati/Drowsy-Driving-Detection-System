@@ -2,10 +2,13 @@ package com.example.drowsydrivingdetection;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +18,8 @@ public class ProfilePage extends AppCompatActivity {
     EditText name, email, age, experience, drivingHours, otherCondition;
     CheckBox narcolepsy, sleepApnea, insomnia, alerts;
     Button btnSave;
+
+    private TextView passBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class ProfilePage extends AppCompatActivity {
 
         alerts = findViewById(R.id.cbAlerts);
         btnSave = findViewById(R.id.btnSave);
+        passBanner = findViewById(R.id.passBanner);
 
         btnSave.setOnClickListener(v -> saveProfile());
     }
@@ -65,8 +71,26 @@ public class ProfilePage extends AppCompatActivity {
 
         editor.apply();
 
-        Toast.makeText(this,
-                "Profile saved successfully!",
-                Toast.LENGTH_SHORT).show();
+        showPass("Profile saved successfully!");
+    }
+
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                passBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 100000);
     }
 }

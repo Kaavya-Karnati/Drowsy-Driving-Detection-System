@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -31,6 +33,8 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private CameraBridgeViewBase OpenCVCamera;
     // Mat mRGBA;
 
+    private TextView errorBanner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
@@ -40,13 +44,15 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             Log.d(TAG,"OpenCV successfully loaded.");
         } else {
             Log.e(TAG,"OpenCV initialization failed!");
-            (Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG)).show();
+            showError("OpenCV initialization failed!");
             return;
         }
 
         // Make sure device doesn't auto-dim because the camera is on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.open_cv_activity);
+
+        errorBanner = findViewById(R.id.errorBanner);
 
         // Sets OpenCVCamera to my_camera in camera_page.xml
         OpenCVCamera = findViewById(R.id.my_camera);
@@ -128,5 +134,35 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         }
         OpenCVCamera.setCameraPermissionGranted();
     }
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
+    }
 }
+
+
+
 

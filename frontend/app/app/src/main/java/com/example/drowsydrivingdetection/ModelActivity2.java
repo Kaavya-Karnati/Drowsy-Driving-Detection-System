@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
+
 
 public class ModelActivity2 extends NavActivity {
 
@@ -16,6 +17,7 @@ public class ModelActivity2 extends NavActivity {
 
     private View indicatorGreen;
     private View indicatorRed;
+    private TextView passBanner;
     private boolean isDetectionRunning = false;
 
     @Override
@@ -29,6 +31,7 @@ public class ModelActivity2 extends NavActivity {
         OpenCVModel = findViewById(R.id.openCVButton);
         indicatorGreen = findViewById(R.id.statusIndicatorGreen);
         indicatorRed = findViewById(R.id.statusIndicatorRed);
+        passBanner = findViewById(R.id.passBanner);
 
         indicatorRed.setVisibility(View.VISIBLE);
         indicatorGreen.setVisibility(View.INVISIBLE);
@@ -41,13 +44,42 @@ public class ModelActivity2 extends NavActivity {
         startActivity(new Intent(this, ModelPage.class));
     }
 
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(0f);
+        passBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        passBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                passBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
+    }
+
     private void setupButtonListeners() {
         btnWakeUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ModelActivity2.this, "Wake Up Alert Triggered!", Toast.LENGTH_SHORT).show();
+                showPass("Wake Up Alert Triggered!");
             }
         });
+
 
         OpenCVModel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +99,7 @@ public class ModelActivity2 extends NavActivity {
                     isDetectionRunning = true;
                     indicatorRed.setVisibility(View.INVISIBLE);
                     indicatorGreen.setVisibility(View.VISIBLE);
-                    Toast.makeText(ModelActivity2.this, "Drowsy Detection Started", Toast.LENGTH_SHORT).show();
+                    showPass("Drowsy Detection Started");
                 }
             }
         });
@@ -79,7 +111,7 @@ public class ModelActivity2 extends NavActivity {
                     isDetectionRunning = false;
                     indicatorGreen.setVisibility(View.INVISIBLE);
                     indicatorRed.setVisibility(View.VISIBLE);
-                    Toast.makeText(ModelActivity2.this, "Drowsy Detection Stopped", Toast.LENGTH_SHORT).show();
+                    showPass("Drowsy Detection Stopped");
                 }
             }
         });

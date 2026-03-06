@@ -11,9 +11,9 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,6 +53,7 @@ public class ModelPage extends AppCompatActivity {
     private ModelLoader modelLoader;
 
     private YOLODetector yoloDetector;
+    private TextView errorBanner;
 
     @Override
     public void onRequestPermissionsResult(int reqCode,
@@ -64,9 +65,7 @@ public class ModelPage extends AppCompatActivity {
             if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera(); //start camera since permission was granted by user
             } else {
-                Toast.makeText(this,
-                        "Camera permission is required to start detection",
-                        Toast.LENGTH_LONG).show();
+                showError("Camera permission is required to start detection");
                 finish();
             }
         }
@@ -81,6 +80,7 @@ public class ModelPage extends AppCompatActivity {
         capturedView = findViewById(R.id.capturedView);
         statusText = findViewById(R.id.statusText);
         fps = findViewById(R.id.fps);
+        errorBanner = findViewById(R.id.errorBanner);
 
         cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
         //dedicated to camera frame processing (different thread for better performance)
@@ -166,7 +166,7 @@ public class ModelPage extends AppCompatActivity {
 
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("CameraX", "Camera failed", e);
-                Toast.makeText(this, "Camera error", Toast.LENGTH_SHORT).show();
+                showError("Camera error");
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -256,6 +256,34 @@ public class ModelPage extends AppCompatActivity {
         }
 
         //gives the real time processing FPS
+    }
+
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
     }
 
 

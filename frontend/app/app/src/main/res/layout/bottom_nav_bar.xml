@@ -58,14 +58,16 @@
     </FrameLayout>
 
     <!-- Profile Icon -->
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profileLogo"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:src="@drawable/default_profile_icon"
+        android:scaleType="centerCrop"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/navIndicator"
         app:layout_constraintStart_toEndOf="@id/faqLogo"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

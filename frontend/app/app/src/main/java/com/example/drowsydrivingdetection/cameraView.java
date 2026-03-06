@@ -7,8 +7,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,6 +36,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
     // Tag for logging (Named after the class) -Anthony
     private static final String TAG = "cameraView: ";
     private TextView detectionText;
+    private TextView errorBanner;
 
     // Helper function for loading model (https://blog.tensorflow.org/2018/03/using-tensorflow-lite-on-android.html)
     private MappedByteBuffer loadModelFile(String modelName) throws IOException{
@@ -65,6 +66,8 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -102,7 +105,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
             Log.d(TAG,"OpenCV successfully loaded.");
         } else {
             Log.e(TAG,"OpenCV initialization failed!");
-            (Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG)).show();
+            showError("OpenCV initialization failed!");
             return;
         }
 
@@ -111,6 +114,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         setContentView(R.layout.activity_cameraview);
 
         detectionText = findViewById(R.id.detectionText);
+        errorBanner = findViewById(R.id.errorBanner);
 
         // Sets OpenCVCamera to my_camera in camera_page.xml
         OpenCVCamera = findViewById(R.id.my_camera);
@@ -121,6 +125,34 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
         OpenCVCamera.setCvCameraViewListener(this);
 
         // returnToScreen();
+    }
+
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
     }
 
 
@@ -164,7 +196,7 @@ public class cameraView extends AppCompatActivity implements CameraBridgeViewBas
                 OpenCVCamera.setCameraPermissionGranted();
                 OpenCVCamera.enableView();
             } else {
-                Toast.makeText(this, "Camera permission required", Toast.LENGTH_LONG).show();
+                showError("Camera permission required");
                 finish();
             }
         } else {

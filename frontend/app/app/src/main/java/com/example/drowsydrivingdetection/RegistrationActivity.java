@@ -2,10 +2,10 @@ package com.example.drowsydrivingdetection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +30,9 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText securityQuestion1;
     private TextInputEditText securityQuestion2;
     private TextInputEditText securityQuestion3;
+    private TextView passBanner;
+    private TextView errorBanner;
+
 
 
 
@@ -73,6 +76,8 @@ public class RegistrationActivity extends AppCompatActivity {
         securityQuestion1 = findViewById(R.id.securityQuestion1);
         securityQuestion2 = findViewById(R.id.securityQuestion2);
         securityQuestion3 = findViewById(R.id.securityQuestion3);
+        passBanner = findViewById(R.id.passBanner);
+        errorBanner = findViewById(R.id.errorBanner);
     }
 
 
@@ -108,21 +113,21 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Validate inputs
         if (firstName.isEmpty()) {
-            Toast.makeText(this, "Please enter your first name", Toast.LENGTH_SHORT).show();
+            showError("Please enter your first name");
             this.firstName.requestFocus();
             return;
         }
 
 
         if (lastName.isEmpty()) {
-            Toast.makeText(this, "Please enter your last name", Toast.LENGTH_SHORT).show();
+            showError("Please enter your last name");
             this.lastName.requestFocus();
             return;
         }
 
 
         if (email.isEmpty()) {
-            Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show();
+            showError("Please enter your email");
             this.email.requestFocus();
             return;
         }
@@ -130,14 +135,14 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Validate email format
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            showError("Please enter a valid email address");
             this.email.requestFocus();
             return;
         }
 
 
         if (password.isEmpty()) {
-            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
+            showError("Please enter a password");
             this.password.requestFocus();
             return;
         }
@@ -150,7 +155,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         if (confirmPassword.isEmpty()) {
-            Toast.makeText(this, "Please confirm your password", Toast.LENGTH_SHORT).show();
+            showError("Please confirm your password");
             this.confirmPassword.requestFocus();
             return;
         }
@@ -158,28 +163,28 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Check if passwords match
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            showError("Passwords do not match");
             this.confirmPassword.requestFocus();
             return;
         }
 
 
         if (securityAnswer1.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 1", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 1");
             this.securityQuestion1.requestFocus();
             return;
         }
 
 
         if (securityAnswer2.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 2", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 2");
             this.securityQuestion2.requestFocus();
             return;
         }
 
 
         if (securityAnswer3.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 3", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 3");
             this.securityQuestion3.requestFocus();
             return;
         }
@@ -188,7 +193,7 @@ public class RegistrationActivity extends AppCompatActivity {
         // Check if email is already registered
         String existingEmail = sharedPreferences.getString("registered_email", null);
         if (existingEmail != null && existingEmail.equals(email)) {
-            Toast.makeText(this, "Email already registered. Please sign in instead.", Toast.LENGTH_LONG).show();
+            showErrorForTransition("Email already registered. Please sign in instead.");
             navigateToSignIn();
             return;
         }
@@ -203,7 +208,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         if (hashedPassword == null) {
-            Toast.makeText(this, "Error creating account. Please try again.", Toast.LENGTH_SHORT).show();
+            showError("Error creating account. Please try again.");
             return;
         }
 
@@ -224,13 +229,82 @@ public class RegistrationActivity extends AppCompatActivity {
         editor.apply();
 
 
-        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+        showPass("Account created successfully!");
         navigateToHome();
     }
 
 
     private boolean isUserLoggedIn() {
         return sharedPreferences.getBoolean("isLoggedIn", false);
+    }
+
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
+    }
+
+    private void showErrorForTransition(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                errorBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 100000);
+    }
+
+
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                passBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 100000);
     }
 
 
@@ -252,8 +326,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private boolean isPasswordValid(String password) {
         // Check minimum length
         if (password.length() < MIN_PASSWORD_LENGTH) {
-            Toast.makeText(this, "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long",
-                    Toast.LENGTH_SHORT).show();
+            this.password.setError("Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");
             this.password.requestFocus();
             return false;
         }
@@ -261,8 +334,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Check for at least one digit
         if (!DIGIT_PATTERN.matcher(password).matches()) {
-            Toast.makeText(this, "Password must contain at least one digit (0-9)",
-                    Toast.LENGTH_SHORT).show();
+            this.password.setError("Password must contain at least one digit (0-9)");
             this.password.requestFocus();
             return false;
         }
@@ -270,8 +342,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Check for at least one special character
         if (!SPECIAL_CHAR_PATTERN.matcher(password).matches()) {
-            Toast.makeText(this, "Password must contain at least one special character (!@#$%^&*)",
-                    Toast.LENGTH_SHORT).show();
+            this.password.setError("Password must contain at least one special character (!@#$%^&*)");
             this.password.requestFocus();
             return false;
         }

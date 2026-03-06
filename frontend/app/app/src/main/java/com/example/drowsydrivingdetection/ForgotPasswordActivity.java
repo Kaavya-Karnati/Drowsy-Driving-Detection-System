@@ -3,10 +3,10 @@ package com.example.drowsydrivingdetection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +24,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private Button btnVerify;
     private TextView backToLogin;
     private TextView errorBanner;
+    private TextView passBanner;
 
     private SharedPreferences sharedPreferences;
 
@@ -51,6 +52,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         btnVerify = findViewById(R.id.btnVerify);
         backToLogin = findViewById(R.id.backToLogin);
         errorBanner = findViewById(R.id.errorBanner);
+        passBanner = findViewById(R.id.passBanner);
     }
 
     private void setupListeners() {
@@ -78,43 +80,43 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         String a3 = answer3.getText().toString().trim();
 
         if (fFirstName.isEmpty()) {
-            Toast.makeText(this, "Please enter your first name", Toast.LENGTH_SHORT).show();
+            showError("Please enter your first name");
             firstName.requestFocus();
             return;
         }
 
         if (fLastName.isEmpty()) {
-            Toast.makeText(this, "Please enter your last name", Toast.LENGTH_SHORT).show();
+            showError("Please enter your last name");
             lastName.requestFocus();
             return;
         }
 
         if (fEmail.isEmpty()) {
-            Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show();
+            showError("Please enter your email");
             email.requestFocus();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(fEmail).matches()) {
-            Toast.makeText(this, "Enter email address in the right format", Toast.LENGTH_SHORT).show();
+            showError("Enter email address in the right format");
             email.requestFocus();
             return;
         }
 
         if (a1.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 1", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 1");
             answer1.requestFocus();
             return;
         }
 
         if (a2.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 2", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 2");
             answer2.requestFocus();
             return;
         }
 
         if (a3.isEmpty()) {
-            Toast.makeText(this, "Please answer Security Question 3", Toast.LENGTH_SHORT).show();
+            showError("Please answer Security Question 3");
             answer3.requestFocus();
             return;
         }
@@ -124,12 +126,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         String sEmail = sharedPreferences.getString("registered_email", null);
 
         if (sFirstName == null || sLastName == null || sEmail == null) {
-            Toast.makeText(this, "Account doesn't exist", Toast.LENGTH_SHORT).show();
+            showError("Account doesn't exist");
             return;
         }
 
         if (!sEmail.equalsIgnoreCase(fEmail)) {
-            Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show();
+            showError("Invalid details");
             email.requestFocus();
             return;
         }
@@ -141,19 +143,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         if (System.currentTimeMillis() < lockTime) {
             long remainingMillis = lockTime - System.currentTimeMillis();
             long remainingMinutes = (remainingMillis / 60000) + 1;
-            Toast.makeText(this, "Too many attempts. Try again in " + remainingMinutes + " minutes.", Toast.LENGTH_LONG).show();
+            showError("Too many attempts. Try again in " + remainingMinutes + " minutes.");
             goToLogin();
             return;
         }
 
         if (!sFirstName.equalsIgnoreCase(fFirstName)) {
-            Toast.makeText(this, "Invalid details", Toast.LENGTH_SHORT).show();
+            showError("Invalid details");
             firstName.requestFocus();
             return;
         }
 
         if (!sLastName.equalsIgnoreCase(fLastName)) {
-            Toast.makeText(this, "Invalid details", Toast.LENGTH_SHORT).show();
+            showError("Invalid details");
             lastName.requestFocus();
             return;
         }
@@ -172,7 +174,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             editor.putInt(attemptKey, 0);
             editor.putLong(lockKey, 0);
             editor.apply();
-            Toast.makeText(this, "Passed!", Toast.LENGTH_SHORT).show();
+            showPass("Passed!");
             navigateToResetPassword();
         } else {
             attempt(fEmail);
@@ -191,7 +193,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             editor.putLong(lockKey, System.currentTimeMillis() + lock);
             editor.putInt(attemptKey, 0);
             editor.apply();
-            Toast.makeText(this, "Too many failed attempts. Locked for 1 hour.", Toast.LENGTH_LONG).show();
+            showError("Too many failed attempts. Locked for 1 hour.");
             goToLogin();
         } else {
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -228,6 +230,26 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         }, 2000);
                     }
                 });
+    }
+
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                passBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 100000);
     }
 
     private void navigateToResetPassword() {
