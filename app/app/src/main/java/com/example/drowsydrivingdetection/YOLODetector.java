@@ -1,12 +1,14 @@
 package com.example.drowsydrivingdetection;
 
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.util.Log;
 
 import org.tensorflow.lite.Interpreter;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 
 //Class runs object detection using the YOLO model. Class handles image preprocessing & model execution
@@ -176,7 +178,7 @@ public class YOLODetector {
                     detectionCount++;
                     String className = classes.get(maxClassIndex);
                     Log.d(TAG, String.format(
-                            "Detection #%d: Class='%s' (%.3f) | BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                            "Detection #%d: Class='%s' (%.3f) || BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
                             detectionCount, className, maxScore, cx, cy, w, h
                     ));
                 }
@@ -210,7 +212,7 @@ public class YOLODetector {
                             : "unknown";
 
                     Log.d(TAG, String.format(
-                            "Detection #%d: Class='%s' (%.3f) | BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                            "Detection #%d: Class='%s' (%.3f) || BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
                             detectionCount, className, maxScore, cx, cy, w, h
                     ));
                 }
@@ -222,6 +224,150 @@ public class YOLODetector {
         } else {
             Log.d(TAG, "Total detections: " + detectionCount);
         }
+    }
+
+    public CleanDetectionResult detectAndParse(Bitmap bitmap) {
+        //run existing detection
+        DetectionResult rawResult = detect(bitmap);
+
+        //instantiate the cleaner result class
+        CleanDetectionResult cleanResult = new CleanDetectionResult();
+
+        //parse the raw output into bounding boxes (new model class)
+        if (rawResult != null && rawResult.rawOutput != null) {
+            List<BoundingBox> boxes = parseDetections(
+                    rawResult.rawOutput,
+                    bitmap.getWidth(),
+                    bitmap.getHeight()
+            );
+            cleanResult.detections = boxes;
+        }
+
+        // Count detections by class
+        cleanResult.countDetections();
+        Log.e("Clean Result: ", cleanResult.toString());
+
+        return cleanResult;
+    }
+
+    private List<BoundingBox> parseDetections(float[][][] rawOutput, int imageWidth, int imageHeight) {
+        List<BoundingBox> boxes = new ArrayList<>();
+        float confThreshold = 0.2f; //tentative, for testing purposes, will be higher
+
+        if (rawOutput == null || rawOutput.length == 0) {
+            Log.d(TAG, "No output from model");
+            return boxes;
+        }
+
+        int dim1 = rawOutput[0].length;
+        int dim2 = rawOutput[0][0].length;
+        boolean isTransposed = (dim1 < 100);
+
+        Log.d(TAG, "Parsing detections: Shape: [1, " + dim1 + ", " + dim2 + "]");
+        Log.d(TAG, "Format: " + (isTransposed ? "TRANSPOSED [1, 7, 8400]" : "STANDARD [1, 8400, 7]"));
+
+        if (isTransposed) {
+            parseTransposedFormat(rawOutput, boxes, confThreshold, imageWidth, imageHeight, dim2);
+        } else {
+            parseStandardFormat(rawOutput, boxes, confThreshold, imageWidth, imageHeight, dim1);
+        }
+
+        Log.d(TAG, "Total parsed detections: " + boxes.size());
+        return boxes;
+    }
+
+    private void parseTransposedFormat(float[][][] output, List<BoundingBox> boxes,
+                                       float confThreshold, int imageWidth, int imageHeight,
+                                       int numDetections) {
+        for (int i = 0; i < numDetections; i++) {
+            // Extract bbox coordinates
+            float cx = output[0][0][i];
+            float cy = output[0][1][i];
+            float w = output[0][2][i];
+            float h = output[0][3][i];
+
+            // Find max class score
+            float maxScore = 0;
+            int maxClassIndex = -1;
+
+            for (int j = 0; j < classes.size(); j++) {
+                float score = output[0][4 + j][i];
+                if (score > maxScore) {
+                    maxScore = score;
+                    maxClassIndex = j;
+                }
+            }
+
+            // Filter by confidence and create BoundingBox
+            if (maxScore > confThreshold && maxClassIndex >= 0 && maxClassIndex < classes.size()) {
+                RectF bbox = convertToCornerFormat(cx, cy, w, h, imageWidth, imageHeight);
+                String label = classes.get(maxClassIndex);
+                boxes.add(new BoundingBox(bbox, label, maxScore));
+
+                Log.d(TAG, String.format(
+                        "Detection: Class='%s' (%.3f) || BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                        label, maxScore, cx, cy, w, h
+                ));
+            }
+        }
+    }
+
+    private void parseStandardFormat(float[][][] output, List<BoundingBox> boxes,
+                                     float confThreshold, int imageWidth, int imageHeight,
+                                     int numDetections) {
+        for (int i = 0; i < numDetections; i++) {
+            float[] prediction = output[0][i];
+
+            //extract bbox coordinates
+            float cx = prediction[0];
+            float cy = prediction[1];
+            float w = prediction[2];
+            float h = prediction[3];
+
+            //find max class score
+            float maxScore = 0;
+            int maxClassIndex = -1;
+
+            for (int j = 4; j < Math.min(prediction.length, 4 + classes.size()); j++) {
+                if (prediction[j] > maxScore) {
+                    maxScore = prediction[j];
+                    maxClassIndex = j - 4;
+                }
+            }
+
+            //filter by confidence and create BoundingBox
+            if (maxScore > confThreshold && maxClassIndex >= 0 && maxClassIndex < classes.size()) {
+                RectF bbox = convertToCornerFormat(cx, cy, w, h, imageWidth, imageHeight);
+                String label = classes.get(maxClassIndex);
+                boxes.add(new BoundingBox(bbox, label, maxScore));
+
+                Log.d(TAG, String.format(
+                        "Detection: Class='%s' (%.3f) || BBox=[cx:%.1f, cy:%.1f, w:%.1f, h:%.1f]",
+                        label, maxScore, cx, cy, w, h
+                ));
+            }
+        }
+    }
+
+    private RectF convertToCornerFormat(float cx, float cy, float w, float h,
+                                        int imageWidth, int imageHeight) {
+        //scale from model input size to actual image size
+        float scaleX = (float) imageWidth / inputSize;
+        float scaleY = (float) imageHeight / inputSize;
+
+        //convert center coordinates to corner coordinates
+        float x1 = (cx - w / 2) * scaleX;
+        float y1 = (cy - h / 2) * scaleY;
+        float x2 = (cx + w / 2) * scaleX;
+        float y2 = (cy + h / 2) * scaleY;
+
+        //clamp to image bounds
+        x1 = Math.max(0, Math.min(x1, imageWidth));
+        y1 = Math.max(0, Math.min(y1, imageHeight));
+        x2 = Math.max(0, Math.min(x2, imageWidth));
+        y2 = Math.max(0, Math.min(y2, imageHeight));
+
+        return new RectF(x1, y1, x2, y2);
     }
 
 }
