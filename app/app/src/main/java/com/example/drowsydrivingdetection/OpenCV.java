@@ -68,7 +68,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private int imageH = 640; // defaults for our dataset
     private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
-    private double expectedConfidenceLevel = 0.8; // Our expected confidence before triggering an alert is .8
+    private double expectedConfidenceLevel = 0.6; // Our expected confidence before triggering an alert is .6 for prototype 2
 
     // TFLite buffers
     private float[][][] outputBuffer;
@@ -76,6 +76,13 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private Bitmap modelBitmap;
     private Mat resizedRGBA;
     private int[] imageValues;
+
+    // For timer
+    // Basically, instead of running tflite.run on every frame, it'll only run every 5 frames
+    // My PC gets about ~4fps running on every frame vs 12-15 when running every 5 frames.
+    // We can increase the number based on the amount of times
+    int totalFrames = 0;
+    int inferOnFrame = 5;
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
@@ -181,12 +188,15 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     // Update drowsy UI based on awake or sleep
     public void updateUIAwakeOrDrowsy(float confidence) {
         String detectionTextUpdate = "TBD";
-        if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy here
-            detectionTextUpdate = "Asleep";
-            Log.i(TAG, detectionTextUpdate + "%: " + confidence * 100); // logging
+
+        String percent = String.format("%.2f", confidence * 100);
+
+        if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy on the file, but 60% for prototype 2
+            detectionTextUpdate = "Asleep (%: " + percent + ")";
+            Log.i(TAG, detectionTextUpdate); // logging
         } else {
-            detectionTextUpdate = "Awake (%: " + (confidence * 100);
-            Log.i(TAG, detectionTextUpdate + "%: " + (confidence * 100)); // logging
+            detectionTextUpdate = "Awake (%: " + percent + ")";
+            Log.i(TAG, detectionTextUpdate); // logging
         }
 
         //
@@ -266,31 +276,38 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame cvCameraViewFrame) {
         Mat rgba = cvCameraViewFrame.rgba();
 
-        Imgproc.resize(rgba, resizedRGBA, new Size(imageW, imageH));
+        if (totalFrames % inferOnFrame == 0) {
+            Imgproc.resize(rgba, resizedRGBA, new Size(imageW, imageH), 0, 0, Imgproc.INTER_LINEAR);
 
-        Utils.matToBitmap(resizedRGBA, modelBitmap);
-        bitmapToBuffer(modelBitmap, imageInputBuffer);
+            // Once we get converting mat -> ByteBuffer down, performance should increase even more
+            // instead of running two commands we'd be cut to just one
+            Utils.matToBitmap(resizedRGBA, modelBitmap);
+            bitmapToBuffer(modelBitmap, imageInputBuffer);
 
-        tflite.run(imageInputBuffer, outputBuffer);
+            tflite.run(imageInputBuffer, outputBuffer);
+
+            float highestConfidenceScore = 0;
+            for (int i = 0; i < outputTensor[2]; i++){
+                float currentConfidenceScore = outputBuffer[0][4][i];
+                if (currentConfidenceScore > highestConfidenceScore){
+                    highestConfidenceScore = currentConfidenceScore;
+                }
+            }
+
+            updateUIAwakeOrDrowsy(highestConfidenceScore);
+        }
+        totalFrames++;
 
         /* Keeps track of the highest confidence score from the model, then iterates
         thru the entire output buffer [0][4][i] (which is 8400)
-        If the confidence score is greater than .8 (set in the updateUIAwake function)
+        If the confidence score is greater than .6 (set in the updateUIAwake function)
         then it changes the onscreen text from awake to asleep
 
         I don't know if it does yawning yet (I need to clean this up so I can add debugging)
         but based on what Nirav sent I can prob change that to look at it (maybe that's why there's
         two shapes? Not sure)
          */
-        float highestConfidenceScore = 0;
-        for (int i = 0; i < outputTensor[2]; i++){
-            float currentConfidenceScore = outputBuffer[0][4][i];
-            if (currentConfidenceScore > highestConfidenceScore){
-                highestConfidenceScore = currentConfidenceScore;
-            }
-        }
 
-        updateUIAwakeOrDrowsy(highestConfidenceScore);
         return rgba;
     }
 
