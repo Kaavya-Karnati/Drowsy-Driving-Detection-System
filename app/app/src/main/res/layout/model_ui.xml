@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -9,10 +10,10 @@
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnStart"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -20,7 +21,6 @@
             android:paddingBottom="24dp">
 
             <!-- Drowsy Detection Title -->
-
             <TextView
                 android:id="@+id/drowsyDetectionTitle"
                 android:layout_width="wrap_content"
@@ -57,8 +57,8 @@
                 app:layout_constraintStart_toEndOf="@id/statusIndicatorGreen"
                 app:layout_constraintTop_toTopOf="@id/drowsyDetectionTitle" />
 
-
             <!-- Feeling Sleepy Popup -->
+            <!--
             <ImageView
                 android:id="@+id/coffeeIcon"
                 android:layout_width="150dp"
@@ -83,7 +83,6 @@
                 app:layout_constraintHorizontal_bias="0.218"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/coffeeIcon" />
-
 
             <TextView
                 android:id="@+id/timeForBreak"
@@ -116,41 +115,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/timeForBreak" />
+            -->
 
-            <!-- Start Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStart"
-                android:layout_width="115dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="40dp"
-                android:backgroundTint="#4CAF50"
-                android:fontFamily="@font/inter_medium"
-                android:text="@string/start"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:cornerRadius="20dp"
-                app:layout_constraintEnd_toStartOf="@id/btnStop"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnWakeUp" />
-
-            <!-- Stop Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStop"
-                android:layout_width="115dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="40dp"
-                android:backgroundTint="#F44336"
-                android:fontFamily="@font/inter_medium"
-                android:text="@string/stop"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:cornerRadius="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/btnStart"
-                app:layout_constraintTop_toBottomOf="@id/btnWakeUp" />
-
+            <!--
             <Button
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
@@ -189,10 +156,92 @@
                 app:layout_constraintStart_toEndOf="@+id/coffeeIcon"
                 app:layout_constraintTop_toBottomOf="@+id/openCVButton"
                 app:layout_constraintVertical_bias="0.193" />
+            -->
+
+            <!-- ==================== NEW ALERT UI ELEMENTS ==================== -->
+
+            <!-- Visual Alert Banner: shown when eyes closed >= 3s (audio alert trigger) -->
+            <TextView
+                android:id="@+id/visualAlertPopUp"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:background="#E53935"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/wake_up"
+                android:textColor="#FFFFFF"
+                android:textSize="45sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drowsyDetectionTitle" />
+
+            <!-- Break Popup Image: shown when 3+ yawns detected -->
+            <ImageView
+                android:id="@+id/breakPopUp"
+                android:layout_width="138dp"
+                android:layout_height="168dp"
+                android:layout_marginTop="32dp"
+                android:src="@drawable/break_popup_with_text"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/visualAlertPopUp" />
+
+            <!-- Close/Dismiss X Button for break popup -->
+            <ImageView
+                android:id="@+id/closePopup"
+                android:layout_width="43dp"
+                android:layout_height="36dp"
+                android:src="@drawable/cross"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/breakPopUp"
+                app:layout_constraintStart_toStartOf="@id/breakPopUp"
+                app:layout_constraintTop_toTopOf="@id/breakPopUp"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <!-- Start Button — always visible, anchored above navbar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStart"
+        android:layout_width="115dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#4CAF50"
+        android:fontFamily="@font/inter_medium"
+        android:text="@string/start"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintEnd_toStartOf="@id/btnStop"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Stop Button — always visible, anchored above navbar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStop"
+        android:layout_width="115dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#F44336"
+        android:fontFamily="@font/inter_medium"
+        android:text="@string/stop"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnStart" />
 
     <include
         android:id="@+id/bottomNavigation"
