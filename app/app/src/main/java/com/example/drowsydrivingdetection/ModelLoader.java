@@ -30,7 +30,7 @@ public class ModelLoader {
         try {
             Log.d("Model Loader: ", "loading model");
 
-            ByteBuffer modelBuffer = loadModelFile(context.getAssets(), "best_float32.tflite");
+            ByteBuffer modelBuffer = loadModelFile(context.getAssets(), "best_float32_75.tflite");
             //TF lite requires a ByteBuffer to load models faster & avoid copying the model in RAM
 
             Interpreter.Options options = new Interpreter.Options();
@@ -49,7 +49,7 @@ public class ModelLoader {
 
             // Initialize TFLite interpreter with configured options
             this.interpreter = new Interpreter(modelBuffer, options);
-            this.classes = loadClasses(context.getAssets(), "classes.txt");
+            this.classes = loadClasses(context.getAssets(), "classes_75.txt");
 
             printModelInfo();
 
