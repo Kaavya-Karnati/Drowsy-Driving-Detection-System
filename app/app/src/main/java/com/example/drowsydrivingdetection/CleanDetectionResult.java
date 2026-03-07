@@ -30,7 +30,7 @@ public class CleanDetectionResult {
         for(BoundingBox bbox : this.detections) {
             totalConfidence += bbox.confidence;
 
-            switch (bbox.label.toLowerCase()) {
+            switch (bbox.label.toLowerCase().replaceAll("\\s+", "")) {
                 case "close":
                     eyesClosedCount++;
                     break;
@@ -42,6 +42,12 @@ public class CleanDetectionResult {
                     break;
                 case "yawn":
                     yawnCount++;
+                    break;
+                case "attentiveeye":
+                    eyesOpenCount++;
+                    break;
+                case "drowsyeye":
+                    eyesClosedCount++;
                     break;
             }
         }
