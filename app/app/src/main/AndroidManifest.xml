@@ -70,6 +70,14 @@
         <activity android:name=".AlertsDashboard" />
 
         <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true" />
+
+        <activity
             android:name=".AlertActivity"
             android:exported="true" />
 
