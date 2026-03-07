@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -74,6 +75,8 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private double expectedConfidenceLevel = 0.6; // Our expected confidence before triggering an alert is .6 for prototype 2
     private GpuDelegate gpuDelegate = null;
 
+    SharedPreferences sharedPreferences;
+
     // TFLite buffers
     private float[][][] outputBuffer;
     private int[] outputTensor;
@@ -88,6 +91,8 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     int totalFrames = 0;
     int inferOnFrame = 5;
 
+
+
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
 
@@ -96,7 +101,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         super.onCreate(savedInstanceState);
         //System.out.println("total cores:" + availableThreads);
-
+        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
         // Initialize TFLite
         try {
             TFLiteSetup();
@@ -185,6 +190,17 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         }
     }
 
+    private void saveAlertCount() {
+        // get updated alert from shared preferences
+        // Most likely we will change how this works if we implement it being set by different dates
+        int currentAlerts = sharedPreferences.getInt("audio_alert", 0);
+
+        Log.d(TAG, "Saved audio alert, current count: " + currentAlerts);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("audio_alert", currentAlerts + 1);
+        editor.apply();
+    }
+
     // Update drowsy UI based on awake or sleep
     public void updateUIAwakeOrDrowsy(float confidence) {
         String detectionTextUpdate = "TBD";
@@ -193,6 +209,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy on the file, but 60% for prototype 2
             detectionTextUpdate = "Asleep (%: " + percent + ")";
+            saveAlertCount();
             Log.i(TAG, detectionTextUpdate); // logging
         } else {
             detectionTextUpdate = "Awake (%: " + percent + ")";
