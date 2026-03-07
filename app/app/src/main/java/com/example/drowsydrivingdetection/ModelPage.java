@@ -330,6 +330,8 @@ public class ModelPage extends AppCompatActivity {
             triggerVisualAlert();
             visualAlertTriggered = true;
 
+            drowsinessTracker.resetYawns();
+
             //auto-reset visual alert after showing
             //(so it can trigger again later)
             new Handler(Looper.getMainLooper()).postDelayed(() -> {

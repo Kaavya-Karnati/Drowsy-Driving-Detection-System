@@ -15,7 +15,9 @@ public class DrowsinessTracker {
     //configuration for time and alert threshold logic
     private static final int WINDOW_SIZE = 90;  //3 seconds at 30 FPS
     private static final long EYES_CLOSED_THRESHOLD_MS = 3000;  //3 seconds for audio alert
-    private static final int YAWN_COUNT_THRESHOLD = 3;  //3 yawns for visual alert
+    private static final int YAWN_COUNT_THRESHOLD = 14;  //3 yawns for visual alert
+    //several yawns detected (since real time yawning lasts for a few second, each frame 
+    //counts as a yawn, so for now replace with 14 (14 detections roughly amount to 3 yawns))
     private static final long YAWN_WINDOW_MS = 60000;  //Count yawns in last 60 seconds
 
     //Sliding window of recent detections;
@@ -53,7 +55,7 @@ public class DrowsinessTracker {
         updateEyesClosedState(result);
 
         //track yawns
-        if (result.yawnCount > 0) {
+        if (result.yawnCount > 0 && getRecentYawnCount() < YAWN_COUNT_THRESHOLD) {
             yawnTimestamps.add(result.timestamp);
             cleanOldYawns(result.timestamp);
             Log.d(TAG, "Yawn detected! Total in window: " + getRecentYawnCount());
@@ -87,7 +89,7 @@ public class DrowsinessTracker {
         }
     }
 
-    //remove yawns older than the window
+    //remove yawns older than the window (60 seconds)
     private void cleanOldYawns(long currentTime) {
         yawnTimestamps.removeIf(timestamp ->
                 (currentTime - timestamp) > YAWN_WINDOW_MS
@@ -134,6 +136,10 @@ public class DrowsinessTracker {
         eyesClosedStartTime = 0;
         currentlyEyesClosed = false;
         audioAlertActive = false;
+    }
+
+    public void resetYawns() {
+        yawnTimestamps.clear();
     }
 
     public void dismissAudioAlert() {

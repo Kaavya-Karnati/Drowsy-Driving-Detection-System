@@ -252,7 +252,7 @@ public class YOLODetector {
 
     private List<BoundingBox> parseDetections(float[][][] rawOutput, int imageWidth, int imageHeight) {
         List<BoundingBox> boxes = new ArrayList<>();
-        float confThreshold = 0.2f; //tentative, for testing purposes, will be higher
+        float confThreshold = 0.5f; //tentative, for testing purposes, will be higher
 
         if (rawOutput == null || rawOutput.length == 0) {
             Log.d(TAG, "No output from model");
