@@ -24,6 +24,9 @@ import org.opencv.imgproc.Imgproc;
 
 // Tensorflow imports
 import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.gpu.CompatibilityList;
+import org.tensorflow.lite.gpu.GpuDelegate;
+import org.tensorflow.lite.gpu.GpuDelegateFactory;
 
 // Java imports
 import java.io.FileInputStream;
@@ -69,6 +72,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
     private double expectedConfidenceLevel = 0.6; // Our expected confidence before triggering an alert is .6 for prototype 2
+    private GpuDelegate gpuDelegate = null;
 
     // TFLite buffers
     private float[][][] outputBuffer;
@@ -101,9 +105,6 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             throw new RuntimeException(e);
         }
 
-        // Create buffer to store confidence predictions
-        outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
-
         // OpenCV loader
         if (OpenCVLoader.initLocal()) {
             Log.d(TAG,"OpenCV successfully loaded.");
@@ -126,13 +127,24 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Enables view nad tells camera to listen to this view (because disabled by default)
         OpenCVCamera.setVisibility(SurfaceView.VISIBLE);
         OpenCVCamera.setCvCameraViewListener(this);
-
-        // returnToScreen();
     }
 
     private void TFLiteSetup() throws IOException {
         Interpreter.Options interpreterSettings = new Interpreter.Options();
-        interpreterSettings.setNumThreads(availableThreads); // Increase threads used based on device
+        CompatibilityList compatibilityList = new CompatibilityList();
+
+        // From ModelLoader.java, checks if there is a GPU available to use, if not then defaults to
+        // using CPU
+        // I don't have an android device to test this (it's always disabled?)
+        if (compatibilityList.isDelegateSupportedOnThisDevice()) {
+            GpuDelegateFactory.Options delegateOptions = compatibilityList.getBestOptionsForThisDevice();
+            this.gpuDelegate = new GpuDelegate(delegateOptions);
+            interpreterSettings.addDelegate(this.gpuDelegate);
+            Log.d(TAG, "TFLiteSetup GPU acceleration enabled.");
+        } else {
+            interpreterSettings.setNumThreads(availableThreads); // Increase threads used based on device
+            Log.d(TAG, "TFLiteSetup GPU acceleration disabled.");
+        }
 
         try {
             tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
@@ -151,6 +163,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Set image buffer to store the size of the image
         imageInputBuffer = ByteBuffer.allocateDirect(4 * imageW * imageH * 3);
         imageInputBuffer.order(ByteOrder.nativeOrder());
+
+        // Create buffer to store confidence predictions
+        outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
         // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
     }
 
@@ -172,6 +187,11 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         }
 
         buffer.rewind();
+    }
+
+    // Convert Mat to byteBuffer
+    private void matToByteBuffer(Mat mat, ByteBuffer buffer) {
+
     }
 
     // Request permission for camera (if not already accepted)
