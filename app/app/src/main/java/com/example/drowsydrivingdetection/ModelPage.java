@@ -331,6 +331,7 @@ public class ModelPage extends AppCompatActivity {
             visualAlertTriggered = true;
 
             drowsinessTracker.resetYawns();
+            //resetting yawns after a visual alert is triggered
 
             //auto-reset visual alert after showing
             //(so it can trigger again later)
