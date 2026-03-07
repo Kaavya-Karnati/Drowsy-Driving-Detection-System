@@ -285,7 +285,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             float highestConfidenceScore = 0;
             for (int i = 0; i < outputTensor[2]; i++){
                 float currentConfidenceScore = outputBuffer[0][4][i];
-                Log.d(TAG, "Currently detecting: ");
+                // Log.d(TAG, "Currently detecting: ");
                 if (currentConfidenceScore > highestConfidenceScore){
                     highestConfidenceScore = currentConfidenceScore;
                 }
