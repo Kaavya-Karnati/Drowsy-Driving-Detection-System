@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -65,11 +66,10 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private static final int CAMERA_PERMISSION = 1;
     // Mat mRGBA;
 
-    // Interpreter and information for TFLite (most likely need to save for later since we're doing our dashboard?)
+    // Interpreter and information for TFLite
     protected Interpreter tflite;
     private int imageW = 640;
     private int imageH = 640; // defaults for our dataset
-    private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
     private double expectedConfidenceLevel = 0.6; // Our expected confidence before triggering an alert is .6 for prototype 2
     private GpuDelegate gpuDelegate = null;
@@ -77,9 +77,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     // TFLite buffers
     private float[][][] outputBuffer;
     private int[] outputTensor;
-    private Bitmap modelBitmap;
     private Mat resizedRGBA;
     private int[] imageValues;
+    byte[] matToByteBufferArray;
 
     // For timer
     // Basically, instead of running tflite.run on every frame, it'll only run every 5 frames
@@ -114,17 +114,20 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             return;
         }
 
-        // Make sure device doesn't auto-dim because the camera is on
+        // Keeps screen on whenever camera is in view
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_cameraview);
 
+        // Sets detectionText to proper id in activity_cameraview.xml
         detectionText = findViewById(R.id.detectionText);
 
-        // Sets OpenCVCamera to my_camera in camera_page.xml
+        /*
+        1. Sets OpenCVCamera to my_camera in camera_page.xml
+        2. Checks for camera permissions
+        3. Sets visibility and camera to proper listener
+         */
         OpenCVCamera = findViewById(R.id.my_camera);
         getCameraPermissions();
-
-        // Enables view nad tells camera to listen to this view (because disabled by default)
         OpenCVCamera.setVisibility(SurfaceView.VISIBLE);
         OpenCVCamera.setCvCameraViewListener(this);
     }
@@ -147,7 +150,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         }
 
         try {
-            tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
+            // Load model using best_float32 (I got better model accuracy with similar performance than 16)
+            // Also loads interpreter settings including GPU delegating if enabled
+            tflite = new Interpreter(loadModelFile("best_float32.tflite"), interpreterSettings);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -167,31 +172,6 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Create buffer to store confidence predictions
         outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
         // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
-    }
-
-    // Convert bitmap to buffer (https://stackoverflow.com/questions/55777086/converting-bitmap-to-bytebuffer-float-in-tensorflow-lite-android)
-    private void bitmapToBuffer(Bitmap bitmap, ByteBuffer buffer) {
-        buffer.rewind();
-
-        bitmap.getPixels(imageValues, 0, imageW, 0, 0, imageW, imageH);
-
-        int pixel = 0;
-        for (int i = 0; i < imageH; i++){
-            for (int j = 0; j < imageW; j++){
-                int value = imageValues[pixel++];
-
-                buffer.putFloat(((value>> 16) & 0xFF) / 255.f);
-                buffer.putFloat(((value>> 8) & 0xFF) / 255.f);
-                buffer.putFloat((value & 0xFF) / 255.f);
-            }
-        }
-
-        buffer.rewind();
-    }
-
-    // Convert Mat to byteBuffer
-    private void matToByteBuffer(Mat mat, ByteBuffer buffer) {
-
     }
 
     // Request permission for camera (if not already accepted)
@@ -285,11 +265,8 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     @Override
     public void onCameraViewStarted(int i, int i1) {
         // Create a resized RGB matrix that we can use whenever the camera is created
-        // Also I don't know if we're supposed to use createBitmap or createScaledBitmap,
-        // we can change it once we get the actual model post-processing working
         resizedRGBA = new Mat();
-        modelBitmap = Bitmap.createBitmap(imageW, imageH, Bitmap.Config.ARGB_8888);
-        imageValues = new int[imageW * imageH]; // only initialize once instead of every frame
+        matToByteBufferArray = new byte[imageW * imageH * 3];
     }
 
     @Override
@@ -297,18 +274,18 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         Mat rgba = cvCameraViewFrame.rgba();
 
         if (totalFrames % inferOnFrame == 0) {
-            Imgproc.resize(rgba, resizedRGBA, new Size(imageW, imageH), 0, 0, Imgproc.INTER_LINEAR);
+            // Resizes image and converts to proper color channels
+            ImageProcessing.resizeImageConvertColor(rgba, resizedRGBA, imageW, imageH);
 
-            // Once we get converting mat -> ByteBuffer down, performance should increase even more
-            // instead of running two commands we'd be cut to just one
-            Utils.matToBitmap(resizedRGBA, modelBitmap);
-            bitmapToBuffer(modelBitmap, imageInputBuffer);
+            // Converts mat (resizedRGBA) into imageInputBuffer
+            ImageProcessing.matToByteBuffer(resizedRGBA, imageInputBuffer, matToByteBufferArray);
 
             tflite.run(imageInputBuffer, outputBuffer);
 
             float highestConfidenceScore = 0;
             for (int i = 0; i < outputTensor[2]; i++){
                 float currentConfidenceScore = outputBuffer[0][4][i];
+                Log.d(TAG, "Currently detecting: ");
                 if (currentConfidenceScore > highestConfidenceScore){
                     highestConfidenceScore = currentConfidenceScore;
                 }
