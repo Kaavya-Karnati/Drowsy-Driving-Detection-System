@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,6 +49,8 @@ public class ProfileActivity extends NavActivity {
     private SharedPreferences sharedPreferences;
     private Uri cameraImageUri;
     private ShapeableImageView profilePicture;
+    private TextView passBanner;
+    private TextView errorBanner;
 
     // Opens the photo gallery and receives the selected image
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -74,9 +77,8 @@ public class ProfileActivity extends NavActivity {
                         if (granted) {
                             openCamera();
                         } else {
-                            Toast.makeText(this,
-                                    "Camera permission is required to take a photo.",
-                                    Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(this, "Camera permission is required to take a photo.", Toast.LENGTH_SHORT).show();
+                            showError("Camera permission is required to take a photo.");
                         }
                     });
 
@@ -108,6 +110,8 @@ public class ProfileActivity extends NavActivity {
         visualAlertsCount = findViewById(R.id.visualAlertsCount);
 
         profilePicture = findViewById(R.id.profilePicture);
+        passBanner = findViewById(R.id.passBanner);
+        errorBanner = findViewById(R.id.errorBanner);
     }
 
     private void loadUserData() {
@@ -174,9 +178,8 @@ public class ProfileActivity extends NavActivity {
 
         profilePicture.setImageURI(imageUri);
 
-        Toast.makeText(this,
-                "Profile photo updated!",
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show();
+        showPass("Profile photo updated!");
     }
 
     // Camera Permissions
@@ -213,9 +216,8 @@ public class ProfileActivity extends NavActivity {
             cameraLauncher.launch(cameraImageUri);
 
         } catch (IOException e) {
-            Toast.makeText(this,
-                    "Could not open camera",
-                    Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Could not open camera", Toast.LENGTH_SHORT).show();
+            showError("Could not open camera");
         }
     }
 
@@ -280,6 +282,57 @@ public class ProfileActivity extends NavActivity {
         });
     }
 
+    // Ahmed's Code
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
+    }
+
+
+    private void showPass(String message) {
+        passBanner.setText(message);
+        passBanner.setVisibility(View.VISIBLE);
+        passBanner.setAlpha(1f);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                passBanner.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                passBanner.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 100000);
+    }
+    // End of Ahmed's Code
+
     private void handleLogout() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -288,7 +341,8 @@ public class ProfileActivity extends NavActivity {
         editor.remove("isGuest");
         editor.apply();
 
-        Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        showPass("Logged out successfully");
 
         // Navigate to sign-in page
         Intent intent = new Intent(ProfileActivity.this, SignInActivity.class);

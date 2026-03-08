@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProfileNonRegisteredActivity extends NavActivity {
@@ -14,6 +15,7 @@ public class ProfileNonRegisteredActivity extends NavActivity {
     private Button btnChangeAlertPreferences;
     private Button btnMonitorData;
     private Button btnRegisterHere;
+    private TextView errorBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,24 +39,24 @@ public class ProfileNonRegisteredActivity extends NavActivity {
         btnSaveContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ProfileNonRegisteredActivity.this,
-                        "Please register to save contact info", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to save contact info", Toast.LENGTH_SHORT).show();
+                showError("Please register to save contact info");
             }
         });
 
         btnChangeAlertPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ProfileNonRegisteredActivity.this,
-                        "Please register to change alert preferences", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to change alert preferences", Toast.LENGTH_SHORT).show();
+                showError("Please register to change alert preferences");
             }
         });
 
         btnMonitorData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ProfileNonRegisteredActivity.this,
-                        "Please register to monitor your data", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to monitor your data", Toast.LENGTH_SHORT).show();
+                showError("Please register to monitor your data");
             }
         });
 
@@ -65,6 +67,36 @@ public class ProfileNonRegisteredActivity extends NavActivity {
             }
         });
     }
+
+    // Ahmed's Code
+    private void showError(String message) {
+        errorBanner.setText(message);
+        errorBanner.setVisibility(View.VISIBLE);
+        errorBanner.setAlpha(0f);
+        errorBanner.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorBanner.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorBanner.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 2000);
+                    }
+                });
+    }
+    // End of Ahmed's Code
 
     private void navigateToRegistration() {
         // Clear guest session
