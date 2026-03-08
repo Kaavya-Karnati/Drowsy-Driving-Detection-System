@@ -67,8 +67,8 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private static final int CAMERA_PERMISSION = 1;
     // Mat mRGBA;
 
-    // Interpreter and information for TFLite
-    protected Interpreter tflite;
+    // Changing from original to using ModelLoader
+    private ModelLoader modelLoader;
     private int imageW = 640;
     private int imageH = 640; // defaults for our dataset
     private ByteBuffer imageInputBuffer;
@@ -102,12 +102,22 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         super.onCreate(savedInstanceState);
         //System.out.println("total cores:" + availableThreads);
         sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
-        // Initialize TFLite
-        try {
-            TFLiteSetup();
-        } catch (IOException e) {
-            Log.e(TAG, "TFLite setup failed!");
-            throw new RuntimeException(e);
+
+        // Initialize TFLite using ModelLoader to get proper classes
+        modelLoader = new ModelLoader(this);
+
+        if (!modelLoader.isLoaded()){
+            Log.e(TAG, "Model failed to load.");
+            /*
+            Bring up with Ahmed to possibly add a warning message here that the model failed to load
+            instead of just logging to console -Anthony
+             */
+        } else {
+            try {
+                TFLiteSetup();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // OpenCV loader
@@ -138,33 +148,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     }
 
     private void TFLiteSetup() throws IOException {
-        Interpreter.Options interpreterSettings = new Interpreter.Options();
-        CompatibilityList compatibilityList = new CompatibilityList();
-
-        // From ModelLoader.java, checks if there is a GPU available to use, if not then defaults to
-        // using CPU
-        // I don't have an android device to test this (it's always disabled?)
-        if (compatibilityList.isDelegateSupportedOnThisDevice()) {
-            GpuDelegateFactory.Options delegateOptions = compatibilityList.getBestOptionsForThisDevice();
-            this.gpuDelegate = new GpuDelegate(delegateOptions);
-            interpreterSettings.addDelegate(this.gpuDelegate);
-            Log.d(TAG, "TFLiteSetup GPU acceleration enabled.");
-        } else {
-            interpreterSettings.setNumThreads(availableThreads); // Increase threads used based on device
-            Log.d(TAG, "TFLiteSetup GPU acceleration disabled.");
-        }
-
-        try {
-            // Load model using best_float32 (I got better model accuracy with similar performance than 16)
-            // Also loads interpreter settings including GPU delegating if enabled
-            tflite = new Interpreter(loadModelFile("best_float32.tflite"), interpreterSettings);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // TFLite setup
-        int[] inputTensor = tflite.getInputTensor(0).shape();
-        outputTensor = tflite.getOutputTensor(0).shape();
+        // TFLite setup (but using modelLoader instead)
+        int[] inputTensor = modelLoader.getInterpreter().getInputTensor(0).shape();
+        outputTensor = modelLoader.getInterpreter().getOutputTensor(0).shape();
 
         // Change width/height based on camera input
         imageH = inputTensor[1];
@@ -268,9 +254,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             OpenCVCamera.disableView();
         }
 
-        if (tflite != null){
-            tflite.close();
-            tflite = null;
+        if (modelLoader != null){
+            modelLoader.close();
+            modelLoader = null;
         }
     }
 
@@ -297,8 +283,13 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             // Converts mat (resizedRGBA) into imageInputBuffer
             ImageProcessing.matToByteBuffer(resizedRGBA, imageInputBuffer, matToByteBufferArray);
 
-            tflite.run(imageInputBuffer, outputBuffer);
+            // Swapped to using modelLoader instead
+            modelLoader.getInterpreter().run(imageInputBuffer, outputBuffer);
 
+            /*
+            Needs to be changed to actually do proper YOLO detections
+            most likely through YOLODetector
+             */
             float highestConfidenceScore = 0;
             for (int i = 0; i < outputTensor[2]; i++){
                 float currentConfidenceScore = outputBuffer[0][4][i];
