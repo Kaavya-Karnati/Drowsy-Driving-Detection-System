@@ -14,8 +14,8 @@ public class DrowsinessTracker {
 
     //configuration for time and alert threshold logic
     private static final int WINDOW_SIZE = 90;  //3 seconds at 30 FPS
-    private static final long EYES_CLOSED_THRESHOLD_MS = 3000;  //3 seconds for audio alert
-    private static final int YAWN_COUNT_THRESHOLD = 14;  //3 yawns for visual alert
+    private static final long EYES_CLOSED_THRESHOLD_MS = 2000;  //3 seconds for audio alert
+    private static final int YAWN_COUNT_THRESHOLD = 30;  //3 yawns for visual alert
     //several yawns detected (since real time yawning lasts for a few second, each frame 
     //counts as a yawn, so for now replace with 14 (14 detections roughly amount to 3 yawns))
     private static final long YAWN_WINDOW_MS = 60000;  //Count yawns in last 60 seconds

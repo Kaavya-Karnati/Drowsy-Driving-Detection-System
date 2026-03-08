@@ -141,6 +141,7 @@ public class ModelPage extends AppCompatActivity {
         }
         visualAlertHandler.removeCallbacksAndMessages(null);
         breakPopupHandler.removeCallbacksAndMessages(null);
+        drowsinessTracker.reset();
     }
 
     private boolean hasCameraPermission() {
