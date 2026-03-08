@@ -43,14 +43,27 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.litert.gpu.api
+    implementation libs.litert.gpu
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
     //for model
-    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+    //implementation 'org.tensorflow:tensorflow-lite:2.14.0'
+    //implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
+    //implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+    /*
+    Fix for 16kb alignment: Apparently Google switched the compiling from 4kb
+     to 16kb when they switched the import to LiteRT, but the good news is all
+     of our functions stayed the exact same
+     https://discuss.ai.google.dev/t/tensorflow-lite-and-16-kb-page-size-support/93052
+     https://www.reddit.com/r/androiddev/comments/1o2i1mn/google_play_16_kb_page_size_error_litert_support/
+     */
+    implementation 'com.google.ai.edge.litert:litert:1.4.0'
+    implementation 'com.google.ai.edge.litert:litert-api:1.4.0'
+    implementation 'com.google.ai.edge.litert:litert-support:1.4.0'
+    implementation 'com.google.ai.edge.litert:litert-metadata:1.4.0'
+    implementation "androidx.camera:camera-core:1.4.2"
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
