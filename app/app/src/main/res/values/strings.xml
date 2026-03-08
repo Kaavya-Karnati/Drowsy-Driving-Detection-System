@@ -41,6 +41,11 @@
     <string name="profile_settings">Profile Settings</string>
     <string name="sign_out">Sign Out</string>
 
+    <string name="upload_profile_photo">Upload profile photo</string>
+    <string name="profile_photo_uploaded_successfully">Profile photo uploaded successfully!</string>
+    <string name="failed_to_upload_profile_photo_please_try_again">Failed to upload profile photo. Please try again!</string>
+    <string name="logout">Logout</string>
+
     <!-- About/Help Screen -->
     <string name="help_title">Help &amp; FAQ</string>
     <string name="help_description">Welcome to the help section. Here you can find answers to common questions.</string>
