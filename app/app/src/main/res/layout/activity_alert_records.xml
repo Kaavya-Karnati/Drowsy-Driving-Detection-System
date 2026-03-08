@@ -144,7 +144,7 @@
                 expandableTextView:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/AuditoryAlertTotal2"
+                android:id="@+id/VisualAlertTotal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"

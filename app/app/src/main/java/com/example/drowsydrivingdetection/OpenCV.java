@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -18,12 +19,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 // Tensorflow imports
 import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.gpu.CompatibilityList;
+import org.tensorflow.lite.gpu.GpuDelegate;
+import org.tensorflow.lite.gpu.GpuDelegateFactory;
 
 // Java imports
 import java.io.FileInputStream;
@@ -62,20 +67,31 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private static final int CAMERA_PERMISSION = 1;
     // Mat mRGBA;
 
-    // Interpreter and information for TFLite (most likely need to save for later since we're doing our dashboard?)
-    protected Interpreter tflite;
+    // Changing from original to using ModelLoader
+    private ModelLoader modelLoader;
     private int imageW = 640;
     private int imageH = 640; // defaults for our dataset
-    private boolean modelStarted = false;
     private ByteBuffer imageInputBuffer;
-    private double expectedConfidenceLevel = 0.8; // Our expected confidence before triggering an alert is .8
+    private double expectedConfidenceLevel = 0.6; // Our expected confidence before triggering an alert is .6 for prototype 2
+    private GpuDelegate gpuDelegate = null;
+
+    SharedPreferences sharedPreferences;
 
     // TFLite buffers
     private float[][][] outputBuffer;
     private int[] outputTensor;
-    private Bitmap modelBitmap;
     private Mat resizedRGBA;
     private int[] imageValues;
+    byte[] matToByteBufferArray;
+
+    // For timer
+    // Basically, instead of running tflite.run on every frame, it'll only run every 5 frames
+    // My PC gets about ~4fps running on every frame vs 12-15 when running every 5 frames.
+    // We can increase the number based on the amount of times
+    int totalFrames = 0;
+    int inferOnFrame = 5;
+
+
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
@@ -85,17 +101,24 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         super.onCreate(savedInstanceState);
         //System.out.println("total cores:" + availableThreads);
+        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
 
-        // Initialize TFLite
-        try {
-            TFLiteSetup();
-        } catch (IOException e) {
-            Log.e(TAG, "TFLite setup failed!");
-            throw new RuntimeException(e);
+        // Initialize TFLite using ModelLoader to get proper classes
+        modelLoader = new ModelLoader(this);
+
+        if (!modelLoader.isLoaded()){
+            Log.e(TAG, "Model failed to load.");
+            /*
+            Bring up with Ahmed to possibly add a warning message here that the model failed to load
+            instead of just logging to console -Anthony
+             */
+        } else {
+            try {
+                TFLiteSetup();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        // Create buffer to store confidence predictions
-        outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
 
         // OpenCV loader
         if (OpenCVLoader.initLocal()) {
@@ -106,36 +129,28 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             return;
         }
 
-        // Make sure device doesn't auto-dim because the camera is on
+        // Keeps screen on whenever camera is in view
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_cameraview);
 
+        // Sets detectionText to proper id in activity_cameraview.xml
         detectionText = findViewById(R.id.detectionText);
 
-        // Sets OpenCVCamera to my_camera in camera_page.xml
+        /*
+        1. Sets OpenCVCamera to my_camera in camera_page.xml
+        2. Checks for camera permissions
+        3. Sets visibility and camera to proper listener
+         */
         OpenCVCamera = findViewById(R.id.my_camera);
         getCameraPermissions();
-
-        // Enables view nad tells camera to listen to this view (because disabled by default)
         OpenCVCamera.setVisibility(SurfaceView.VISIBLE);
         OpenCVCamera.setCvCameraViewListener(this);
-
-        // returnToScreen();
     }
 
     private void TFLiteSetup() throws IOException {
-        Interpreter.Options interpreterSettings = new Interpreter.Options();
-        interpreterSettings.setNumThreads(availableThreads); // Increase threads used based on device
-
-        try {
-            tflite = new Interpreter(loadModelFile("best_float16.tflite"), interpreterSettings); // load model, then send the 4 thread settings (and anything else we add)
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // TFLite setup
-        int[] inputTensor = tflite.getInputTensor(0).shape();
-        outputTensor = tflite.getOutputTensor(0).shape();
+        // TFLite setup (but using modelLoader instead)
+        int[] inputTensor = modelLoader.getInterpreter().getInputTensor(0).shape();
+        outputTensor = modelLoader.getInterpreter().getOutputTensor(0).shape();
 
         // Change width/height based on camera input
         imageH = inputTensor[1];
@@ -144,27 +159,10 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Set image buffer to store the size of the image
         imageInputBuffer = ByteBuffer.allocateDirect(4 * imageW * imageH * 3);
         imageInputBuffer.order(ByteOrder.nativeOrder());
+
+        // Create buffer to store confidence predictions
+        outputBuffer = new float[outputTensor[0]][outputTensor[1]][outputTensor[2]];
         // https://ai.google.dev/edge/api/tflite/java/org/tensorflow/lite/Interpreter
-    }
-
-    // Convert bitmap to buffer (https://stackoverflow.com/questions/55777086/converting-bitmap-to-bytebuffer-float-in-tensorflow-lite-android)
-    private void bitmapToBuffer(Bitmap bitmap, ByteBuffer buffer) {
-        buffer.rewind();
-
-        bitmap.getPixels(imageValues, 0, imageW, 0, 0, imageW, imageH);
-
-        int pixel = 0;
-        for (int i = 0; i < imageH; i++){
-            for (int j = 0; j < imageW; j++){
-                int value = imageValues[pixel++];
-
-                buffer.putFloat(((value>> 16) & 0xFF) / 255.f);
-                buffer.putFloat(((value>> 8) & 0xFF) / 255.f);
-                buffer.putFloat((value & 0xFF) / 255.f);
-            }
-        }
-
-        buffer.rewind();
     }
 
     // Request permission for camera (if not already accepted)
@@ -178,15 +176,30 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         }
     }
 
+    private void saveAlertCount() {
+        // get updated alert from shared preferences
+        // Most likely we will change how this works if we implement it being set by different dates
+        int currentAlerts = sharedPreferences.getInt("audio_alert", 0);
+
+        Log.d(TAG, "Saved audio alert, current count: " + currentAlerts);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("audio_alert", currentAlerts + 1);
+        editor.apply();
+    }
+
     // Update drowsy UI based on awake or sleep
     public void updateUIAwakeOrDrowsy(float confidence) {
         String detectionTextUpdate = "TBD";
-        if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy here
-            detectionTextUpdate = "Asleep";
-            Log.i(TAG, detectionTextUpdate + "%: " + confidence * 100); // logging
+
+        String percent = String.format("%.2f", confidence * 100);
+
+        if (confidence >= expectedConfidenceLevel) {// We're shooting for 80% accuracy on the file, but 60% for prototype 2
+            detectionTextUpdate = "Asleep (%: " + percent + ")";
+            saveAlertCount();
+            Log.i(TAG, detectionTextUpdate); // logging
         } else {
-            detectionTextUpdate = "Awake (%: " + (confidence * 100);
-            Log.i(TAG, detectionTextUpdate + "%: " + (confidence * 100)); // logging
+            detectionTextUpdate = "Awake (%: " + percent + ")";
+            Log.i(TAG, detectionTextUpdate); // logging
         }
 
         //
@@ -241,9 +254,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             OpenCVCamera.disableView();
         }
 
-        if (tflite != null){
-            tflite.close();
-            tflite = null;
+        if (modelLoader != null){
+            modelLoader.close();
+            modelLoader = null;
         }
     }
 
@@ -255,42 +268,51 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     @Override
     public void onCameraViewStarted(int i, int i1) {
         // Create a resized RGB matrix that we can use whenever the camera is created
-        // Also I don't know if we're supposed to use createBitmap or createScaledBitmap,
-        // we can change it once we get the actual model post-processing working
         resizedRGBA = new Mat();
-        modelBitmap = Bitmap.createBitmap(imageW, imageH, Bitmap.Config.ARGB_8888);
-        imageValues = new int[imageW * imageH]; // only initialize once instead of every frame
+        matToByteBufferArray = new byte[imageW * imageH * 3];
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame cvCameraViewFrame) {
         Mat rgba = cvCameraViewFrame.rgba();
 
-        Imgproc.resize(rgba, resizedRGBA, new Size(imageW, imageH));
+        if (totalFrames % inferOnFrame == 0) {
+            // Resizes image and converts to proper color channels
+            ImageProcessing.resizeImageConvertColor(rgba, resizedRGBA, imageW, imageH);
 
-        Utils.matToBitmap(resizedRGBA, modelBitmap);
-        bitmapToBuffer(modelBitmap, imageInputBuffer);
+            // Converts mat (resizedRGBA) into imageInputBuffer
+            ImageProcessing.matToByteBuffer(resizedRGBA, imageInputBuffer, matToByteBufferArray);
 
-        tflite.run(imageInputBuffer, outputBuffer);
+            // Swapped to using modelLoader instead
+            modelLoader.getInterpreter().run(imageInputBuffer, outputBuffer);
+
+            /*
+            Needs to be changed to actually do proper YOLO detections
+            most likely through YOLODetector
+             */
+            float highestConfidenceScore = 0;
+            for (int i = 0; i < outputTensor[2]; i++){
+                float currentConfidenceScore = outputBuffer[0][4][i];
+                // Log.d(TAG, "Currently detecting: ");
+                if (currentConfidenceScore > highestConfidenceScore){
+                    highestConfidenceScore = currentConfidenceScore;
+                }
+            }
+
+            updateUIAwakeOrDrowsy(highestConfidenceScore);
+        }
+        totalFrames++;
 
         /* Keeps track of the highest confidence score from the model, then iterates
         thru the entire output buffer [0][4][i] (which is 8400)
-        If the confidence score is greater than .8 (set in the updateUIAwake function)
+        If the confidence score is greater than .6 (set in the updateUIAwake function)
         then it changes the onscreen text from awake to asleep
 
         I don't know if it does yawning yet (I need to clean this up so I can add debugging)
         but based on what Nirav sent I can prob change that to look at it (maybe that's why there's
         two shapes? Not sure)
          */
-        float highestConfidenceScore = 0;
-        for (int i = 0; i < outputTensor[2]; i++){
-            float currentConfidenceScore = outputBuffer[0][4][i];
-            if (currentConfidenceScore > highestConfidenceScore){
-                highestConfidenceScore = currentConfidenceScore;
-            }
-        }
 
-        updateUIAwakeOrDrowsy(highestConfidenceScore);
         return rgba;
     }
 

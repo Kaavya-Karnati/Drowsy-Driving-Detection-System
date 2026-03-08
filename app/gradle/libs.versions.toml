@@ -8,7 +8,7 @@ material = "1.13.0"
 activity = "1.12.2"
 constraintlayout = "2.2.1"
 litertGpuApi = "1.4.1"
-lifecycleService = "2.10.0"
+litertGpu = "1.4.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -19,7 +19,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 litert-gpu-api = { group = "com.google.ai.edge.litert", name = "litert-gpu-api", version.ref = "litertGpuApi" }
-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
+litert-gpu = { group = "com.google.ai.edge.litert", name = "litert-gpu", version.ref = "litertGpu" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
