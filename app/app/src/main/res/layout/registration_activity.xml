@@ -1,46 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-Original Code - Ahemed
-Refined the code and connected with the other pages - Kaavya
--->
-<!--
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
-
-    <EditText
-        android:id="@+id/Rusername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username"
-        android:textColor="#000000"
-        android:textColorHint="#000000" />
-
-    <EditText
-        android:id="@+id/Rpassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:textColor="#000000"
-        android:textColorHint="#000000" />
-
-    <Button
-        android:id="@+id/Register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Register" />
-
-</LinearLayout>
--->
-
-<!--
-Original Code - Ahmed
-UI redesigned to match Figma/Image - Kaavya
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -157,6 +115,17 @@ UI redesigned to match Figma/Image - Kaavya
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Password Requirements -->
+        <TextView
+            android:id="@+id/tvPasswordRequirements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/password_req"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="24dp" />
+
         <!-- Confirm Password -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -176,16 +145,92 @@ UI redesigned to match Figma/Image - Kaavya
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Password Requirements -->
-        <TextView
-            android:id="@+id/tvPasswordRequirements"
+        <!--New Code from Ahmed-->
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/password_req"
-            android:textSize="16sp"
-            android:textColor="#666666"
-            android:lineSpacingExtra="2dp"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="#E0E0E0">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/securityQuestion1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Security Question 1 - Pet's Name"
+                android:padding="16dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="#E0E0E0">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/securityQuestion2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Security Question 2 - Mother's Maiden Name"
+                android:padding="16dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:boxStrokeColor="#E0E0E0">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/securityQuestion3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Security Question 3 - Place of Birth"
+                android:padding="16dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/passBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password was Changed!"
+            android:background="@drawable/pass_banner_background"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:alpha="0"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/errorBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wrong answer! Please try again!"
+            android:background="@drawable/error_banner_background"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:alpha="0"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- New Coded ended-->
 
         <!-- Continue Button -->
         <com.google.android.material.button.MaterialButton
