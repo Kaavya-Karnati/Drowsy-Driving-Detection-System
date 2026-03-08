@@ -18,8 +18,8 @@
     <!-- Home Icon -->
     <ImageView
         android:id="@+id/homeLogo"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
         android:src="@drawable/home_page_logo"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/navIndicator"
@@ -50,8 +50,8 @@
 
         <ImageView
             android:id="@+id/faqImg"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:src="@drawable/faq_page_logo"
             />
 
