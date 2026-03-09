@@ -35,6 +35,12 @@ public class HomeActivity extends NavActivity {
         loadProfilePicture();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadProfilePicture();
+    }
+
     private void loadHomeData() {
         alertCountNumber.setText("45,678 Alerts");
         auditoryAlertEmail.setText("+20 % from last month");
