@@ -299,7 +299,12 @@ public class YOLODetector {
             }
 
             // Filter by confidence and create BoundingBox
-            if (maxScore > confThreshold && maxClassIndex >= 0 && maxClassIndex < classes.size()) {
+            String className = (maxClassIndex >= 0 && maxClassIndex < classes.size())
+                    ? classes.get(maxClassIndex) : "";
+            float threshold = getThresholdForClass(className.trim());
+
+            // Filter by class-specific confidence
+            if (maxScore > threshold && maxClassIndex >= 0 && maxClassIndex < classes.size()) {
                 RectF bbox = convertToCornerFormat(cx, cy, w, h, imageWidth, imageHeight);
                 String label = classes.get(maxClassIndex);
                 boxes.add(new BoundingBox(bbox, label, maxScore));
@@ -310,6 +315,16 @@ public class YOLODetector {
                 ));
             }
         }
+    }
+
+
+     //get confidence threshold for specific class(es)
+     //different classes may need different thresholds
+    private float getThresholdForClass(String className) {
+        if (className.toLowerCase().equals("yawn")) {
+            return 0.75f;  // High threshold for yawns
+        }
+        return 0.5f;  // Default threshold
     }
 
     private void parseStandardFormat(float[][][] output, List<BoundingBox> boxes,
