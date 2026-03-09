@@ -97,9 +97,14 @@ public class FaqActivity extends NavActivity {
     }
 
     private void loadProfilePicture() {
-        String profilePhoto = sharedPreferences.getString("profilePhotoUri", null);
+        String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
         if(profilePhoto != null){
             profileIcon.setImageURI(Uri.parse(profilePhoto));
         }
+    }
+
+    private String getUserPhoto() {
+        String email = sharedPreferences.getString("userEmail", "guest");
+        return "profilePhotoUri_" + email;
     }
 }
