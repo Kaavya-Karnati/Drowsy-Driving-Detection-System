@@ -167,7 +167,7 @@ public class SignInActivity extends AppCompatActivity {
             // Password correct - log in
             String firstName = sharedPreferences.getString("userFirstName", "User");
             String lastName = sharedPreferences.getString("userLastName", "");
-            String fullName = (firstName + " " + lastName).trim();
+            String fullName = sharedPreferences.getString("userName_" + email, "Guest User");
 
             if (fullName.isEmpty()) {
                 fullName = "User";
@@ -177,7 +177,7 @@ public class SignInActivity extends AppCompatActivity {
             editor.putBoolean("isLoggedIn", true);
             editor.putBoolean("isGuest", false);
             editor.putString("userEmail", email);
-            editor.putString("userName", fullName);
+//            editor.putString("userName", fullName);
             editor.apply();
 
             //Toast.makeText(this, "Sign in successful!", Toast.LENGTH_SHORT).show();

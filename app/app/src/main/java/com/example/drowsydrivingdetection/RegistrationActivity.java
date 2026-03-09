@@ -205,9 +205,10 @@ public class RegistrationActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("registered_email", email);
         editor.putString("password_hash", hashedPassword);
+
         editor.putString("userFirstName", firstName);
         editor.putString("userLastName", lastName);
-        editor.putString("userName", firstName + " " + lastName);
+        editor.putString("userName_" + email, firstName + " " + lastName);
         editor.putString("userEmail", email);
         editor.putBoolean("isLoggedIn", true);
         editor.putBoolean("isGuest", false);

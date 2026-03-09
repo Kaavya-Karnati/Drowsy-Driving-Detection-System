@@ -44,24 +44,24 @@ public class ProfileNonRegisteredActivity extends NavActivity {
         btnSaveContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to save contact info", Toast.LENGTH_SHORT).show();
-                showError("Please register to save contact info");
+                Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to save contact info", Toast.LENGTH_SHORT).show();
+//                showError("Please register to save contact info");
             }
         });
 
         btnChangeAlertPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to change alert preferences", Toast.LENGTH_SHORT).show();
-                showError("Please register to change alert preferences");
+                Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to change alert preferences", Toast.LENGTH_SHORT).show();
+//                showError("Please register to change alert preferences");
             }
         });
 
         btnMonitorData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to monitor your data", Toast.LENGTH_SHORT).show();
-                showError("Please register to monitor your data");
+                Toast.makeText(ProfileNonRegisteredActivity.this, "Please register to monitor your data", Toast.LENGTH_SHORT).show();
+//                showError("Please register to monitor your data");
             }
         });
 
