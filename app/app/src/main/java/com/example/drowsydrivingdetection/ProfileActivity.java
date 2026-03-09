@@ -115,10 +115,10 @@ public class ProfileActivity extends NavActivity {
 
     private void loadUserData() {
         // Load user data from SharedPreferences
-        String firstName = sharedPreferences.getString("userFirstName", "");
-        String lastName = sharedPreferences.getString("userLastName", "");
         userEmail.setText(sharedPreferences.getString("userEmail", "default@gmail.com"));
         String email = (String) userEmail.getText();
+        String firstName = sharedPreferences.getString("userFirstName_" + email, "");
+        String lastName = sharedPreferences.getString("userLastName_" + email, "");
         String fullName = sharedPreferences.getString("userName_" + email, firstName + " " + lastName);
         userName.setText(fullName);
 

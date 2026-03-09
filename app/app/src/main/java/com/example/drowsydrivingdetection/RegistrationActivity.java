@@ -206,8 +206,8 @@ public class RegistrationActivity extends AppCompatActivity {
         editor.putString("registered_email", email);
         editor.putString("password_hash", hashedPassword);
 
-        editor.putString("userFirstName", firstName);
-        editor.putString("userLastName", lastName);
+        editor.putString("userFirstName_" + email, firstName);
+        editor.putString("userLastName_" + email, lastName);
         editor.putString("userName_" + email, firstName + " " + lastName);
         editor.putString("userEmail", email);
         editor.putBoolean("isLoggedIn", true);

@@ -121,9 +121,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        String sFirstName = sharedPreferences.getString("userFirstName", null);
-        String sLastName = sharedPreferences.getString("userLastName", null);
         String sEmail = sharedPreferences.getString("registered_email", null);
+        String sFirstName = sharedPreferences.getString("userFirstName_" + sEmail, null);
+        String sLastName = sharedPreferences.getString("userLastName_" + sEmail, null);
+
 
         if (sFirstName == null || sLastName == null || sEmail == null) {
             showError("Account doesn't exist");
