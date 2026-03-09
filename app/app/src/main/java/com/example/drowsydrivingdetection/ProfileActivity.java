@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import android.net.Uri;
 import android.content.pm.PackageManager;
@@ -134,7 +133,7 @@ public class ProfileActivity extends NavActivity {
         visualAlertsCount.setText(sharedPreferences.getString("visualCount", "--"));
 
         // Profile Picture - Kaavya
-        String profilePhoto = sharedPreferences.getString("profilePhotoUri", null);
+        String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
         if(profilePhoto != null){
             profilePicture.setImageURI(Uri.parse(profilePhoto));
         }
@@ -173,7 +172,7 @@ public class ProfileActivity extends NavActivity {
         } catch (Exception ignored) {}
 
         sharedPreferences.edit()
-                .putString("profilePhotoUri", imageUri.toString())
+                .putString(getUserPhoto(), imageUri.toString())
                 .apply();
 
         profilePicture.setImageURI(imageUri);
@@ -329,7 +328,7 @@ public class ProfileActivity extends NavActivity {
                             }
                         });
             }
-        }, 100000);
+        }, 5000);
     }
     // End of Ahmed's Code
 
@@ -375,6 +374,11 @@ public class ProfileActivity extends NavActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             overridePendingTransition(0, 0);
+    }
+
+    private String getUserPhoto() {
+        String email = sharedPreferences.getString("userEmail", "guest");
+        return "profilePhotoUri_" + email;
     }
 
 }
