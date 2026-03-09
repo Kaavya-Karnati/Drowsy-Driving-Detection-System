@@ -65,4 +65,7 @@ dependencies {
     implementation(files("libs/OpenCV-release.aar")) // .aar file for openCV
 
     implementation 'org.mindrot:jbcrypt:0.4'
+
+    //chart library
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
