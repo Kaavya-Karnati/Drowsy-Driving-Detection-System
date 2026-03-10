@@ -130,14 +130,22 @@ public class ProfileActivity extends NavActivity {
         switchVisualAlerts.setChecked(sharedPreferences.getBoolean("visualAlerts", true));
 
         // Load alert counts
-        auditoryAlertsCount.setText(sharedPreferences.getString("auditoryCount", "00"));
-        visualAlertsCount.setText(sharedPreferences.getString("visualCount", "--"));
+        int audioCount = sharedPreferences.getInt("audio_alert", 0);
+        int visualCount = sharedPreferences.getInt("visual_alert", 0);
+        auditoryAlertsCount.setText(String.valueOf(audioCount));
+        visualAlertsCount.setText(String.valueOf(visualCount));
 
         // Profile Picture - Kaavya
         String profilePhoto = sharedPreferences.getString("profilePhotoUri", null);
         if(profilePhoto != null){
             profilePicture.setImageURI(Uri.parse(profilePhoto));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserData();
     }
 
     // User to choose between gallery selection or take a photo
