@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ public class HomeActivity extends NavActivity {
     private TextView auditoryAlertEmail;
     private TextView visualAlertEmail;
     private ShapeableImageView profileIcon;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class HomeActivity extends NavActivity {
         auditoryAlertEmail = findViewById(R.id.auditoryAlertEmail);
         visualAlertEmail = findViewById(R.id.visualAlertEmail);
         profileIcon = findViewById(R.id.profileIcon);
+        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
 
         setupBottomNavigation();
         loadHomeData();
@@ -36,7 +39,10 @@ public class HomeActivity extends NavActivity {
     }
 
     private void loadHomeData() {
-        alertCountNumber.setText("45,678 Alerts");
+        int currentAudioAlerts = sharedPreferences.getInt("audio_alert", 0);
+        int currentVisualAlerts = sharedPreferences.getInt("visual_alert", 0);
+        int totalAlerts = currentAudioAlerts + currentVisualAlerts;
+        alertCountNumber.setText(totalAlerts + " Alerts");
         auditoryAlertEmail.setText("+20 % from last month");
         visualAlertEmail.setText("-5% from last month");
     }
