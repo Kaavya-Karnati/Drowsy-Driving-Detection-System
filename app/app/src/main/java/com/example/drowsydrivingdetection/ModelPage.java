@@ -323,6 +323,7 @@ public class ModelPage extends AppCompatActivity {
         } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
             //if eyes open again before the 3 second window, we dismiss the alert
             audioAlertTriggered = false;
+            stopAudioAlert();
             Log.d("TAG", "Audio alert dismissed since eyes opened");
         }
 
@@ -342,27 +343,46 @@ public class ModelPage extends AppCompatActivity {
         }
     }
 
+    private void stopAudioAlert() {
+        runOnUiThread(() -> {
+            if (mediaPlayer != null) {
+                try {
+                    mediaPlayer.stop();
+                } catch (Exception ignored) {}
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+            // Fade out the WAKE UP banner
+            visualAlertHandler.removeCallbacksAndMessages(null);
+            ObjectAnimator fadeOut = ObjectAnimator.ofFloat(visualAlertPopUp, "alpha", visualAlertPopUp.getAlpha(), 0f);
+            fadeOut.setDuration(400);
+            fadeOut.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    visualAlertPopUp.setVisibility(View.GONE);
+                }
+            });
+            fadeOut.start();
+        });
+    }
+
     // Kaavya: plays audio alert and fades in the WAKE UP banner for 3 seconds when eyes have been closed >= 3s
     private void triggerAudioAlert() {
         Log.e("AUDIO ALERT", "AUDIO ALERT");
         runOnUiThread(() -> {
-            // play sound
             if (mediaPlayer != null) {
                 mediaPlayer.release();
                 mediaPlayer = null;
             }
             try {
-                mediaPlayer = MediaPlayer.create(this, R.raw.audio_alert);
+                mediaPlayer = MediaPlayer.create(this, R.raw.chime_final);
+                mediaPlayer.setLooping(true);
                 mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(mp -> {
-                    mp.release();
-                    mediaPlayer = null;
-                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // show WAKE UP banner (mirrors AlertActivity.showVisualAlert)
+            // Show WAKE UP banner (stays visible while eyes remain closed)
             visualAlertHandler.removeCallbacksAndMessages(null);
             visualAlertPopUp.setAlpha(0f);
             visualAlertPopUp.setVisibility(View.VISIBLE);
@@ -370,18 +390,6 @@ public class ModelPage extends AppCompatActivity {
             ObjectAnimator fadeIn = ObjectAnimator.ofFloat(visualAlertPopUp, "alpha", 0f, 1f);
             fadeIn.setDuration(400);
             fadeIn.start();
-
-            visualAlertHandler.postDelayed(() -> {
-                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(visualAlertPopUp, "alpha", 1f, 0f);
-                fadeOut.setDuration(600);
-                fadeOut.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        visualAlertPopUp.setVisibility(View.GONE);
-                    }
-                });
-                fadeOut.start();
-            }, 3000);
         });
     }
 
