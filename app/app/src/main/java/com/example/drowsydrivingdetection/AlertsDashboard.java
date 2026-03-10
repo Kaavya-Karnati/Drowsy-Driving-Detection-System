@@ -1,10 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public class AlertsDashboard extends NavActivity{
 
@@ -20,16 +17,32 @@ public class AlertsDashboard extends NavActivity{
         visualAlertDetectionText = findViewById(R.id.VisualAlertTotal);
 
         runOnUiThread(() -> {
-            audioAlertDetectionText.setText(getCurrentAlertCounts() + " alerts.");
+            if (getCurrentAudioAlertCounts() == 1) {
+                audioAlertDetectionText.setText(getCurrentAudioAlertCounts() + " alert");
+            } else {
+                audioAlertDetectionText.setText(getCurrentAudioAlertCounts() + " alerts");
+            }
+
+            if (getCurrentVisualAlertCounts() == 1){
+                visualAlertDetectionText.setText(getCurrentVisualAlertCounts() + " alert");
+            } else {
+                visualAlertDetectionText.setText(getCurrentVisualAlertCounts() + " alerts");
+            }
         });
 
         setupBottomNavigation();
     }
 
-    private int getCurrentAlertCounts(){
-        int currentAlerts = sharedPreferences.getInt("audio_alert", 0);
+    private int getCurrentAudioAlertCounts(){
+        int currentAudioAlerts = sharedPreferences.getInt("audio_alert", 0);
 
-        return currentAlerts;
+        return currentAudioAlerts;
+    }
+
+    private int getCurrentVisualAlertCounts(){
+        int currentVisualAlerts = sharedPreferences.getInt("visual_alert", 0);
+
+        return currentVisualAlerts;
     }
 
 }

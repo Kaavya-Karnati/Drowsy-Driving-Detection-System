@@ -109,7 +109,7 @@ public class ModelPage extends AppCompatActivity {
         closePopup = findViewById(R.id.closePopup);
         closePopup.setOnClickListener(v -> closeBreakPopup());
 
-        this.drowsinessTracker = new DrowsinessTracker();
+        this.drowsinessTracker = new DrowsinessTracker(getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE));
 
         cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
         //dedicated to camera frame processing (different thread for better performance)
@@ -319,6 +319,7 @@ public class ModelPage extends AppCompatActivity {
         if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
             triggerAudioAlert();
             audioAlertTriggered = true;
+            drowsinessTracker.saveAudioAlertCount();
         } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
             //if eyes open again before the 3 second window, we dismiss the alert
             audioAlertTriggered = false;
@@ -329,7 +330,7 @@ public class ModelPage extends AppCompatActivity {
         if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
             triggerVisualAlert();
             visualAlertTriggered = true;
-
+            drowsinessTracker.saveVisualAlertCount();
             drowsinessTracker.resetYawns();
             //resetting yawns after a visual alert is triggered
 
