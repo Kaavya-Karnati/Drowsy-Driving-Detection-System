@@ -324,7 +324,7 @@ public class YOLODetector {
         if (className.toLowerCase().equals("yawn")) {
             return 0.75f;  // High threshold for yawns
         }
-        return 0.5f;  // Default threshold
+        return 0.3f;  // Default threshold
     }
 
     private void parseStandardFormat(float[][][] output, List<BoundingBox> boxes,
