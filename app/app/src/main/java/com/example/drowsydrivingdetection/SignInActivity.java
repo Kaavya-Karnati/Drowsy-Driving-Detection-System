@@ -194,10 +194,10 @@ public class SignInActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLoggedIn", true);
         editor.putBoolean("isGuest", true);
-        editor.putString("userEmail", "Guest");
-        editor.putString("userName", "Guest User");
-        editor.putString("userFirstName", "Guest");
-        editor.putString("userLastName", "User");
+//        editor.putString("userEmail", "Guest");
+//        editor.putString("userName", "Guest User");
+//        editor.putString("userFirstName", "Guest");
+//        editor.putString("userLastName", "User");
         editor.apply();
 
         //Toast.makeText(this, "Continuing as guest", Toast.LENGTH_SHORT).show();
