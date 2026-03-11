@@ -109,6 +109,7 @@ public class AlertsDashboard extends NavActivity{
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         Bchart.getAxisRight().setEnabled(false);
         Bchart.getDescription().setText("Audio vs Visual Alerts This Week");
+        Bchart.getAxisLeft().setAxisMinimum(0f);
         Bchart.getAxisLeft().setGranularity(1f);
         Bchart.getAxisLeft().setGranularityEnabled(true);
         Bchart.getXAxis().setDrawGridLines(false);
