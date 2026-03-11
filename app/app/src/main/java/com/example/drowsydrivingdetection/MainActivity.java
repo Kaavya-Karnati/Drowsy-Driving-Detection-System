@@ -43,11 +43,11 @@ public class MainActivity extends NavActivity {
         }
 
         setContentView(R.layout.home_page);
-
+/*
         alertCountNumber = findViewById(R.id.alertCountNumber);
         auditoryAlertEmail = findViewById(R.id.auditoryAlertEmail);
         visualAlertEmail = findViewById(R.id.visualAlertEmail);
-
+*/
         setupBottomNavigation();
         loadHomeData();
     }
