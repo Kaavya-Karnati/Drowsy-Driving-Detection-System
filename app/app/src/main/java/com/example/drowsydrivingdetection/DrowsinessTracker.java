@@ -1,6 +1,7 @@
 package com.example.drowsydrivingdetection;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayDeque;
@@ -34,12 +35,16 @@ public class DrowsinessTracker {
     private boolean currentlyEyesClosed;
     private boolean audioAlertActive;
 
-    public DrowsinessTracker() {
+    // need sharedPreferences to save to the alert dashboard
+    private SharedPreferences sharedPreferences;
+
+    public DrowsinessTracker(SharedPreferences sharedPreferences) {
         this.frameHistory = new ArrayDeque<>(WINDOW_SIZE);
         this.yawnTimestamps = new ArrayList<>();
         this.eyesClosedStartTime = 0;
         this.currentlyEyesClosed = false;
         this.audioAlertActive = false;
+        this.sharedPreferences = sharedPreferences;
     }
 
     public void addFrame(CleanDetectionResult result) {
@@ -144,5 +149,23 @@ public class DrowsinessTracker {
 
     public void dismissAudioAlert() {
         audioAlertActive = false;
+    }
+
+    public void saveAudioAlertCount() {
+        int currentAlerts = sharedPreferences.getInt("audio_alert", 0);
+
+        Log.d(TAG, "Saved audio alert, current count: " + currentAlerts);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("audio_alert", currentAlerts + 1);
+        editor.apply();
+    }
+
+    public void saveVisualAlertCount() {
+        int currentAlerts = sharedPreferences.getInt("visual_alert", 0);
+
+        Log.d(TAG, "Saved visual alert, current count: " + currentAlerts);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("visual_alert", currentAlerts + 1);
+        editor.apply();
     }
 }

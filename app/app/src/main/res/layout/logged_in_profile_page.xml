@@ -426,6 +426,16 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <ImageView
+                        android:id="@+id/DropdownArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        app:layout_constraintStart_toEndOf="@id/tvAlertRecordsTitle"
+                        app:layout_constraintTop_toTopOf="@id/tvAlertRecordsTitle"
+                        app:layout_constraintBottom_toBottomOf="@id/tvAlertRecordsTitle"
+                        android:src="@drawable/ic_arrow_right" />
+
                     <TextView
                         android:id="@+id/tvAuditoryAlertsRecordLabel"
                         android:layout_width="0dp"
