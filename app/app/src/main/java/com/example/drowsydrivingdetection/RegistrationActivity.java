@@ -215,6 +215,8 @@ public class RegistrationActivity extends AppCompatActivity {
         editor.putString("securityAnswer1", securityAnswer1);
         editor.putString("securityAnswer2", securityAnswer2);
         editor.putString("securityAnswer3", securityAnswer3);
+        editor.putInt("audio_alert", 0);
+        editor.putInt("visual_alert", 0);
         editor.apply();
 
         //Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
