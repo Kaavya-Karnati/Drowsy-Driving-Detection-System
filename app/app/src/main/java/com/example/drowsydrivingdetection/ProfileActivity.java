@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import android.net.Uri;
@@ -30,6 +31,7 @@ import java.util.Locale;
 
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class ProfileActivity extends NavActivity {
 
@@ -50,6 +52,13 @@ public class ProfileActivity extends NavActivity {
     private ShapeableImageView profilePicture;
     private TextView passBanner;
     private TextView errorBanner;
+    private String originalName;
+    private String originalEmail;
+    private ImageView btnEdit;
+    private ImageView saveProfile;
+    private ImageView cancelEdit;
+    private TextInputEditText editName;
+    private TextInputEditText editEmail;
 
     // Opens the photo gallery and receives the selected image
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -99,6 +108,13 @@ public class ProfileActivity extends NavActivity {
         userEmail = findViewById(R.id.userEmail);
         btnUpload = findViewById(R.id.btnUpload);
         //btnChange = findViewById(R.id.btnChange);
+        btnEdit = findViewById(R.id.editProfile);
+        cancelEdit = findViewById(R.id.cancelEdit);
+        saveProfile = findViewById(R.id.saveProfile);
+
+        editName = findViewById(R.id.etEditName);
+        editEmail = findViewById(R.id.etEditEmail);
+
         btnLogout = findViewById(R.id.btnLogout);
         switchNarcolepsy = findViewById(R.id.switchNarcolepsy);
         switchSleepApnea = findViewById(R.id.switchSleepApnea);
@@ -121,6 +137,9 @@ public class ProfileActivity extends NavActivity {
         String lastName = sharedPreferences.getString("userLastName_" + email, "");
         String fullName = sharedPreferences.getString("userName_" + email, firstName + " " + lastName);
         userName.setText(fullName);
+
+        originalName = fullName;
+        originalEmail = email;
 
         // Load switch states
         switchNarcolepsy.setChecked(sharedPreferences.getBoolean("narcolepsy", false));
@@ -290,6 +309,29 @@ public class ProfileActivity extends NavActivity {
         switchVisualAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPreferences.edit().putBoolean("visualAlerts", isChecked).apply();
         });
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enterEditMode();
+            }
+        });
+
+        cancelEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeEditMode();
+            }
+        });
+
+        saveProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveProfileChanges();
+            }
+        });
+
+
     }
 
     // Ahmed's Code
@@ -390,6 +432,70 @@ public class ProfileActivity extends NavActivity {
     private String getUserPhoto() {
         String email = sharedPreferences.getString("userEmail", "guest");
         return "profilePhotoUri_" + email;
+    }
+
+    private void enterEditMode() {
+        //hide display mode views
+        userName.setVisibility(View.GONE);
+        userEmail.setVisibility(View.GONE);
+        btnEdit.setVisibility(View.GONE);
+
+        editEmail.setVisibility(View.VISIBLE);
+        editName.setVisibility(View.VISIBLE);
+        findViewById(R.id.tilEditName).setVisibility(View.VISIBLE);
+//        findViewById(R.id.tilEditEmail).setVisibility(View.VISIBLE);
+        saveProfile.setVisibility(View.VISIBLE);
+        cancelEdit.setVisibility(View.VISIBLE);
+
+        editName.setText(originalName);
+        editEmail.setText(originalEmail);
+        editName.requestFocus();
+
+    }
+
+    private void closeEditMode() {
+        //show display mode views
+        userName.setVisibility(View.VISIBLE);
+        userEmail.setVisibility(View.VISIBLE);
+        btnEdit.setVisibility(View.VISIBLE);
+
+        findViewById(R.id.tilEditName).setVisibility(View.GONE);
+//        findViewById(R.id.tilEditEmail).setVisibility(View.GONE);
+
+        saveProfile.setVisibility(View.GONE);
+        cancelEdit.setVisibility(View.GONE);
+
+    }
+
+    private void saveProfileChanges() {
+        String newName = editName.getText().toString().trim();
+
+        //validate name
+        if (newName.isEmpty()) {
+            showError("Name cannot be empty");
+            return;
+        }
+
+        //split name into first and last name
+        String[] nameParts = newName.split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+        //save to SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("userFirstName_" + originalEmail, firstName);
+        editor.putString("userLastName_" + originalEmail, lastName);
+        editor.putString("userName_" + originalEmail, newName);
+
+        editor.apply();
+
+        originalName = newName;
+
+        userName.setText(newName);
+
+        closeEditMode();
+
+        showPass("Profile updated successfully");
     }
 
 }
