@@ -55,15 +55,11 @@ public class AlertsDashboard extends NavActivity{
     }
 
     private int getCurrentAudioAlertCounts(){
-        int currentAudioAlerts = sharedPreferences.getInt("audio_alert", 0);
-
-        return currentAudioAlerts;
+        return sharedPreferences.getInt("audio_alert", 0);
     }
 
     private int getCurrentVisualAlertCounts(){
-        int currentVisualAlerts = sharedPreferences.getInt("visual_alert", 0);
-
-        return currentVisualAlerts;
+        return sharedPreferences.getInt("visual_alert", 0);
     }
 
     @Override
@@ -86,9 +82,8 @@ public class AlertsDashboard extends NavActivity{
 
     private void chartman() {
 
-
-        int aAlerts = 5;
-        int vAlerts = 1;
+        int aAlerts = getCurrentAudioAlertCounts();
+        int vAlerts = getCurrentVisualAlertCounts();
 
         ArrayList<BarEntry> inputs = new ArrayList<>();
         inputs.add(new BarEntry(0, aAlerts));
@@ -114,6 +109,11 @@ public class AlertsDashboard extends NavActivity{
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         Bchart.getAxisRight().setEnabled(false);
         Bchart.getDescription().setText("Audio vs Visual Alerts This Week");
+        Bchart.getAxisLeft().setGranularity(1f);
+        Bchart.getAxisLeft().setGranularityEnabled(true);
+        Bchart.getXAxis().setDrawGridLines(false);
+        Bchart.setDrawGridBackground(false);
+        Bchart.animateY(500);
         Bchart.invalidate();
     }
 
