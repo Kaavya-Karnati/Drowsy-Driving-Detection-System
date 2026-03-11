@@ -98,7 +98,7 @@ public class ProfileActivity extends NavActivity {
         userName = findViewById(R.id.userName);
         userEmail = findViewById(R.id.userEmail);
         btnUpload = findViewById(R.id.btnUpload);
-        btnChange = findViewById(R.id.btnChange);
+        //btnChange = findViewById(R.id.btnChange);
         btnLogout = findViewById(R.id.btnLogout);
         switchNarcolepsy = findViewById(R.id.switchNarcolepsy);
         switchSleepApnea = findViewById(R.id.switchSleepApnea);
@@ -252,6 +252,7 @@ public class ProfileActivity extends NavActivity {
             }
         });
 
+        /*
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -259,6 +260,7 @@ public class ProfileActivity extends NavActivity {
                 showImagePickerDialog();
             }
         });
+        */
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
