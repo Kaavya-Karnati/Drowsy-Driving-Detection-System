@@ -21,9 +21,9 @@ public class HomeActivity extends NavActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
 
-        alertCountNumber = findViewById(R.id.alertCountNumber);
-        auditoryAlertEmail = findViewById(R.id.auditoryAlertEmail);
-        visualAlertEmail = findViewById(R.id.visualAlertEmail);
+        // alertCountNumber = findViewById(R.id.alertCountNumber);
+        // auditoryAlertEmail = findViewById(R.id.auditoryAlertEmail);
+        // visualAlertEmail = findViewById(R.id.visualAlertEmail);
         profileIcon = findViewById(R.id.profileIcon);
         sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
 
