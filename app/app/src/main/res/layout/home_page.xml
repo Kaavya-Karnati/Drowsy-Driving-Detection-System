@@ -32,14 +32,13 @@
 
                 <ImageView
                     android:id="@+id/app_logo"
-                    android:layout_width="84dp"
-                    android:layout_height="69dp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/drowsy_driver_logo_no_text"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tvAppTitle"
@@ -49,7 +48,7 @@
                     android:fontFamily="@font/inter_semibold"
                     android:text="Drowsy Driver"
                     android:textColor="@android:color/black"
-                    android:textSize="30sp"
+                    android:textSize="26sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/profileIcon"
                     app:layout_constraintStart_toEndOf="@id/app_logo"
@@ -77,7 +76,7 @@
                 android:layout_marginBottom="28dp"
                 android:fontFamily="@font/inter"
                 android:lineSpacingExtra="4dp"
-                android:text="This app watches for signs like falling asleep at the wheel, eye closures and yawns, and alerts you before it becomes dangerous."
+                android:text="This app watches for signs you&#8217;re falling asleep at the wheel, eye closures and yawns, and alerts you before it becomes dangerous."
                 android:textColor="#393838"
                 android:textSize="15sp" />
 
@@ -125,6 +124,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -183,6 +183,7 @@
                 android:layout_marginBottom="28dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -276,6 +277,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -317,6 +319,7 @@
                 android:layout_marginBottom="28dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -392,6 +395,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -433,6 +437,7 @@
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
@@ -456,7 +461,7 @@
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/inter"
                         android:lineSpacingExtra="2dp"
-                        android:text="Pick how you want to be alerted: sound, visual, or both. You can change this any time."
+                        android:text="Pick how you want to be alerted &#8212; sound, visual, or both. You can change this any time."
                         android:textColor="#393838"
                         android:textSize="12sp" />
 
