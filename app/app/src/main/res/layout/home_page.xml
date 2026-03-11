@@ -14,43 +14,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingBottom="24dp">
 
-            <!-- Title -->
+            <!-- Top Bar -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/topBar"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="24dp"
                 android:paddingTop="48dp"
                 android:paddingEnd="24dp"
-                android:paddingBottom="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:paddingBottom="24dp">
 
-                <!-- Drowsy Driver Title -->
+                <ImageView
+                    android:id="@+id/app_logo"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/drowsy_driver_logo_no_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/tvAppTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:fontFamily="@font/inter_semibold"
                     android:text="Drowsy Driver"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp"
+                    android:textSize="26sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/profileIcon"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/app_logo"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- Profile Icon -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/profileIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/default_profile_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -60,161 +67,409 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Alert Count Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/alertCount"
-                android:layout_width="0dp"
+            <!-- Intro -->
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
+                android:fontFamily="@font/inter"
+                android:lineSpacingExtra="4dp"
+                android:text="This app watches for signs you&#8217;re falling asleep at the wheel, eye closures and yawns, and alerts you before it becomes dangerous."
+                android:textColor="#393838"
+                android:textSize="15sp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
+                android:background="#E0E0E0" />
+
+            <!-- Detection -->
+            <TextView
+                android:id="@+id/howToUseTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Detection"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/howToUseSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/inter"
+                android:lineSpacingExtra="2dp"
+                android:text="Go to the Model tab to get started."
+                android:textColor="#393838"
+                android:textSize="14sp" />
+
+            <!-- Start Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/stepStartCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/topBar"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FFFFFF"
-                    android:padding="20dp">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-                    <!-- Alert Count Label -->
-                    <TextView
-                        android:id="@+id/alertCountLabel"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Start button"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/start_button" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_semibold"
-                        android:text="@string/alert_count"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <!-- Alert Count Number -->
-                    <TextView
-                        android:id="@+id/alertCountNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/inter_semibold"
-                        android:text="@string/alert_num"
-                        android:textColor="@android:color/black"
-                        android:textSize="28sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/alertCountLabel" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="Start Detection"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
 
-                    <!-- Alert Driver Badge -->
-                    <TextView
-                        android:id="@+id/alertDriverBadge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/inter_medium"
-                        android:text="@string/alert_driver"
-                        android:textColor="#393838"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/alertCountNumber" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Hit the green Start button. Your front camera turns on and the model starts watching. You&#8217;ll see a green dot when it&#8217;s running."
+                            android:textColor="#393838"
+                            android:textSize="12sp" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Alert Details Card -->
+            <!-- Stop Card -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/alertDetails"
-                android:layout_width="0dp"
+                android:id="@+id/stepStopCard"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/alertCount"
+                app:cardBackgroundColor="#FFFFFF"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FFFFFF"
-                    android:padding="20dp">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-                    <!-- Alert Details Title -->
-                    <TextView
-                        android:id="@+id/alertDetailsTitle"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Stop button"
+                        android:scaleType="centerInside"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/stop_button" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_semibold"
-                        android:text="@string/alert_details"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <!-- Auditory Alert Label -->
-                    <TextView
-                        android:id="@+id/auditoryAlertLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/inter_medium"
-                        android:text="@string/auditory_alert"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/alertDetailsTitle" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="Stop Detection"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
 
-                    <!-- Auditory Alert Email -->
-                    <TextView
-                        android:id="@+id/auditoryAlertEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/inter"
-                        android:text="+20 % from last month"
-                        android:textColor="#393838"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/auditoryAlertLabel" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:lineSpacingExtra="2dp"
+                            android:text="When you&#8217;re done driving, hit Stop. Your session data saves automatically."
+                            android:textColor="#393838"
+                            android:textSize="12sp" />
 
-                    <!-- Visual Alert Label -->
-                    <TextView
-                        android:id="@+id/visualAlertLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:fontFamily="@font/inter_medium"
-                        android:text="@string/visual_alert"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/auditoryAlertEmail" />
+                    </LinearLayout>
 
-                    <!-- Visual Alert Email -->
-                    <TextView
-                        android:id="@+id/visualAlertEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/inter"
-                        android:text="-5 % from last month"
-                        android:textColor="#393838"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/visualAlertLabel" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
+                android:background="#E0E0E0" />
+
+            <!-- Alert Dashboard -->
+            <TextView
+                android:id="@+id/dashboardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Alert Dashboard"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/dashboardSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/inter"
+                android:lineSpacingExtra="2dp"
+                android:text="Go to Profile &#8594; Alert Records to see your full alert history and a chart of your activity over time."
+                android:textColor="#393838"
+                android:textSize="14sp" />
+
+            <!-- Auditory Alert Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/auditoryCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Auditory Alert"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Eyes closed for 3+ seconds &#8212; a loud sound plays to wake you up."
+                        android:textColor="#393838"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Visual Alert Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/visualCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Visual Alert"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter"
+                        android:lineSpacingExtra="2dp"
+                        android:text="3+ yawns detected &#8212; a big red WAKE UP banner flashes on screen with a break reminder."
+                        android:textColor="#393838"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="28dp"
+                android:background="#E0E0E0" />
+
+            <!-- Profile -->
+            <TextView
+                android:id="@+id/profileSectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Your Profile"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/profileSectionSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/inter"
+                android:lineSpacingExtra="2dp"
+                android:text="Set up your profile so the app knows a bit more about you."
+                android:textColor="#393838"
+                android:textSize="14sp" />
+
+            <!-- Health Conditions Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/healthCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Health Conditions"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Got narcolepsy, sleep apnea, or insomnia? Toggle them on so the app knows your risk level."
+                        android:textColor="#393838"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Alert Preferences Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/alertPrefCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="Alert Preferences"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Pick how you want to be alerted &#8212; sound, visual, or both. You can change this any time."
+                        android:textColor="#393838"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </ScrollView>
 
