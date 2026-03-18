@@ -1,17 +1,17 @@
 package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.viewmodel.ForgotPasswordViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
@@ -27,17 +27,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private TextView errorBanner;
     private TextView passBanner;
 
-    private SharedPreferences sharedPreferences;
-
-    private static final int max = 3;
-    private static final long lock = 60 * 60 * 1000;
+    private ForgotPasswordViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+        viewModel = new ViewModelProvider(this).get(ForgotPasswordViewModel.class);
 
         initializeViews();
         setupListeners();
@@ -80,129 +77,43 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         String a2 = answer2.getText().toString().trim();
         String a3 = answer3.getText().toString().trim();
 
-        if (fFirstName.isEmpty()) {
-            showError("Please enter your first name");
-            firstName.requestFocus();
-            return;
-        }
+        ForgotPasswordViewModel.VerificationResult result =
+                viewModel.handleVerification(fFirstName, fLastName, fEmail, a1, a2, a3);
 
-        if (fLastName.isEmpty()) {
-            showError("Please enter your last name");
-            lastName.requestFocus();
-            return;
-        }
-
-        if (fEmail.isEmpty()) {
-            showError("Please enter your email");
-            email.requestFocus();
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(fEmail).matches()) {
-            showError("Enter email address in the right format");
-            email.requestFocus();
-            return;
-        }
-
-        if (a1.isEmpty()) {
-            showError("Please answer Security Question 1");
-            answer1.requestFocus();
-            return;
-        }
-
-        if (a2.isEmpty()) {
-            showError("Please answer Security Question 2");
-            answer2.requestFocus();
-            return;
-        }
-
-        if (a3.isEmpty()) {
-            showError("Please answer Security Question 3");
-            answer3.requestFocus();
-            return;
-        }
-
-        String sEmail = sharedPreferences.getString("registered_email", null);
-        String sFirstName = sharedPreferences.getString("userFirstName_" + sEmail, null);
-        String sLastName = sharedPreferences.getString("userLastName_" + sEmail, null);
-
-
-        if (sFirstName == null || sLastName == null || sEmail == null) {
-            showError("Account doesn't exist");
-            return;
-        }
-
-        if (!sEmail.equalsIgnoreCase(fEmail)) {
-            showError("Invalid details");
-            email.requestFocus();
-            return;
-        }
-
-        String attemptKey = "resetattempts" + fEmail;
-        String lockKey = "resetlocktime" + fEmail;
-
-        long lockTime = sharedPreferences.getLong(lockKey, 0);
-        if (System.currentTimeMillis() < lockTime) {
-            long remainingMillis = lockTime - System.currentTimeMillis();
-            long remainingMinutes = (remainingMillis / 60000) + 1;
-            showError("Too many attempts. Try again in " + remainingMinutes + " minutes.");
-            goToLogin();
-            return;
-        }
-
-        if (!sFirstName.equalsIgnoreCase(fFirstName)) {
-            showError("Invalid details");
-            firstName.requestFocus();
-            return;
-        }
-
-        if (!sLastName.equalsIgnoreCase(fLastName)) {
-            showError("Invalid details");
-            lastName.requestFocus();
-            return;
-        }
-
-        String s1 = sharedPreferences.getString("securityAnswer1", "").trim();
-        String s2 = sharedPreferences.getString("securityAnswer2", "").trim();
-        String s3 = sharedPreferences.getString("securityAnswer3", "").trim();
-
-        int correct = 0;
-        if (a1.equalsIgnoreCase(s1)) correct++;
-        if (a2.equalsIgnoreCase(s2)) correct++;
-        if (a3.equalsIgnoreCase(s3)) correct++;
-
-        if (correct >= 2) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(attemptKey, 0);
-            editor.putLong(lockKey, 0);
-            editor.apply();
-            showPass("Passed!");
+        if (result.success) {
+            showPass(result.message);
             navigateToResetPassword();
+        } else if (result.lockedOut) {
+            showError(result.message);
+            goToLogin();
         } else {
-            attempt(fEmail);
+            if (result.focusField != null) {
+                applyFieldFocus(result.focusField);
+            }
+            showError(result.message);
         }
     }
 
-    private void attempt(String email) {
-        String attemptKey = "resetattempts" + email;
-        String lockKey = "resetlocktime" + email;
-
-        int attempts = sharedPreferences.getInt(attemptKey, 0);
-        attempts++;
-
-        if (attempts >= max) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putLong(lockKey, System.currentTimeMillis() + lock);
-            editor.putInt(attemptKey, 0);
-            editor.apply();
-            showError("Too many failed attempts. Locked for 1 hour.");
-            goToLogin();
-        } else {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(attemptKey, attempts);
-            editor.apply();
-            int remaining = max - attempts;
-            showError("Wrong answer! " + remaining + " attempts remaining.");
+    private void applyFieldFocus(ForgotPasswordViewModel.FocusField field) {
+        switch (field) {
+            case FIRST_NAME:
+                firstName.requestFocus();
+                break;
+            case LAST_NAME:
+                lastName.requestFocus();
+                break;
+            case EMAIL:
+                email.requestFocus();
+                break;
+            case ANSWER1:
+                answer1.requestFocus();
+                break;
+            case ANSWER2:
+                answer2.requestFocus();
+                break;
+            case ANSWER3:
+                answer3.requestFocus();
+                break;
         }
     }
 
