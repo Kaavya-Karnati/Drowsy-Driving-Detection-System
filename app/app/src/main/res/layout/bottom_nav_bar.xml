@@ -5,69 +5,140 @@
     android:layout_height="80dp"
     android:background="@drawable/navbar_border">
 
+    <!-- Nav indicator bar -->
     <View
         android:id="@+id/navIndicator"
         android:layout_width="60dp"
         android:layout_height="4dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Home Icon -->
-    <ImageView
-        android:id="@+id/homeLogo"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:src="@drawable/home_page_logo"
-        android:layout_marginBottom="20dp"
+    <!-- Nav Items Row -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:weightSum="4"
         app:layout_constraintBottom_toTopOf="@id/navIndicator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/modelLogo"
-        app:layout_constraintHorizontal_chainStyle="spread" />
-
-    <!-- Model Icon -->
-    <ImageView
-        android:id="@+id/modelLogo"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:src="@drawable/model_page_logo"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/navIndicator"
-        app:layout_constraintStart_toEndOf="@id/homeLogo"
-        app:layout_constraintEnd_toStartOf="@id/faqLogo" />
-
-    <!-- FAQ Icon -->
-    <FrameLayout
-        android:id="@+id/faqLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/navIndicator"
-        app:layout_constraintStart_toEndOf="@id/modelLogo"
-        app:layout_constraintEnd_toStartOf="@id/profileLogo">
-
-        <ImageView
-            android:id="@+id/faqImg"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:src="@drawable/faq_page_logo"
-            />
-
-    </FrameLayout>
-
-    <!-- Profile Icon -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profileLogo"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:src="@drawable/default_profile_icon"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/navIndicator"
-        app:layout_constraintStart_toEndOf="@id/faqLogo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:shapeAppearanceOverlay="@style/CircleImageView" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Home -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/homeLogo"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:contentDescription="Home"
+                android:src="@drawable/home_page_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/inter_medium"
+                android:text="Home"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <!-- Model -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/modelLogo"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="Model"
+                android:src="@drawable/model_page_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/inter_medium"
+                android:text="Model"
+                android:textColor="#393838"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <!-- FAQ -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/faqLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/faqImg"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="FAQ"
+                    android:src="@drawable/faq_page_logo" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/inter_medium"
+                android:text="FAQ"
+                android:textColor="#393838"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <!-- Profile -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profileLogo"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_profile_icon"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/inter_medium"
+                android:text="Profile"
+                android:textColor="#393838"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
