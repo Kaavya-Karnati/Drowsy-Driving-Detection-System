@@ -23,9 +23,11 @@ public class SignInActivity extends AppCompatActivity {
     private Button btnContinue;
     private Button btnGuestSignIn;
     private TextView tvCreateAccount;
+    // Ahmed's Code
     private TextView forgotPassword;
     private TextView passBanner;
     private TextView errorBanner;
+    //end
 
     private SignInViewModel viewModel;
 
