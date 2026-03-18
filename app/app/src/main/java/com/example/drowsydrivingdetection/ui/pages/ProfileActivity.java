@@ -3,7 +3,6 @@ package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,9 +19,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.drowsydrivingdetection.R;
 import com.example.drowsydrivingdetection.ui.nav.NavActivity;
+import com.example.drowsydrivingdetection.viewmodel.ProfileViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
@@ -40,7 +41,6 @@ public class ProfileActivity extends NavActivity {
     private TextView userName;
     private TextView userEmail;
     private Button btnUpload;
-    private Button btnChange;
     private Button btnLogout;
     private SwitchMaterial switchNarcolepsy;
     private SwitchMaterial switchSleepApnea;
@@ -49,7 +49,6 @@ public class ProfileActivity extends NavActivity {
     private SwitchMaterial switchVisualAlerts;
     private TextView auditoryAlertsCount;
     private TextView visualAlertsCount;
-    private SharedPreferences sharedPreferences;
     private Uri cameraImageUri;
     private ShapeableImageView profilePicture;
     private TextView passBanner;
@@ -61,6 +60,8 @@ public class ProfileActivity extends NavActivity {
     private ImageView cancelEdit;
     private TextInputEditText editName;
     private TextInputEditText editEmail;
+
+    private ProfileViewModel viewModel;
 
     // Opens the photo gallery and receives the selected image
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -97,7 +98,7 @@ public class ProfileActivity extends NavActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.logged_in_profile_page);
 
-        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+        viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         initializeViews();
         setupBottomNavigation();
@@ -109,7 +110,6 @@ public class ProfileActivity extends NavActivity {
         userName = findViewById(R.id.userName);
         userEmail = findViewById(R.id.userEmail);
         btnUpload = findViewById(R.id.btnUpload);
-        //btnChange = findViewById(R.id.btnChange);
         btnEdit = findViewById(R.id.editProfile);
         cancelEdit = findViewById(R.id.cancelEdit);
         saveProfile = findViewById(R.id.saveProfile);
@@ -133,33 +133,27 @@ public class ProfileActivity extends NavActivity {
 
     private void loadUserData() {
         // Load user data from SharedPreferences
-        userEmail.setText(sharedPreferences.getString("userEmail", "default@gmail.com"));
-        String email = (String) userEmail.getText();
-        String firstName = sharedPreferences.getString("userFirstName_" + email, "");
-        String lastName = sharedPreferences.getString("userLastName_" + email, "");
-        String fullName = sharedPreferences.getString("userName_" + email, firstName + " " + lastName);
-        userName.setText(fullName);
+        ProfileViewModel.ProfileData data = viewModel.loadProfileData();
 
-        originalName = fullName;
-        originalEmail = email;
+        userName.setText(data.fullName);
+        userEmail.setText(data.email);
+        originalName = data.fullName;
+        originalEmail = data.email;
 
         // Load switch states
-        switchNarcolepsy.setChecked(sharedPreferences.getBoolean("narcolepsy", false));
-        switchSleepApnea.setChecked(sharedPreferences.getBoolean("sleepApnea", false));
-        switchInsomnia.setChecked(sharedPreferences.getBoolean("insomnia", false));
-        switchAuditoryAlerts.setChecked(sharedPreferences.getBoolean("auditoryAlerts", true));
-        switchVisualAlerts.setChecked(sharedPreferences.getBoolean("visualAlerts", true));
+        switchNarcolepsy.setChecked(data.narcolepsy);
+        switchSleepApnea.setChecked(data.sleepApnea);
+        switchInsomnia.setChecked(data.insomnia);
+        switchAuditoryAlerts.setChecked(data.auditoryAlerts);
+        switchVisualAlerts.setChecked(data.visualAlerts);
 
         // Load alert counts
-        int audioCount = sharedPreferences.getInt("audio_alert", 0);
-        int visualCount = sharedPreferences.getInt("visual_alert", 0);
-        auditoryAlertsCount.setText(String.valueOf(audioCount));
-        visualAlertsCount.setText(String.valueOf(visualCount));
+        auditoryAlertsCount.setText(String.valueOf(data.audioAlertCount));
+        visualAlertsCount.setText(String.valueOf(data.visualAlertCount));
 
         // Profile Picture - Kaavya
-        String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
-        if(profilePhoto != null){
-            profilePicture.setImageURI(Uri.parse(profilePhoto));
+        if (data.profilePhotoUri != null) {
+            profilePicture.setImageURI(Uri.parse(data.profilePhotoUri));
         }
     }
 
@@ -169,9 +163,9 @@ public class ProfileActivity extends NavActivity {
         loadUserData();
     }
 
+
     // User to choose between gallery selection or take a photo
     private void showImagePickerDialog() {
-
         final String[] options = {"Choose from Gallery", "Take Photo"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -180,7 +174,6 @@ public class ProfileActivity extends NavActivity {
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 if (which == 0) {
                     openGallery();
                 } else {
@@ -194,26 +187,20 @@ public class ProfileActivity extends NavActivity {
 
     // Selects the image and updates the profile pic
     private void handleImageSelected(Uri imageUri) {
-
         try {
             getContentResolver().takePersistableUriPermission(
                     imageUri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION);
         } catch (Exception ignored) {}
 
-        sharedPreferences.edit()
-                .putString(getUserPhoto(), imageUri.toString())
-                .apply();
-
+        viewModel.saveProfilePhoto(imageUri.toString());
         profilePicture.setImageURI(imageUri);
-
         //Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show();
         showPass("Profile photo updated!");
     }
 
     // Camera Permissions
     private void checkCameraPermission() {
-
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -233,7 +220,6 @@ public class ProfileActivity extends NavActivity {
 
     // Opens the camera
     private void openCamera() {
-
         try {
             File photoFile = createImageFile();
 
@@ -245,14 +231,12 @@ public class ProfileActivity extends NavActivity {
             cameraLauncher.launch(cameraImageUri);
 
         } catch (IOException e) {
-            // Toast.makeText(this, "Could not open camera", Toast.LENGTH_SHORT).show();
             showError("Could not open camera");
         }
     }
 
     // Creates a temp image file
     private File createImageFile() throws IOException {
-
         String timeStamp = new SimpleDateFormat(
                 "yyyyMMdd_HHmmss",
                 Locale.getDefault()).format(new Date());
@@ -264,15 +248,15 @@ public class ProfileActivity extends NavActivity {
                 ".jpg",
                 storageDir);
     }
+
     private void setupListeners() {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(ProfileActivity.this, "Upload profile picture", Toast.LENGTH_SHORT).show();
                 showImagePickerDialog();
             }
         });
-
+        
         /*
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,7 +266,6 @@ public class ProfileActivity extends NavActivity {
             }
         });
         */
-
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,23 +276,23 @@ public class ProfileActivity extends NavActivity {
 
         // Save switch states when changed
         switchNarcolepsy.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("narcolepsy", isChecked).apply();
+            viewModel.saveSwitchState("narcolepsy", isChecked);
         });
 
         switchSleepApnea.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("sleepApnea", isChecked).apply();
+            viewModel.saveSwitchState("sleepApnea", isChecked);
         });
 
         switchInsomnia.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("insomnia", isChecked).apply();
+            viewModel.saveSwitchState("insomnia", isChecked);
         });
 
         switchAuditoryAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("auditoryAlerts", isChecked).apply();
+            viewModel.saveSwitchState("auditoryAlerts", isChecked);
         });
 
         switchVisualAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("visualAlerts", isChecked).apply();
+            viewModel.saveSwitchState("visualAlerts", isChecked);
         });
 
         btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -332,8 +315,6 @@ public class ProfileActivity extends NavActivity {
                 saveProfileChanges();
             }
         });
-
-
     }
 
     // Ahmed's Code
@@ -386,16 +367,8 @@ public class ProfileActivity extends NavActivity {
         }, 5000);
     }
     // End of Ahmed's Code
-
     private void handleLogout() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // Only clear login session, not account credentials
-        editor.remove("isLoggedIn");
-        editor.remove("isGuest");
-        editor.apply();
-
-        //Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        viewModel.logout();
         showPass("Logged out successfully");
 
         // Navigate to sign-in page
@@ -431,11 +404,6 @@ public class ProfileActivity extends NavActivity {
             overridePendingTransition(0, 0);
     }
 
-    private String getUserPhoto() {
-        String email = sharedPreferences.getString("userEmail", "guest");
-        return "profilePhotoUri_" + email;
-    }
-
     private void enterEditMode() {
         //hide display mode views
         userName.setVisibility(View.GONE);
@@ -445,14 +413,13 @@ public class ProfileActivity extends NavActivity {
         editEmail.setVisibility(View.VISIBLE);
         editName.setVisibility(View.VISIBLE);
         findViewById(R.id.tilEditName).setVisibility(View.VISIBLE);
-//        findViewById(R.id.tilEditEmail).setVisibility(View.VISIBLE);
+        //findViewById(R.id.tilEditEmail).setVisibility(View.VISIBLE);
         saveProfile.setVisibility(View.VISIBLE);
         cancelEdit.setVisibility(View.VISIBLE);
 
         editName.setText(originalName);
         editEmail.setText(originalEmail);
         editName.requestFocus();
-
     }
 
     private void closeEditMode() {
@@ -462,42 +429,25 @@ public class ProfileActivity extends NavActivity {
         btnEdit.setVisibility(View.VISIBLE);
 
         findViewById(R.id.tilEditName).setVisibility(View.GONE);
-//        findViewById(R.id.tilEditEmail).setVisibility(View.GONE);
+        //findViewById(R.id.tilEditEmail).setVisibility(View.GONE);
 
         saveProfile.setVisibility(View.GONE);
         cancelEdit.setVisibility(View.GONE);
-
     }
 
     private void saveProfileChanges() {
         String newName = editName.getText().toString().trim();
 
-        //validate name
-        if (newName.isEmpty()) {
-            showError("Name cannot be empty");
-            return;
+        ProfileViewModel.SaveProfileResult result = viewModel.saveProfileChanges(newName, originalEmail);
+
+        if (result.isSuccess) {
+            originalName = result.updatedName;
+            userName.setText(result.updatedName);
+            closeEditMode();
+            showPass(result.message);
+        } else {
+            showError(result.message);
         }
-
-        //split name into first and last name
-        String[] nameParts = newName.split(" ", 2);
-        String firstName = nameParts[0];
-        String lastName = nameParts.length > 1 ? nameParts[1] : "";
-
-        //save to SharedPreferences
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("userFirstName_" + originalEmail, firstName);
-        editor.putString("userLastName_" + originalEmail, lastName);
-        editor.putString("userName_" + originalEmail, newName);
-
-        editor.apply();
-
-        originalName = newName;
-
-        userName.setText(newName);
-
-        closeEditMode();
-
-        showPass("Profile updated successfully");
     }
 
 }
