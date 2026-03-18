@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.viewmodel;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -6,13 +6,10 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import java.util.regex.Pattern;
+import com.example.drowsydrivingdetection.security.PasswordValidator;
+import com.example.drowsydrivingdetection.security.SecurityUtils;
 
 public class RegistrationViewModel extends AndroidViewModel {
-
-    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
-    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
-    private static final int MIN_PASSWORD_LENGTH = 8;
 
     private final SharedPreferences sharedPreferences;
 
@@ -56,9 +53,9 @@ public class RegistrationViewModel extends AndroidViewModel {
             return RegistrationResult.error("Please enter a password");
         }
 
-        PasswordValidationResult passwordValidationResult = isPasswordValid(password);
-        if (!passwordValidationResult.isValid) {
-            return RegistrationResult.error(passwordValidationResult.message);
+        PasswordValidator.Result passwordResult = PasswordValidator.validate(password);
+        if (!passwordResult.isValid) {
+            return RegistrationResult.error(passwordResult.message);
         }
 
         if (isNullOrEmpty(confirmPassword)) {
@@ -101,21 +98,6 @@ public class RegistrationViewModel extends AndroidViewModel {
         return value == null || value.trim().isEmpty();
     }
 
-    private PasswordValidationResult isPasswordValid(String password) {
-        if (password.length() < MIN_PASSWORD_LENGTH) {
-            return new PasswordValidationResult(false, "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");
-        }
-
-        if (!DIGIT_PATTERN.matcher(password).matches()) {
-            return new PasswordValidationResult(false, "Password must contain at least one digit (0-9)");
-        }
-
-        if (!SPECIAL_CHAR_PATTERN.matcher(password).matches()) {
-            return new PasswordValidationResult(false, "Password must contain at least one special character (!@#$%^&*)");
-        }
-
-        return new PasswordValidationResult(true, null);
-    }
 
     private boolean registerUser(
             String firstName,
@@ -150,16 +132,6 @@ public class RegistrationViewModel extends AndroidViewModel {
         editor.apply();
 
         return true;
-    }
-
-    private static class PasswordValidationResult {
-        final boolean isValid;
-        final String message;
-
-        PasswordValidationResult(boolean isValid, String message) {
-            this.isValid = isValid;
-            this.message = message;
-        }
     }
 
     public static class RegistrationResult {

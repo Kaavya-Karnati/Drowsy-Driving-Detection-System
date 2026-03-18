@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -33,6 +33,11 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.drowsydrivingdetection.core.CleanDetectionResult;
+import com.example.drowsydrivingdetection.core.DrowsinessTracker;
+import com.example.drowsydrivingdetection.inference.ModelLoader;
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.inference.YOLODetector;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.ByteArrayOutputStream;

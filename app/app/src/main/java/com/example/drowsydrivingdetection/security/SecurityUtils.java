@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.security;
 
 import org.mindrot.jbcrypt.BCrypt;
 

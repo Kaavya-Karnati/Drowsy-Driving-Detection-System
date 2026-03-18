@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.drowsydrivingdetection.MainActivity;
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.viewmodel.SignInViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class SignInActivity extends AppCompatActivity {

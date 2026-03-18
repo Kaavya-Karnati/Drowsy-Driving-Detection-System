@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.core;
 
 import android.annotation.SuppressLint;
 

@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
+import com.example.drowsydrivingdetection.ui.pages.SignInActivity;
+
 public class MainActivity extends NavActivity {
 
     @Override

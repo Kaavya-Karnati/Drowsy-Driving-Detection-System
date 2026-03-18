@@ -1,10 +1,9 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.core;
 
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -16,19 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 // OpenCV imports
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.inference.ModelLoader;
+
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 // Tensorflow imports
-import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.gpu.CompatibilityList;
 import org.tensorflow.lite.gpu.GpuDelegate;
-import org.tensorflow.lite.gpu.GpuDelegateFactory;
 
 // Java imports
 import java.io.FileInputStream;

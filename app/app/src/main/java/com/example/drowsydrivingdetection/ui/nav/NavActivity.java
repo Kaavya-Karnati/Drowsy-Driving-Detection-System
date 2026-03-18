@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.nav;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +10,12 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.drowsydrivingdetection.ui.pages.FaqActivity;
+import com.example.drowsydrivingdetection.ui.pages.ModelActivity2;
+import com.example.drowsydrivingdetection.ui.pages.ProfileActivity;
+import com.example.drowsydrivingdetection.ui.pages.ProfileNonRegisteredActivity;
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.ui.pages.HomeActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class NavActivity extends AppCompatActivity {

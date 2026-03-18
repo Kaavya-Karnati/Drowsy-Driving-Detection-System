@@ -1,9 +1,14 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
+import com.example.drowsydrivingdetection.ui.alerts.AlertActivity;
+import com.example.drowsydrivingdetection.core.OpenCV;
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class ModelActivity2 extends NavActivity {

@@ -1,9 +1,11 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
+import com.example.drowsydrivingdetection.R;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class HomeActivity extends NavActivity {

@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 
 import android.content.DialogInterface;
@@ -21,6 +21,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;

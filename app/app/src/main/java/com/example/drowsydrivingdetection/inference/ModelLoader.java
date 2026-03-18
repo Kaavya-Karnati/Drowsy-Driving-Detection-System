@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.inference;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;

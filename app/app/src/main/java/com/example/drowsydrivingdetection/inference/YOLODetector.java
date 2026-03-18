@@ -1,8 +1,11 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.inference;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.example.drowsydrivingdetection.core.BoundingBox;
+import com.example.drowsydrivingdetection.core.CleanDetectionResult;
 
 import org.tensorflow.lite.Interpreter;
 

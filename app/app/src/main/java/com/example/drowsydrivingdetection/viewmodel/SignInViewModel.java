@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.viewmodel;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -6,13 +6,10 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import java.util.regex.Pattern;
+import com.example.drowsydrivingdetection.security.PasswordValidator;
+import com.example.drowsydrivingdetection.security.SecurityUtils;
 
 public class SignInViewModel extends AndroidViewModel {
-
-    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
-    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
-    private static final int MIN_PASSWORD_LENGTH = 8;
 
     private final SharedPreferences sharedPreferences;
 
@@ -38,15 +35,8 @@ public class SignInViewModel extends AndroidViewModel {
             return SignInResult.error("Please enter a valid email address");
         }
 
-        if (password.length() < MIN_PASSWORD_LENGTH) {
-            return SignInResult.error("Password must be at least 8 characters");
-        }
-
-        if (!DIGIT_PATTERN.matcher(password).matches()) {
-            return SignInResult.error("Invalid Password");
-        }
-
-        if (!SPECIAL_CHAR_PATTERN.matcher(password).matches()) {
+        PasswordValidator.Result passwordResult = PasswordValidator.validate(password);
+        if (!passwordResult.isValid) {
             return SignInResult.error("Invalid Password");
         }
 

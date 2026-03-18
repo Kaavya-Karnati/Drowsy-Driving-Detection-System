@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,9 +10,10 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.security.PasswordValidator;
+import com.example.drowsydrivingdetection.security.SecurityUtils;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.regex.Pattern;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -23,10 +24,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private TextView errorBanner;
 
     private SharedPreferences sharedPreferences;
-
-
-    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
-    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
 
 
     @Override
@@ -81,21 +78,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        if (pass1.length() < 8) {
-            newPassword.setError("Password must be at least 8 characters");
-            newPassword.requestFocus();
-            return;
-        }
-
-
-        if (!DIGIT_PATTERN.matcher(pass1).matches()) {
-            newPassword.setError("Password must contain at least one digit (0-9)");
-            newPassword.requestFocus();
-            return;
-        }
-
-        if (!SPECIAL_CHAR_PATTERN.matcher(pass1).matches()) {
-            newPassword.setError("Password must contain at least one special character (!@#$%^&*)");
+        PasswordValidator.Result passwordResult = PasswordValidator.validate(pass1);
+        if (!passwordResult.isValid) {
+            newPassword.setError(passwordResult.message);
             newPassword.requestFocus();
             return;
         }
