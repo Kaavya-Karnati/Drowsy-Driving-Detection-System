@@ -84,14 +84,19 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void handleRegistration() {
+        // Get input values
         String firstName = this.firstName.getText().toString().trim();
         String lastName = this.lastName.getText().toString().trim();
         String email = this.email.getText().toString().trim();
         String password = this.password.getText().toString().trim();
+
+        // Ahmed's code
         String confirmPassword = this.confirmPassword.getText().toString().trim();
         String securityAnswer1 = this.securityQuestion1.getText().toString().trim();
         String securityAnswer2 = this.securityQuestion2.getText().toString().trim();
         String securityAnswer3 = this.securityQuestion3.getText().toString().trim();
+        //end
+
         RegistrationViewModel.RegistrationResult result = viewModel.handleRegistration(
                 firstName,
                 lastName,

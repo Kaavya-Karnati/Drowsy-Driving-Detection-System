@@ -45,6 +45,7 @@ public class RegistrationViewModel extends AndroidViewModel {
             return RegistrationResult.error("Please enter your email");
         }
 
+        // Validate email format
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return RegistrationResult.error("Please enter a valid email address");
         }
@@ -62,10 +63,12 @@ public class RegistrationViewModel extends AndroidViewModel {
             return RegistrationResult.error("Please confirm your password");
         }
 
+        // Check if passwords match
         if (!password.equals(confirmPassword)) {
             return RegistrationResult.error("Passwords do not match");
         }
 
+        // Ahmed's Code
         if (isNullOrEmpty(securityAnswer1)) {
             return RegistrationResult.error("Please answer Security Question 1");
         }
@@ -77,6 +80,7 @@ public class RegistrationViewModel extends AndroidViewModel {
         if (isNullOrEmpty(securityAnswer3)) {
             return RegistrationResult.error("Please answer Security Question 3");
         }
+        // end
 
         //check if email is already registered
         String existingEmail = sharedPreferences.getString("registered_email", null);
@@ -108,12 +112,14 @@ public class RegistrationViewModel extends AndroidViewModel {
             String securityAnswer2,
             String securityAnswer3
     ) {
+        // Hash the password with BCrypt
         String hashedPassword = SecurityUtils.hashPassword(password);
 
         if (hashedPassword == null) {
             return false;
         }
 
+        // Save user data
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("registered_email", email);
         editor.putString("password_hash", hashedPassword);

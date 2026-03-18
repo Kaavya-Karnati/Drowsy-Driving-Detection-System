@@ -11,14 +11,19 @@ public final class PasswordValidator {
     private PasswordValidator() {}
 
     public static Result validate(String password) {
+        // Validate password
+
+        // Check minimum length
         if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
             return Result.invalid("Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");
         }
 
+        // Check for at least one digit
         if (!DIGIT_PATTERN.matcher(password).matches()) {
             return Result.invalid("Password must contain at least one digit (0-9)");
         }
 
+        // Check for at least one special character
         if (!SPECIAL_CHAR_PATTERN.matcher(password).matches()) {
             return Result.invalid("Password must contain at least one special character (!@#$%^&*)");
         }
