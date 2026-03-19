@@ -136,8 +136,12 @@ public class NavActivity extends AppCompatActivity {
 
     private void loadProfilePictureInNavBar() {
         String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
-        if(profilePhoto != null){
+        if (profilePhoto != null) {
+            profileLogo.setImageURI(null);
             profileLogo.setImageURI(Uri.parse(profilePhoto));
+        } else {
+            profileLogo.setImageURI(null);
+            profileLogo.setImageResource(R.drawable.default_profile_icon);
         }
     }
 

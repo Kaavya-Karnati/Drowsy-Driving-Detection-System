@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.example.drowsydrivingdetection.ui.nav.NavActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.drowsydrivingdetection.ui.pages.HomeActivity;
 import com.example.drowsydrivingdetection.ui.pages.SignInActivity;
 
-public class MainActivity extends NavActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,15 +17,14 @@ public class MainActivity extends NavActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
-        if (!isLoggedIn) {
-            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-            return;
+        Intent intent;
+        if (isLoggedIn) {
+            intent = new Intent(this, HomeActivity.class);
+        } else {
+            intent = new Intent(this, SignInActivity.class);
         }
-
-        setContentView(R.layout.home_page);
-        setupBottomNavigation();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

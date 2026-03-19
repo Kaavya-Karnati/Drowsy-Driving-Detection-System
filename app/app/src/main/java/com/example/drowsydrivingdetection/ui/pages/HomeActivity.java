@@ -40,7 +40,11 @@ public class HomeActivity extends NavActivity {
     private void loadProfilePicture() {
         String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
         if (profilePhoto != null) {
+            profileIcon.setImageURI(null);
             profileIcon.setImageURI(Uri.parse(profilePhoto));
+        } else {
+            profileIcon.setImageURI(null);
+            profileIcon.setImageResource(R.drawable.default_profile_icon);
         }
     }
 

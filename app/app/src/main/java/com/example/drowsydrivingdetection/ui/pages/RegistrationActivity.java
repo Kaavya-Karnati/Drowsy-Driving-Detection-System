@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.drowsydrivingdetection.MainActivity;
 import com.example.drowsydrivingdetection.R;
 import com.example.drowsydrivingdetection.viewmodel.RegistrationViewModel;
 import com.google.android.material.textfield.TextInputEditText;
@@ -231,7 +230,7 @@ public class RegistrationActivity extends AppCompatActivity {
     //end of Ahmed's Code
 
     private void navigateToHome() {
-        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+        Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
