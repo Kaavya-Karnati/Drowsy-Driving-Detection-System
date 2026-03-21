@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -17,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 // OpenCV imports
 import com.example.drowsydrivingdetection.R;
 import com.example.drowsydrivingdetection.inference.ModelLoader;
+import com.example.drowsydrivingdetection.inference.YOLODetector;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
@@ -48,14 +52,14 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private TextView detectionText;
 
     // Helper function for loading model (https://blog.tensorflow.org/2018/03/using-tensorflow-lite-on-android.html)
-    private MappedByteBuffer loadModelFile(String modelName) throws IOException{
-            AssetFileDescriptor fileDescriptor = getAssets().openFd(modelName);
-            FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-            FileChannel fileChannel = inputStream.getChannel();
-            long startOffset = fileDescriptor.getStartOffset();
-            long declaredLength = fileDescriptor.getDeclaredLength();
-            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-        }
+    private MappedByteBuffer loadModelFile(String modelName) throws IOException {
+        AssetFileDescriptor fileDescriptor = getAssets().openFd(modelName);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
 
     // OpenCV camera + variables
     private CameraBridgeViewBase OpenCVCamera;
@@ -72,6 +76,13 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     SharedPreferences sharedPreferences;
 
+    private YOLODetector yoloDetector;
+    private DrowsinessTracker drowsinessTracker;
+    private MediaPlayer mediaPlayer;
+    private boolean audioAlertTriggered = false;
+    private boolean visualAlertTriggered = false;
+    private final Handler visualAlertResetHandler = new Handler(Looper.getMainLooper());
+
     // TFLite buffers
     private float[][][] outputBuffer;
     private int[] outputTensor;
@@ -87,12 +98,11 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     int inferOnFrame = 5;
 
 
-
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         //System.out.println("total cores:" + availableThreads);
@@ -101,7 +111,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Initialize TFLite using ModelLoader to get proper classes
         modelLoader = new ModelLoader(this);
 
-        if (!modelLoader.isLoaded()){
+        if (!modelLoader.isLoaded()) {
             Log.e(TAG, "Model failed to load.");
             /*
             Bring up with Ahmed to possibly add a warning message here that the model failed to load
@@ -110,6 +120,14 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         } else {
             try {
                 TFLiteSetup();
+
+                // Initialize YOLO + drowsiness tracker after tensor sizes are known.
+                yoloDetector = new YOLODetector(
+                        modelLoader.getInterpreter(),
+                        modelLoader.getLabels(),
+                        imageW
+                );
+                drowsinessTracker = new DrowsinessTracker(sharedPreferences);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -117,9 +135,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         // OpenCV loader
         if (OpenCVLoader.initLocal()) {
-            Log.d(TAG,"OpenCV successfully loaded.");
+            Log.d(TAG, "OpenCV successfully loaded.");
         } else {
-            Log.e(TAG,"OpenCV initialization failed!");
+            Log.e(TAG, "OpenCV initialization failed!");
             (Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG)).show();
             return;
         }
@@ -163,7 +181,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     // Request permission for camera (if not already accepted)
     // If you need to test, just hold down on the app and click App Info and in permissions just disable it if you already had it -Anthony
     private void getCameraPermissions() {
-        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){ // Check if permission is granted
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { // Check if permission is granted
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION); // If not, request it
         } else {
             OpenCVCamera.setCameraPermissionGranted(); // If it is, tell OpenCV's camera that we have permission to use it
@@ -221,35 +239,48 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     }
 
     @Override // If camera is not in focused view (aka if you minimize the app), disable camera
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         Log.i(TAG, "onPause: ");
-        if (OpenCVCamera != null){
+        if (OpenCVCamera != null) {
             OpenCVCamera.disableView();
         }
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        if (OpenCVCamera != null && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+        if (OpenCVCamera != null && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             OpenCVCamera.enableView();
         }
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy: ");
-        if (OpenCVCamera != null){
+        if (OpenCVCamera != null) {
             OpenCVCamera.disableView();
         }
 
-        if (modelLoader != null){
+        if (mediaPlayer != null) {
+            try {
+                mediaPlayer.stop();
+            } catch (Exception ignored) {
+            }
+            try {
+                mediaPlayer.release();
+            } catch (Exception ignored) {
+            }
+            mediaPlayer = null;
+        }
+
+        if (drowsinessTracker != null) {
+            drowsinessTracker.reset();
+        }
+
+        if (modelLoader != null) {
             modelLoader.close();
             modelLoader = null;
         }
@@ -278,23 +309,17 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             // Converts mat (resizedRGBA) into imageInputBuffer
             ImageProcessing.matToByteBuffer(resizedRGBA, imageInputBuffer, matToByteBufferArray);
 
-            // Swapped to using modelLoader instead
-            modelLoader.getInterpreter().run(imageInputBuffer, outputBuffer);
+            if (yoloDetector != null && drowsinessTracker != null) {
+                CleanDetectionResult result = yoloDetector.detectAndParse(imageInputBuffer, imageW, imageH);
+                drowsinessTracker.addFrame(result);
+                checkAndTriggerAlerts();
 
-            /*
-            Needs to be changed to actually do proper YOLO detections
-            most likely through YOLODetector
-             */
-            float highestConfidenceScore = 0;
-            for (int i = 0; i < outputTensor[2]; i++){
-                float currentConfidenceScore = outputBuffer[0][4][i];
-                // Log.d(TAG, "Currently detecting: ");
-                if (currentConfidenceScore > highestConfidenceScore){
-                    highestConfidenceScore = currentConfidenceScore;
-                }
+                runOnUiThread(() -> {
+                    detectionText.setText(
+                            "Driver is currently: " + drowsinessTracker.getDrowsinessLevel()
+                    );
+                });
             }
-
-            updateUIAwakeOrDrowsy(highestConfidenceScore);
         }
         totalFrames++;
 
@@ -309,6 +334,70 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
          */
 
         return rgba;
+    }
+
+    private void checkAndTriggerAlerts() {
+        if (drowsinessTracker == null) {
+            return;
+        }
+
+        if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
+            audioAlertTriggered = true;
+            drowsinessTracker.saveAudioAlertCount();
+            triggerAudioAlert();
+        } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
+            audioAlertTriggered = false;
+            stopAudioAlert();
+        }
+
+        if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
+            visualAlertTriggered = true;
+            drowsinessTracker.saveVisualAlertCount();
+            drowsinessTracker.resetYawns();
+
+            // We don't have the overlay views in this OpenCV layout yet; rely on detectionText.
+            Log.d(TAG, "Visual alert triggered (yawn threshold).");
+
+            visualAlertResetHandler.postDelayed(() -> visualAlertTriggered = false, 5000);
+        }
+    }
+
+    private void triggerAudioAlert() {
+        runOnUiThread(() -> {
+            if (mediaPlayer != null) {
+                try {
+                    mediaPlayer.release();
+                } catch (Exception ignored) {
+                }
+                mediaPlayer = null;
+            }
+
+            try {
+                mediaPlayer = MediaPlayer.create(this, R.raw.chime_final);
+                if (mediaPlayer != null) {
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to start audio alert", e);
+            }
+        });
+    }
+
+    private void stopAudioAlert() {
+        runOnUiThread(() -> {
+            if (mediaPlayer != null) {
+                try {
+                    mediaPlayer.stop();
+                } catch (Exception ignored) {
+                }
+                try {
+                    mediaPlayer.release();
+                } catch (Exception ignored) {
+                }
+                mediaPlayer = null;
+            }
+        });
     }
 
 }

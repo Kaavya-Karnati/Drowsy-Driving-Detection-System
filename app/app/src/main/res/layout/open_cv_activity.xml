@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         opencv:show_fps="true"
-        opencv:camera_id="any"/>
+        opencv:camera_id="1"/>
     <!-- following the opencv docs to put 'any', but most likely we should specify later on -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

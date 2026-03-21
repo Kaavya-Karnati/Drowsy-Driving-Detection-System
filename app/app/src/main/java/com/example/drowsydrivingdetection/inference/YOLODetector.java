@@ -119,6 +119,14 @@ public class YOLODetector {
 
     }
 
+    public DetectionResult detect(ByteBuffer inputBuffer) {
+        long startTime = System.currentTimeMillis();
+        this.interpreter.run(inputBuffer, this.outputArray);
+        long inferenceTime = System.currentTimeMillis() - startTime;
+        logDetections(outputArray, 0.6f);
+        return new DetectionResult(this.outputArray, inferenceTime);
+    }
+
     private ByteBuffer bitmapToByteBuffer(Bitmap bitmap) {
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * inputSize * inputSize * 3);
         byteBuffer.order(ByteOrder.nativeOrder());
@@ -253,6 +261,20 @@ public class YOLODetector {
         return cleanResult;
     }
 
+    public CleanDetectionResult detectAndParse(ByteBuffer inputBuffer, int imageWidth, int imageHeight) {
+        DetectionResult rawResult = detect(inputBuffer);
+
+        CleanDetectionResult cleanResult = new CleanDetectionResult();
+        if (rawResult != null && rawResult.rawOutput != null) {
+            List<BoundingBox> boxes = parseDetections(rawResult.rawOutput, imageWidth, imageHeight);
+            cleanResult.detections = boxes;
+        }
+
+        cleanResult.countDetections();
+        Log.e("Clean Result: ", cleanResult.toString());
+        return cleanResult;
+    }
+
     private List<BoundingBox> parseDetections(float[][][] rawOutput, int imageWidth, int imageHeight) {
         List<BoundingBox> boxes = new ArrayList<>();
         float confThreshold = 0.65f; //tentative, for testing purposes, will be higher
@@ -321,8 +343,8 @@ public class YOLODetector {
     }
 
 
-     //get confidence threshold for specific class(es)
-     //different classes may need different thresholds
+    //get confidence threshold for specific class(es)
+    //different classes may need different thresholds
     private float getThresholdForClass(String className) {
         if (className.toLowerCase().equals("yawn")) {
             return 0.75f;  // High threshold for yawns
