@@ -21,6 +21,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText email;
     private TextInputEditText password;
     private TextInputEditText confirmPassword;
+    private TextInputEditText emergencyContact;
     private TextView backToLogin;
     private Button btnRegister;
     // Ahmed's code
@@ -66,6 +67,7 @@ public class RegistrationActivity extends AppCompatActivity {
         securityQuestion1 = findViewById(R.id.securityQuestion1);
         securityQuestion2 = findViewById(R.id.securityQuestion2);
         securityQuestion3 = findViewById(R.id.securityQuestion3);
+        emergencyContact = findViewById(R.id.emergencyContact);
         passBanner = findViewById(R.id.passBanner);
         errorBanner = findViewById(R.id.errorBanner);
         // end
@@ -98,6 +100,7 @@ public class RegistrationActivity extends AppCompatActivity {
         String securityAnswer1 = this.securityQuestion1.getText().toString().trim();
         String securityAnswer2 = this.securityQuestion2.getText().toString().trim();
         String securityAnswer3 = this.securityQuestion3.getText().toString().trim();
+        String emergencyNumber = this.emergencyContact.getText().toString().trim();
         //end
 
         // Validate inputs
@@ -177,6 +180,10 @@ public class RegistrationActivity extends AppCompatActivity {
             this.securityQuestion3.requestFocus();
             return;
         }
+        if (emergencyNumber.isEmpty()) {
+            showError("Please enter an emergency contact number");
+            return;
+        }
         // end
 
         // Check if email is already registered
@@ -188,10 +195,10 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        registerUser(firstName, lastName, email, password, securityAnswer1, securityAnswer2, securityAnswer3);
+        registerUser(firstName, lastName, email, password, securityAnswer1, securityAnswer2, securityAnswer3, emergencyNumber);
     }
 
-    private void registerUser(String firstName, String lastName, String email, String password, String securityAnswer1, String securityAnswer2, String securityAnswer3) {
+    private void registerUser(String firstName, String lastName, String email, String password, String securityAnswer1, String securityAnswer2, String securityAnswer3, String emergencyNumber) {
         // Hash the password with BCrypt
         String hashedPassword = SecurityUtils.hashPassword(password);
 
@@ -217,6 +224,7 @@ public class RegistrationActivity extends AppCompatActivity {
         editor.putString("securityAnswer3", securityAnswer3);
         editor.putInt("audio_alert", 0);
         editor.putInt("visual_alert", 0);
+        editor.putString("emergencyContact" + email, emergencyNumber);
         editor.apply();
 
         //Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
@@ -316,7 +324,7 @@ public class RegistrationActivity extends AppCompatActivity {
         // Check minimum length
         if (password.length() < MIN_PASSWORD_LENGTH) {
             //Toast.makeText(this, "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long", Toast.LENGTH_SHORT).show();
-            this.password.setError("Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");            
+            this.password.setError("Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");
             this.password.requestFocus();
             return false;
         }

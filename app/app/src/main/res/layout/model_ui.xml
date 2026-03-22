@@ -207,6 +207,21 @@
 
     </ScrollView>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmergency"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="Send Emergency Alert"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#FF9800"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@id/btnStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Start Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStart"

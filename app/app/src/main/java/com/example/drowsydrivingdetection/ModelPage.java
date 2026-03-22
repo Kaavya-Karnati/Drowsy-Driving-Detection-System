@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +62,12 @@ public class ModelPage extends AppCompatActivity {
 
     private YOLODetector yoloDetector;
     private DrowsinessTracker drowsinessTracker;
+
+    private boolean emergencyTTriggered = false;
+    private long closed = 0;
+    private static final long timer = 10000;
+
+
     private boolean audioAlertTriggered = false;
     private boolean visualAlertTriggered = false;
 
@@ -72,6 +79,7 @@ public class ModelPage extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private Handler visualAlertHandler = new Handler(Looper.getMainLooper());
     private Handler breakPopupHandler = new Handler(Looper.getMainLooper());
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -88,6 +96,11 @@ public class ModelPage extends AppCompatActivity {
                         "Camera permission is required to start detection",
                         Toast.LENGTH_LONG).show();
                 finish();
+            }
+        }
+        if (reqCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                triggerText();
             }
         }
     }
@@ -218,6 +231,23 @@ public class ModelPage extends AppCompatActivity {
         if (bitmap != null) {
             CleanDetectionResult result = yoloDetector.detectAndParse(bitmap);
             drowsinessTracker.addFrame(result);
+
+            if (drowsinessTracker.shouldTriggerAudioAlert()) {
+                if (closed == 0) {
+                    closed = System.currentTimeMillis();
+                }
+                long duration = System.currentTimeMillis() - closed;
+
+                if (duration >= timer && !emergencyTTriggered) {
+                    emergencyTTriggered = true;
+                    triggerText();
+                }
+            }
+            else {
+                closed = 0;
+                emergencyTTriggered = false;
+            }
+
             checkAndTriggerAlerts();
 
             updateFPSCounter();
@@ -227,6 +257,53 @@ public class ModelPage extends AppCompatActivity {
                 String info = result.toString() + "\n" + drowsinessTracker.getDrowsinessLevel();
                 statusText.setText(info);
             });
+        }
+    }
+
+    private void triggerText() {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Emergency text message triggered because eyes were closed too long!", Toast.LENGTH_LONG).show();
+        });
+        try {
+            sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+            String email = sharedPreferences.getString("userEmail", null);
+            String phone = sharedPreferences.getString("emergencyContact" + email, null);
+
+            if (phone == null || phone.isEmpty()) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "No emergency contact", Toast.LENGTH_SHORT).show();
+                });
+                return;
+            }
+
+            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.SEND_SMS}, 101);
+                return;
+            }
+            android.location.LocationManager lm = (android.location.LocationManager) getSystemService(android.content.Context.LOCATION_SERVICE);
+            android.location.Location location = null;
+            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED || androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                android.location.Location gps = lm.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
+                android.location.Location net = lm.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
+                location = gps;
+                if (location == null) {
+                    location = net;
+                    }
+            }
+
+            String m = "EMERGENCY: The driver is drowsy. Please check on them now!";
+
+            if (location != null) {
+                m += "\nLast Known Location: https://maps.google.com/?q=" + location.getLatitude() + "," + location.getLongitude();
+            }
+            else {
+                m += "\nLocation unavailable";
+            }
+            android.telephony.SmsManager textM = android.telephony.SmsManager.getDefault();
+            textM.sendTextMessage(phone, null, m, null, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
