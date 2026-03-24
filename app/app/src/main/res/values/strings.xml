@@ -41,6 +41,11 @@
     <string name="profile_settings">Profile Settings</string>
     <string name="sign_out">Sign Out</string>
 
+    <string name="upload_profile_photo">Upload profile photo</string>
+    <string name="profile_photo_uploaded_successfully">Profile photo uploaded successfully!</string>
+    <string name="failed_to_upload_profile_photo_please_try_again">Failed to upload profile photo. Please try again!</string>
+    <string name="logout">Logout</string>
+
     <!-- About/Help Screen -->
     <string name="help_title">Help &amp; FAQ</string>
     <string name="help_description">Welcome to the help section. Here you can find answers to common questions.</string>
@@ -62,7 +67,7 @@
     <!-- Top Menu -->
     <string name="action_help">Help</string>
     <string name="opencv">OpenCV</string>
-    <string name="terms">By clicking continue, you agree to our <b>Terms of Service</b> and <b>Privacy Policy</b></string>
+    <string name="terms"><font color="#393838">By clicking continue, you agree to our</font> <font color="#000000"><b>Terms of Service</b></font> <font color="#393838">and</font> <font color="#000000"><b>Privacy Policy</b></font></string>
     <string name="drowsy_driver">Drowsy Driver</string>
     <string name="email_id">Email ID</string>
     <string name="email_hint">email@domain.com</string>
@@ -101,12 +106,12 @@
 
     <!-- FAQ PAGE -->
     <string name="FAQAnswer1">No, an account is not necessary to use our app. However, user features like alert records, preferences, and health information are only available to registered users.</string>
-    <string name="FAQQuestion1">Do I need an account?</string>
-    <string name="FAQQuestion2">How do you detect drowsy driving?</string>
+    <string name="FAQQuestion1"><font color="000000"><b>Do I need an account?</b></font></string>
+    <string name="FAQQuestion2"><font color="000000"><b>How do you detect drowsy driving?</b></font></string>
     <string name="FAQAnswer2">We use a in-house trained YOLOv8 model to detect user facial features, such as closed eyes and yawning.</string>
-    <string name="FAQQuestion3">Is this app considered a medical device?</string>
+    <string name="FAQQuestion3"><font color="000000"><b>Is this app considered a medical device?</b></font></string>
     <string name="FAQAnswer3">No! Our intention for this application is to provide alerts to those who may fall asleep during drives.</string>
-    <string name="FAQQuestion4">Do you store any photos of users?</string>
+    <string name="FAQQuestion4"><font color="000000"><b>Do you store any photos of users?</b></font></string>
     <string name="FAQAnswer4">No, all images and recordings are directly processed on your device, and never reach our servers. Your data is yours.</string>
     <string name="create_an_account">Create an account</string>
     <string name="enter_your_email">Enter your email to sign up for this app</string>
@@ -121,9 +126,22 @@
     <string name="VisualAlertTotal">1 alert</string>
     <string name="pastMonth">in the past month</string>
     <string name="AlertChart1">Alerts Chart</string>
-    <string name="already_registered_login_here">Already Registered? Login Here</string>
+    <string name="already_registered_login_here">Already Registered? <font color="#000000"><u><b>Login Here</b></u></font></string>
     <string name="password_req"><![CDATA[Password must contain:\n• At least 8 characters\n• At least one digit (0-9)\n• At least one special character (!@#$%^&*)]]></string>
     <string name="play_audio_alert">Play Audio Alert</string>
     <string name="show_visual_alert">Show Visual Alert</string>
+    <string name="chart_hardcoded_desc">a sample chart image as a hardcoded value for prototype demo</string>
+    <string name="cross_to_close_pop_up">cross to close pop up</string>
+    <string name="password_changed">Password was Changed!</string>
+    <string name="verify">Verify</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="wrong_answer">Wrong answer! Please try again!</string>
+    <string name="sec_q_3">Security Answer 3 - Place of Birth</string>
+    <string name="sec_q_2">Security Answer 2 - Mother\'s Maiden Name</string>
+    <string name="sec_q_1">Security Answer 1 - Pet\'s Name</string>
+    <string name="registered_email">Registered Email</string>
+    <string name="forgot_password_2">Forgot Password?</string>
+    <string name="email_address">Email Address</string>
+    <string name="password_was_changed">Password was Changed!</string>
 
 </resources>
