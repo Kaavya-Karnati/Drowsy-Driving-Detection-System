@@ -1,6 +1,9 @@
 package com.example.drowsydrivingdetection.core;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
@@ -10,6 +13,7 @@ import android.os.Looper;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.TextView;
@@ -50,6 +54,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     // Tag for logging (Named after the class) -Anthony
     private static final String TAG = "cameraView: ";
     private TextView detectionText;
+    private TextView visualAlertPopUp;
 
     // Helper function for loading model (https://blog.tensorflow.org/2018/03/using-tensorflow-lite-on-android.html)
     private MappedByteBuffer loadModelFile(String modelName) throws IOException {
@@ -82,6 +87,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private boolean audioAlertTriggered = false;
     private boolean visualAlertTriggered = false;
     private final Handler visualAlertResetHandler = new Handler(Looper.getMainLooper());
+    private final Handler visualAlertBannerHandler = new Handler(Looper.getMainLooper());
 
     // TFLite buffers
     private float[][][] outputBuffer;
@@ -148,6 +154,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         // Sets detectionText to proper id in activity_cameraview.xml
         detectionText = findViewById(R.id.detectionText);
+        visualAlertPopUp = findViewById(R.id.visualAlertPopUp);
 
         /*
         1. Sets OpenCVCamera to my_camera in camera_page.xml
@@ -276,6 +283,12 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             mediaPlayer = null;
         }
 
+        visualAlertBannerHandler.removeCallbacksAndMessages(null);
+        if (visualAlertPopUp != null) {
+            visualAlertPopUp.setVisibility(View.GONE);
+            visualAlertPopUp.setAlpha(0f);
+        }
+
         if (drowsinessTracker != null) {
             drowsinessTracker.reset();
         }
@@ -381,6 +394,15 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             } catch (Exception e) {
                 Log.e(TAG, "Failed to start audio alert", e);
             }
+
+            if (visualAlertPopUp != null) {
+                visualAlertBannerHandler.removeCallbacksAndMessages(null);
+                visualAlertPopUp.setAlpha(0f);
+                visualAlertPopUp.setVisibility(View.VISIBLE);
+                ObjectAnimator fadeIn = ObjectAnimator.ofFloat(visualAlertPopUp, "alpha", 0f, 1f);
+                fadeIn.setDuration(400);
+                fadeIn.start();
+            }
         });
     }
 
@@ -396,6 +418,19 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
                 } catch (Exception ignored) {
                 }
                 mediaPlayer = null;
+            }
+
+            if (visualAlertPopUp != null) {
+                visualAlertBannerHandler.removeCallbacksAndMessages(null);
+                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(visualAlertPopUp, "alpha", visualAlertPopUp.getAlpha(), 0f);
+                fadeOut.setDuration(400);
+                fadeOut.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        visualAlertPopUp.setVisibility(View.GONE);
+                    }
+                });
+                fadeOut.start();
             }
         });
     }
