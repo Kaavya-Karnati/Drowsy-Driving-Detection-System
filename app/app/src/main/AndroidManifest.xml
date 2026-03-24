@@ -19,66 +19,62 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".ProfilePage"
-            android:exported="false" />
-
-        <activity
-            android:name=".ModelPage"
+            android:name=".ui.pages.ModelPage"
             android:exported="true">
 
         </activity>
 
         <activity
-            android:name=".OpenCV"
+            android:name=".core.OpenCV"
             android:exported="true">
 
         </activity>
 
         <activity
-            android:name=".HomeActivity"
+            android:name=".ui.pages.HomeActivity"
             android:exported="true">
         </activity>
 
         <activity
-            android:name=".FaqActivity"
+            android:name=".ui.pages.FaqActivity"
             android:exported="true">
 
         </activity>
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".ui.pages.ProfileActivity"
             android:exported="true">
         </activity>
 
         <activity
-            android:name=".ModelActivity2"
+            android:name=".ui.pages.ModelActivity2"
             android:exported="true">
         </activity>
 
         <activity
-            android:name=".SignInActivity"
+            android:name=".ui.pages.SignInActivity"
             android:exported="true" />
 
         <activity
-            android:name=".ProfileNonRegisteredActivity"
+            android:name=".ui.pages.ProfileNonRegisteredActivity"
             android:exported="true" />
 
         <activity
-            android:name=".RegistrationActivity"
+            android:name=".ui.pages.RegistrationActivity"
             android:exported="true" />
 
-        <activity android:name=".AlertsDashboard" />
+        <activity android:name=".ui.pages.AlertsDashboard" />
 
         <activity
-            android:name=".ForgotPasswordActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".ui.pages.ForgotPasswordActivity"
             android:exported="true" />
 
         <activity
-            android:name=".AlertActivity"
+            android:name=".ui.pages.ResetPasswordActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.alerts.AlertActivity"
             android:exported="true" />
 
         <activity

@@ -1,9 +1,11 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
+import com.example.drowsydrivingdetection.R;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class HomeActivity extends NavActivity {
@@ -38,7 +40,11 @@ public class HomeActivity extends NavActivity {
     private void loadProfilePicture() {
         String profilePhoto = sharedPreferences.getString(getUserPhoto(), null);
         if (profilePhoto != null) {
+            profileIcon.setImageURI(null);
             profileIcon.setImageURI(Uri.parse(profilePhoto));
+        } else {
+            profileIcon.setImageURI(null);
+            profileIcon.setImageResource(R.drawable.default_profile_icon);
         }
     }
 

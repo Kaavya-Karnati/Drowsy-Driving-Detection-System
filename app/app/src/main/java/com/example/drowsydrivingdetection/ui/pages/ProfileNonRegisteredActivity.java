@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 
 import android.content.DialogInterface;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
 
 public class ProfileNonRegisteredActivity extends NavActivity {
 

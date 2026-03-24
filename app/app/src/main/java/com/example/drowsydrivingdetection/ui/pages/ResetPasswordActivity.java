@@ -1,7 +1,6 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,10 +8,11 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.viewmodel.ResetPasswordViewModel;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.regex.Pattern;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -22,19 +22,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private TextView passBanner;
     private TextView errorBanner;
 
-    private SharedPreferences sharedPreferences;
-
-
-    private static final Pattern DIGIT_PATTERN = Pattern.compile(".*\\d.*");
-    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile(".*[!@#$%^&*].*");
-
+    private ResetPasswordViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
-        sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+        viewModel = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
 
         initializeViews();
         setupListeners();
@@ -58,62 +53,36 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private void handleResetPassword() {
-
         String pass1 = newPassword.getText().toString().trim();
         String pass2 = confirmPassword.getText().toString().trim();
 
+        ResetPasswordViewModel.ResetResult result = viewModel.handleResetPassword(pass1, pass2);
 
-        if (pass1.isEmpty()) {
-            showError("Please enter a new password");
-            newPassword.requestFocus();
-            return;
+        if (result.success) {
+            showPass(result.message);
+            navigateToSignIn();
+        } else {
+            if (result.isPasswordPolicyError) {
+                newPassword.setError(result.message);
+                newPassword.requestFocus();
+            } else if (result.focusField != null) {
+                applyFieldFocus(result.focusField);
+                showError(result.message);
+            } else {
+                showError(result.message);
+            }
         }
+    }
 
-        if (pass2.isEmpty()) {
-            showError("Please confirm your password");
-            confirmPassword.requestFocus();
-            return;
+    private void applyFieldFocus(ResetPasswordViewModel.FocusField field) {
+        switch (field) {
+            case NEW_PASSWORD:
+                newPassword.requestFocus();
+                break;
+            case CONFIRM_PASSWORD:
+                confirmPassword.requestFocus();
+                break;
         }
-
-        if (!pass1.equals(pass2)) {
-            showError("Passwords do not match");
-            confirmPassword.requestFocus();
-            return;
-        }
-
-        if (pass1.length() < 8) {
-            newPassword.setError("Password must be at least 8 characters");
-            newPassword.requestFocus();
-            return;
-        }
-
-
-        if (!DIGIT_PATTERN.matcher(pass1).matches()) {
-            newPassword.setError("Password must contain at least one digit (0-9)");
-            newPassword.requestFocus();
-            return;
-        }
-
-        if (!SPECIAL_CHAR_PATTERN.matcher(pass1).matches()) {
-            newPassword.setError("Password must contain at least one special character (!@#$%^&*)");
-            newPassword.requestFocus();
-            return;
-        }
-
-
-        String hashedPassword = SecurityUtils.hashPassword(pass1);
-        if (hashedPassword == null) {
-            showError("Error. Please try again.");
-            return;
-        }
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("password_hash", hashedPassword);
-        editor.apply();
-
-        showPass("Password Was Changed!");
-
-        navigateToSignIn();
     }
 
     private void showPass(String message) {
@@ -164,7 +133,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     private void navigateToSignIn() {
         Intent intent = new Intent(this, SignInActivity.class);

@@ -1,4 +1,4 @@
-package com.example.drowsydrivingdetection;
+package com.example.drowsydrivingdetection.ui.pages;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.drowsydrivingdetection.R;
+import com.example.drowsydrivingdetection.ui.nav.NavActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class FaqActivity extends NavActivity {
