@@ -72,6 +72,9 @@ dependencies {
     //chart library
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    // Gson for saving more detailed alert data
+    implementation 'com.google.code.gson:gson:2.13.2'
+
     implementation(files("libs/OpenCV-release.aar")) // .aar file for openCV
 
     implementation 'org.mindrot:jbcrypt:0.4'

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -167,5 +168,37 @@ public class DrowsinessTracker {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("visual_alert", currentAlerts + 1);
         editor.apply();
+    }
+
+    // Merged saveAudioAlertCount and saveVisualAlertCount into one function that takes in the type
+    public void saveAlert(String type){
+        Gson gson = new Gson();
+
+        // Get the 'list' (it's gson list) from sharedPreferences
+        String json = sharedPreferences.getString("all_alerts", null);
+        // debug
+        System.out.println(json);
+        ArrayList<Alert> alertsList = new ArrayList<>();
+
+        // If it's a new user it'll be empty, so initialize a new list
+        if (json == null){
+            alertsList = new ArrayList<>();
+        } else {
+            // Create a temporary array using what we already have saved in sharedPreferences,
+            // then add it all to a list we're going to convert back later
+            Alert[] alertsArray = gson.fromJson(json, Alert[].class);
+            for (int i = 0; i < alertsArray.length; i++){
+                alertsList.add(alertsArray[i]);
+            }
+        }
+
+        // Add the new alert we just saved
+        alertsList.add(new Alert(type, System.currentTimeMillis()));
+
+        String newArray = gson.toJson(alertsList);
+        // debug
+        System.out.println(newArray);
+        sharedPreferences.edit().putString("all_alerts", newArray).apply();
+
     }
 }
