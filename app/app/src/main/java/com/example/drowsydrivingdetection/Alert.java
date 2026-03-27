@@ -11,5 +11,13 @@ public class Alert {
         this.time = time;
     }
 
+    // Getter for type
+    public String getAlertType() {
+        return type;
+    }
 
+    // Getter for time
+    public long getTime() {
+        return time;
+    }
 }

@@ -15,6 +15,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import java.util.ArrayList;
 
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.Gson;
 
 public class AlertsDashboard extends NavActivity{
 
@@ -47,6 +48,7 @@ public class AlertsDashboard extends NavActivity{
             }
         });
 
+        logAlerts();
         setupBottomNavigation();
         loadProfilePicture();
 
@@ -78,6 +80,45 @@ public class AlertsDashboard extends NavActivity{
     private String getUserPhoto() {
         String email = sharedPreferences.getString("userEmail", "guest");
         return "profilePhotoUri_" + email;
+    }
+
+    // Function to retrieve the alerts and return them as an array of Alert[]
+    // - Anthony
+    public Alert[] getAlertsArray() {
+        Gson gson = new Gson();
+
+        // Get the 'list' (it's gson list) from sharedPreferences
+        String json = sharedPreferences.getString("all_alerts", null);
+
+        // If it's a new user it'll be empty, so initialize a new list (same as DrowsinessTracker)
+        if (json == null){
+            return new Alert[0];
+        }
+
+        // Convert from json to actual array
+        return gson.fromJson(json, Alert[].class);
+    }
+
+    // temporary function to make sure it's actually working, this will be removed later
+    // - Anthony
+    public void logAlerts() {
+        Alert[] alerts = getAlertsArray();
+
+        int totalAudio = 0;
+        int totalVisual = 0;
+
+        for (int i = 0; i < alerts.length; i++){
+            Alert currentAlert = alerts[i];
+
+            if(currentAlert.getAlertType().equals("audio")){
+                totalAudio++;
+            } else if (currentAlert.getAlertType().equals("visual")){
+                totalVisual++;
+            }
+        }
+
+        System.out.println("Visual: " + totalVisual);
+        System.out.println("Audio: " + totalAudio);
     }
 
     private void chartman() {

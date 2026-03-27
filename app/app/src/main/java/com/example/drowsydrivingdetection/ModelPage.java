@@ -320,7 +320,7 @@ public class ModelPage extends AppCompatActivity {
         if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
             triggerAudioAlert();
             audioAlertTriggered = true;
-            drowsinessTracker.saveAudioAlertCount();
+            drowsinessTracker.saveAlert("audio");
         } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
             //if eyes open again before the 3 second window, we dismiss the alert
             audioAlertTriggered = false;
@@ -332,7 +332,7 @@ public class ModelPage extends AppCompatActivity {
         if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
             triggerVisualAlert();
             visualAlertTriggered = true;
-            drowsinessTracker.saveVisualAlertCount();
+            drowsinessTracker.saveAlert("visual");
             drowsinessTracker.resetYawns();
             //resetting yawns after a visual alert is triggered
 
