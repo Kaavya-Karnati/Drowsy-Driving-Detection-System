@@ -1,0 +1,147 @@
+<resources>
+    <string name="app_name">Drowsy Driving Detection</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="age">Age</string>
+    <string name="driving_experience_years">Driving Experience (years)</string>
+    <string name="average_driving_hours_per_day">Average Driving Hours per Day</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="enable_drowsiness_alerts">Enable Drowsiness Alerts</string>
+    <string name="other_condition">Other condition</string>
+    <string name="insomnia">Insomnia</string>
+    <string name="sleep_apnea">Sleep Apnea</string>
+    <string name="narcolepsy">Narcolepsy</string>
+    <string name="health_information">Health Information</string>
+    <string name="create_your_profile">Create Your Profile</string>
+    <string name="profile">Profile</string>
+    <string name="model">Model</string>
+
+    <string name="app_logo">App Logo</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Welcome Back</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="dont_have_account">Don\'t have an account? Register here</string>
+
+    <!-- Registration Screen -->
+    <string name="register_title">Create Account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="register">Register</string>
+    <string name="already_have_account">Already have an account? Login here</string>
+
+    <!-- Home -->
+    <string name="welcome_home">Welcome to Drowsy Driver!</string>
+    <string name="home_description">Navigate through the app using the bottom menu</string>
+
+    <!-- Profile Fragment -->
+    <string name="profile_picture">Profile Picture</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">user@example.com</string>
+    <string name="profile_settings">Profile Settings</string>
+    <string name="sign_out">Sign Out</string>
+
+    <string name="upload_profile_photo">Upload profile photo</string>
+    <string name="profile_photo_uploaded_successfully">Profile photo uploaded successfully!</string>
+    <string name="failed_to_upload_profile_photo_please_try_again">Failed to upload profile photo. Please try again!</string>
+    <string name="logout">Logout</string>
+
+    <!-- About/Help Screen -->
+    <string name="help_title">Help &amp; FAQ</string>
+    <string name="help_description">Welcome to the help section. Here you can find answers to common questions.</string>
+    <string name="faq_title">Frequently Asked Questions</string>
+    <string name="faq_question_1">Q: How do I get started?</string>
+    <string name="faq_answer_1">A: After logging in, navigate through the app using the bottom navigation bar. Start with the Home screen to familiarize yourself with the features.</string>
+    <string name="faq_question_2">Q: How do I use the detection feature?</string>
+    <string name="faq_answer_2">A: Tap on the Detection icon in the bottom navigation bar. The detection functionality will be added soon.</string>
+    <string name="faq_question_3">Q: How do I update my profile?</string>
+    <string name="faq_answer_3">A: Go to the Profile tab from the bottom navigation. You can view your information and sign out from there.</string>
+    <string name="about_title">About</string>
+    <string name="about_description">MyApp Version 1.0\n\For support, please contact: support@myapp.com</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_detection">Detection</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Top Menu -->
+    <string name="action_help">Help</string>
+    <string name="opencv">OpenCV</string>
+    <string name="terms"><font color="#393838">By clicking continue, you agree to our</font> <font color="#000000"><b>Terms of Service</b></font> <font color="#393838">and</font> <font color="#000000"><b>Privacy Policy</b></font></string>
+    <string name="drowsy_driver">Drowsy Driver</string>
+    <string name="email_id">Email ID</string>
+    <string name="email_hint">email@domain.com</string>
+    <string name="passwordHint">Drowsy@12345</string>
+    <string name="continue_btn">Continue</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="or_login">or</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_as_a_guest">Continue as a Guest</string>
+    <string name="sign_up_create_and_account">Sign Up/Create and account</string>
+    <string name="profile_title">Profile</string>
+    <string name="save_contact_info">Save Contact Info</string>
+    <string name="change_alert_npreferences">Change Alert\nPreferences</string>
+    <string name="monitor_your_ndata">Monitor Your\nData</string>
+    <string name="register_here">Register here</string>
+    <string name="already_registered">Already Registered? Login here</string>
+    <string name="alert_count">Alert Count</string>
+    <string name="alert_num">45,678 Alerts</string>
+    <string name="alert_driver">Alert Driver</string>
+    <string name="alert_details">Alert Details</string>
+    <string name="auditory_alert">Auditory Alert</string>
+    <string name="visual_alert">Visual Alert</string>
+    <string name="change">Change</string>
+    <string name="alert_preferences">Alert Preferences</string>
+    <string name="auditory_alerts">Auditory Alerts</string>
+    <string name="visual_alerts">Visual Alerts</string>
+    <string name="zero">--</string>
+    <string name="alert_records">Alert Records</string>
+    <string name="twenty">20</string>
+    <string name="drowsy_detection">Drowsy Detection</string>
+    <string name="feeling_sleepy">Feeling Sleepy?</string>
+    <string name="time_for_a_break">Time for a break...</string>
+    <string name="wake_up">WAKE UP!!</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+
+    <!-- FAQ PAGE -->
+    <string name="FAQAnswer1">No, an account is not necessary to use our app. However, user features like alert records, preferences, and health information are only available to registered users.</string>
+    <string name="FAQQuestion1"><font color="000000"><b>Do I need an account?</b></font></string>
+    <string name="FAQQuestion2"><font color="000000"><b>How do you detect drowsy driving?</b></font></string>
+    <string name="FAQAnswer2">We use a in-house trained YOLOv8 model to detect user facial features, such as closed eyes and yawning.</string>
+    <string name="FAQQuestion3"><font color="000000"><b>Is this app considered a medical device?</b></font></string>
+    <string name="FAQAnswer3">No! Our intention for this application is to provide alerts to those who may fall asleep during drives.</string>
+    <string name="FAQQuestion4"><font color="000000"><b>Do you store any photos of users?</b></font></string>
+    <string name="FAQAnswer4">No, all images and recordings are directly processed on your device, and never reach our servers. Your data is yours.</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="enter_your_email">Enter your email to sign up for this app</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+
+    <!-- Alerts page -->
+    <string name="AlertDashboard">Alert Dashboard</string>
+    <string name="AuditoryAlert">Auditory Alert</string>
+    <string name="AuditoryAlertTotal">5 alerts</string>
+    <string name="VisualAlert">Visual Alert</string>
+    <string name="VisualAlertTotal">1 alert</string>
+    <string name="pastMonth">in the past month</string>
+    <string name="AlertChart1">Alerts Chart</string>
+    <string name="already_registered_login_here">Already Registered? <font color="#000000"><u><b>Login Here</b></u></font></string>
+    <string name="password_req"><![CDATA[Password must contain:\n• At least 8 characters\n• At least one digit (0-9)\n• At least one special character (!@#$%^&*)]]></string>
+    <string name="play_audio_alert">Play Audio Alert</string>
+    <string name="show_visual_alert">Show Visual Alert</string>
+    <string name="chart_hardcoded_desc">a sample chart image as a hardcoded value for prototype demo</string>
+    <string name="cross_to_close_pop_up">cross to close pop up</string>
+    <string name="password_changed">Password was Changed!</string>
+    <string name="verify">Verify</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="wrong_answer">Wrong answer! Please try again!</string>
+    <string name="sec_q_3">Security Answer 3 - Place of Birth</string>
+    <string name="sec_q_2">Security Answer 2 - Mother\'s Maiden Name</string>
+    <string name="sec_q_1">Security Answer 1 - Pet\'s Name</string>
+    <string name="registered_email">Registered Email</string>
+    <string name="forgot_password_2">Forgot Password?</string>
+    <string name="email_address">Email Address</string>
+    <string name="password_was_changed">Password was Changed!</string>
+
+</resources>
