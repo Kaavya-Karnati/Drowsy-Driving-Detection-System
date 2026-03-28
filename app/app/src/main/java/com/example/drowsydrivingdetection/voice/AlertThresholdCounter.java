@@ -20,9 +20,9 @@ public class AlertThresholdCounter {
     private long lastSessionEndTime;
 
     public AlertThresholdCounter() {
-        audioAlertCount   = 0;
-        visualAlertCount  = 0;
-        sessionActive     = false;
+        audioAlertCount = 0;
+        visualAlertCount = 0;
+        sessionActive = false;
         lastSessionEndTime = 0;
     }
 
@@ -52,15 +52,26 @@ public class AlertThresholdCounter {
     //called after every session ends, no matter the outcome
     //resets the counts and logs the time of the last time the alert was triggered
     public void resetAfterSession() {
-        audioAlertCount    = 0;
-        visualAlertCount   = 0;
-        sessionActive      = false;
+        audioAlertCount = 0;
+        visualAlertCount = 0;
+        sessionActive = false;
         lastSessionEndTime = System.currentTimeMillis();
     }
 
-    public int getAudioAlertCount()   { return audioAlertCount; }
-    public int getVisualAlertCount()  { return visualAlertCount; }
-    public int getCombinedCount()     { return audioAlertCount + visualAlertCount; }
-    public boolean isSessionActive()  { return sessionActive; }
+    public int getAudioAlertCount() {
+        return audioAlertCount;
+    }
+
+    public int getVisualAlertCount() {
+        return visualAlertCount;
+    }
+
+    public int getCombinedCount() {
+        return audioAlertCount + visualAlertCount;
+    }
+
+    public boolean isSessionActive() {
+        return sessionActive;
+    }
 
 }
