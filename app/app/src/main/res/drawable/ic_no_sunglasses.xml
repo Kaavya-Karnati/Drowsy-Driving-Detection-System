@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Left lens - filled dark rounded rectangle -->
+    <path
+        android:fillColor="#222222"
+        android:pathData="M10,42 Q10,34 18,34 L36,34 Q44,34 44,42 L44,52 Q44,60 36,60 L18,60 Q10,60 10,52 Z" />
+
+    <!-- Right lens - filled dark rounded rectangle -->
+    <path
+        android:fillColor="#222222"
+        android:pathData="M56,42 Q56,34 64,34 L82,34 Q90,34 90,42 L90,52 Q90,60 82,60 L64,60 Q56,60 56,52 Z" />
+
+    <!-- Bridge between lenses -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#222222"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M44,47 L56,47" />
+
+    <!-- Left arm -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#222222"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M10,44 L2,42" />
+
+    <!-- Right arm -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#222222"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M90,44 L98,42" />
+
+    <!-- Red ban circle: two arcs forming a full circle centered at 50,50 r=42 -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#E53935"
+        android:strokeWidth="6"
+        android:pathData="M50,8 A42,42 0 1 1 49.999,8 Z" />
+
+    <!-- Red ban diagonal slash -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#E53935"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M20,20 L80,80" />
+
+</vector>
