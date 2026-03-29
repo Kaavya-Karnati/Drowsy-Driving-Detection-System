@@ -143,5 +143,12 @@
     <string name="forgot_password_2">Forgot Password?</string>
     <string name="email_address">Email Address</string>
     <string name="password_was_changed">Password was Changed!</string>
+    <string name="yes_i_m_alert">Yes — I\'m alert</string>
+    <string name="get_help">Get help</string>
+    <string name="cancel_emergency">Cancel emergency</string>
+    <string name="_5">5</string>
+    <string name="drowsy">Drowsy%:</string>
+    <string name="wrong_answer_please_try_again">Wrong answer! Please try again!</string>
+    <string name="test_voice_feedback">Test voice feedback</string>
 
 </resources>
