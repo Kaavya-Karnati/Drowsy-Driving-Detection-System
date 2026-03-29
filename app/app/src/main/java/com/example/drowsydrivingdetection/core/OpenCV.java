@@ -20,11 +20,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 // OpenCV imports
 import com.example.drowsydrivingdetection.R;
 import com.example.drowsydrivingdetection.inference.ModelLoader;
 import com.example.drowsydrivingdetection.inference.YOLODetector;
+import com.example.drowsydrivingdetection.voice.VoiceFeedbackManager;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
@@ -49,7 +52,8 @@ rather have it actually working rather than cleaning up all my code just to dele
 wrong in the first place -Anthony
  */
 
-public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2,
+        VoiceFeedbackManager.Host {
 
     // Tag for logging (Named after the class) -Anthony
     private static final String TAG = "cameraView: ";
@@ -88,6 +92,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
     private boolean visualAlertTriggered = false;
     private final Handler visualAlertResetHandler = new Handler(Looper.getMainLooper());
     private final Handler visualAlertBannerHandler = new Handler(Looper.getMainLooper());
+    private VoiceFeedbackManager voiceFeedbackManager;
 
     // TFLite buffers
     private float[][][] outputBuffer;
@@ -155,6 +160,16 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         // Sets detectionText to proper id in activity_cameraview.xml
         detectionText = findViewById(R.id.detectionText);
         visualAlertPopUp = findViewById(R.id.visualAlertPopUp);
+
+        voiceFeedbackManager = new VoiceFeedbackManager(this);
+        voiceFeedbackManager.bindUi(
+                findViewById(R.id.voiceFeedbackOverlay),
+                findViewById(R.id.voiceFeedbackStatus),
+                findViewById(R.id.btnVoiceYes),
+                findViewById(R.id.btnVoiceGetHelp),
+                findViewById(R.id.voiceEscalationCountdown),
+                findViewById(R.id.btnVoiceCancelEmergency)
+        );
 
         /*
         1. Sets OpenCVCamera to my_camera in camera_page.xml
@@ -231,6 +246,14 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == VoiceFeedbackManager.REQUEST_RECORD_AUDIO) {
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.onRequestPermissionsResult(requestCode, granted);
+            }
+            return;
+        }
         // Check request code from getCameraPermissions() to see which one it is. If we implement the Google Maps API we could also change these to check for more than just camera -Anthony
         if (requestCode == CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -287,6 +310,11 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         if (visualAlertPopUp != null) {
             visualAlertPopUp.setVisibility(View.GONE);
             visualAlertPopUp.setAlpha(0f);
+        }
+
+        if (voiceFeedbackManager != null) {
+            voiceFeedbackManager.destroy();
+            voiceFeedbackManager = null;
         }
 
         if (drowsinessTracker != null) {
@@ -357,7 +385,12 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
             audioAlertTriggered = true;
             drowsinessTracker.saveAudioAlertCount();
-            triggerAudioAlert();
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.notifyDrowsinessAlertFired(true);
+            }
+            if (voiceFeedbackManager == null || !voiceFeedbackManager.isVoiceSessionActive()) {
+                triggerAudioAlert();
+            }
         } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
             audioAlertTriggered = false;
             stopAudioAlert();
@@ -366,6 +399,9 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
             visualAlertTriggered = true;
             drowsinessTracker.saveVisualAlertCount();
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.notifyDrowsinessAlertFired(false);
+            }
             drowsinessTracker.resetYawns();
 
             // We don't have the overlay views in this OpenCV layout yet; rely on detectionText.
@@ -433,6 +469,48 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
                 fadeOut.start();
             }
         });
+    }
+
+    @Override
+    public AppCompatActivity getActivity() {
+        return this;
+    }
+
+    @Override
+    public SharedPreferences getPrefs() {
+        return sharedPreferences;
+    }
+
+    @Override
+    public void stopAlarmSoundOnly() {
+        runOnUiThread(() -> {
+            if (mediaPlayer != null) {
+                try {
+                    mediaPlayer.stop();
+                } catch (Exception ignored) {
+                }
+                try {
+                    mediaPlayer.release();
+                } catch (Exception ignored) {
+                }
+                mediaPlayer = null;
+            }
+        });
+    }
+
+    @Override
+    public boolean hasRecordAudioPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void requestRecordAudioPermission(int requestCode) {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.RECORD_AUDIO},
+                requestCode
+        );
     }
 
 }
