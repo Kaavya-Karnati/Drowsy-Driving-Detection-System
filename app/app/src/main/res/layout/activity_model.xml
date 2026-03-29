@@ -3,59 +3,140 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
-    <!-- Camera Preview (full screen background) -->
+    <!-- Camera preview (fills the screen) -->
     <androidx.camera.view.PreviewView
         android:id="@+id/cameraView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Status bar at the bottom -->
-    <LinearLayout
-        android:id="@+id/statusBar"
+    <!-- capturedView: hidden — was causing ghost overlay. Kept so code compiles. -->
+    <ImageView
+        android:id="@+id/capturedView"
         android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- STATUS TEXT + FPS (original — pinned to bottom) -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="#DD000000"
+        android:layout_margin="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:background="#66000000"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="@id/fps"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/fps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:background="#66000000"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- OVERLAY 1 — NO FACE DETECTED -->
+    <LinearLayout
+        android:id="@+id/overlayNoFace"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:id="@+id/capturedView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="TODO" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_warning_circle" />
 
         <TextView
-            android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Camera Ready"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Facial features not detected!\nAdjust Camera"
+            android:textColor="#E53935"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_margin="8dp" />
+            android:fontFamily="@font/inter_semibold" />
 
         <TextView
-            android:id="@+id/fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="FPS:"
-            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Turn on lights if dark 🌙"
             android:textColor="#FFFFFF"
-            android:layout_marginEnd="4dp" />
+            android:textSize="15sp"
+            android:fontFamily="@font/inter" />
 
     </LinearLayout>
 
-    <!-- WAKE UP banner it overlays camera, shown when eyes closed >= 3s -->
+    <!-- OVERLAY 2 — MODEL FAILED TO LOAD -->
+    <LinearLayout
+        android:id="@+id/overlayModelFailed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_warning_circle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Model failed to load\n(Click on start again)"
+            android:textColor="#FFC107"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_semibold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Close all other application(s)"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:fontFamily="@font/inter" />
+
+    </LinearLayout>
+
+    <!-- OVERLAY 3 — WAKE UP banner (eyes closed >= 3s) -->
     <TextView
         android:id="@+id/visualAlertPopUp"
         android:layout_width="0dp"
@@ -64,18 +145,18 @@
         android:layout_marginEnd="24dp"
         android:background="#E53935"
         android:gravity="center"
+        android:padding="16dp"
         android:text="@string/wake_up"
         android:textColor="#FFFFFF"
         android:textSize="45sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/statusBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Break popup it overlays camera, shown on 3+ yawns -->
+    <!-- OVERLAY 4 — BREAK POPUP (3+ yawns detected) -->
     <ImageView
         android:id="@+id/breakPopUp"
         android:layout_width="138dp"
@@ -83,19 +164,148 @@
         android:src="@drawable/break_popup_with_text"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/statusBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- X dismiss button it pinned to top-end corner of breakPopUp -->
+    <!-- X dismiss button for break popup -->
     <ImageView
         android:id="@+id/closePopup"
         android:layout_width="43dp"
         android:layout_height="36dp"
         android:src="@drawable/cross"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/breakPopUp"
-        app:layout_constraintTop_toTopOf="@id/breakPopUp" />
+        app:layout_constraintTop_toTopOf="@id/breakPopUp"
+        app:layout_constraintEnd_toEndOf="@id/breakPopUp" />
+
+
+    <!-- OVERLAY 5 — POOR CAMERA QUALITY -->
+    <LinearLayout
+        android:id="@+id/overlayPoorCamera"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_camera_outline" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Poor Camera Quality"
+            android:textColor="#E91E8C"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_semibold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="(Min. Requirements not met)"
+            android:textColor="#E91E8C"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:fontFamily="@font/inter" />
+
+    </LinearLayout>
+
+    <!-- OVERLAY 6 — AUDIO TOO LOW -->
+    <LinearLayout
+        android:id="@+id/overlayAudioLow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_volume_up" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Turn Up Volume"
+            android:textColor="#FFC107"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_semibold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="(Or falls back to vibration)"
+            android:textColor="#FFC107"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:fontFamily="@font/inter" />
+
+    </LinearLayout>
+
+    <!-- OVERLAY 7 — BATTERY OVERHEATING -->
+    <LinearLayout
+        android:id="@+id/overlayBatteryOverheat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_battery_charging" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Battery Overheated"
+            android:textColor="#E91E8C"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_semibold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="(Detection unavailable)"
+            android:textColor="#E91E8C"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:fontFamily="@font/inter" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

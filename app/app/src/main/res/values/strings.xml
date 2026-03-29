@@ -143,5 +143,6 @@
     <string name="forgot_password_2">Forgot Password?</string>
     <string name="email_address">Email Address</string>
     <string name="password_was_changed">Password was Changed!</string>
+    <string name="yes_or_need_help">\"YES\" or \"NEED HELP\"</string>
 
 </resources>
