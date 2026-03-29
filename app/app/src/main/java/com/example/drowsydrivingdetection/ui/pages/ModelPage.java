@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +39,7 @@ import com.example.drowsydrivingdetection.core.DrowsinessTracker;
 import com.example.drowsydrivingdetection.inference.ModelLoader;
 import com.example.drowsydrivingdetection.R;
 import com.example.drowsydrivingdetection.inference.YOLODetector;
+import com.example.drowsydrivingdetection.voice.VoiceFeedbackManager;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +48,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ModelPage extends AppCompatActivity {
+public class ModelPage extends AppCompatActivity implements VoiceFeedbackManager.Host {
     private static final int CAMERA_CODE = 100; //distinguishing camera permissions from audio,
     //storage, etc
 
@@ -78,12 +80,23 @@ public class ModelPage extends AppCompatActivity {
     private Handler visualAlertHandler = new Handler(Looper.getMainLooper());
     private Handler breakPopupHandler = new Handler(Looper.getMainLooper());
 
+    private VoiceFeedbackManager voiceFeedbackManager;
 
     @Override
     public void onRequestPermissionsResult(int reqCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(reqCode, permissions, grantResults);
+
+        //request permissions (similar to camera permission logic)
+        if (reqCode == VoiceFeedbackManager.REQUEST_RECORD_AUDIO) {
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.onRequestPermissionsResult(reqCode, granted);
+            }
+            return;
+        }
 
         if (reqCode == CAMERA_CODE) {
             if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -114,6 +127,22 @@ public class ModelPage extends AppCompatActivity {
         closePopup = findViewById(R.id.closePopup);
         closePopup.setOnClickListener(v -> closeBreakPopup());
 
+        //Nirav Handles UI changes to incorporate the new changes (feedback overlay UI)
+        voiceFeedbackManager = new VoiceFeedbackManager(this);
+        voiceFeedbackManager.bindUi(
+                findViewById(R.id.voiceFeedbackOverlay),
+                findViewById(R.id.voiceFeedbackStatus),
+                findViewById(R.id.btnVoiceYes),
+                findViewById(R.id.btnVoiceGetHelp),
+                findViewById(R.id.voiceEscalationCountdown),
+                findViewById(R.id.btnVoiceCancelEmergency)
+        );
+        findViewById(R.id.btnTestVoiceFeedback).setOnClickListener(v -> {
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.startManualTestSession();
+            }
+        });
+        //end Nirav
         this.drowsinessTracker = new DrowsinessTracker(getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE));
 
         cameraExecutor = Executors.newSingleThreadExecutor(); //create a background executor
@@ -146,9 +175,53 @@ public class ModelPage extends AppCompatActivity {
         }
         visualAlertHandler.removeCallbacksAndMessages(null);
         breakPopupHandler.removeCallbacksAndMessages(null);
+        if (voiceFeedbackManager != null) {
+            voiceFeedbackManager.destroy();
+            voiceFeedbackManager = null;
+        }
+        //destroying the voice feedback flow
         drowsinessTracker.reset();
     }
 
+
+    @Override
+    public AppCompatActivity getActivity() {
+        return this;
+    }
+
+    @Override
+    public SharedPreferences getPrefs() {
+        return getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+    }
+
+    @Override
+    public void stopAlarmSoundOnly() {
+        runOnUiThread(() -> {
+            if (mediaPlayer != null) {
+                try {
+                    mediaPlayer.stop();
+                } catch (Exception ignored) {
+                }
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        });
+    }
+
+    @Override
+    public boolean hasRecordAudioPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void requestRecordAudioPermission(int requestCode) {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.RECORD_AUDIO},
+                requestCode
+        );
+    }
     private boolean hasCameraPermission() {
         return ContextCompat.checkSelfPermission(
                 this,
@@ -288,7 +361,8 @@ public class ModelPage extends AppCompatActivity {
 
         if (elapsed >= 1000) {
             int calculatedFps = (int) (frameCount * 1000.0 / elapsed);
-            runOnUiThread(() -> fps.setText("FPS: " + calculatedFps));
+            String fpsText = "FPS: " + calculatedFps;
+            runOnUiThread(() -> fps.setText(fpsText));
 
             frameCount = 0;
             fpsStartTime = now;
@@ -299,14 +373,16 @@ public class ModelPage extends AppCompatActivity {
 
 
     private void loadModel() {
-        this.statusText.setText("Loading model");
+        final String modelLoadingText = "Loading model";
+        this.statusText.setText(modelLoadingText);
 
         new Thread(() -> {
             modelLoader = new ModelLoader(this);
+            final String modelLoadedText = "Model Loaded";
 
             runOnUiThread(() -> {
                 if (modelLoader.isLoaded()) {
-                    statusText.setText("Model Loaded");
+                    statusText.setText(modelLoadedText);
                     yoloDetector = new YOLODetector(
                             modelLoader.getInterpreter(),
                             modelLoader.getLabels(),
@@ -314,7 +390,8 @@ public class ModelPage extends AppCompatActivity {
                     );
                     Log.d("Model ready: ", String.valueOf(modelLoader.getLabels().size()));
                 } else {
-                    statusText.setText("Model failed to load");
+                    final String modelFailedLoadText = "Model failed to load";
+                    statusText.setText(modelFailedLoadText);
                 }
             });
         }).start();
@@ -323,9 +400,17 @@ public class ModelPage extends AppCompatActivity {
     private void checkAndTriggerAlerts() {
         //check for possibility of audio alert (eyes closed for 3 or more seconds)
         if (drowsinessTracker.shouldTriggerAudioAlert() && !audioAlertTriggered) {
-            triggerAudioAlert();
             audioAlertTriggered = true;
             drowsinessTracker.saveAudioAlertCount();
+
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.notifyDrowsinessAlertFired(true);
+            }
+            //avoid starting the looping chime if voice check-in took over
+            if (voiceFeedbackManager == null || !voiceFeedbackManager.isVoiceSessionActive()) {
+                triggerAudioAlert();
+            }
+
         } else if (!drowsinessTracker.shouldTriggerAudioAlert() && audioAlertTriggered) {
             //if eyes open again before the 3 second window, we dismiss the alert
             audioAlertTriggered = false;
@@ -335,9 +420,14 @@ public class ModelPage extends AppCompatActivity {
 
         //check for visual alert (3 yawns) Tentative for now, could be reduced/increased
         if (drowsinessTracker.shouldTriggerVisualAlert() && !visualAlertTriggered) {
-            triggerVisualAlert();
             visualAlertTriggered = true;
             drowsinessTracker.saveVisualAlertCount();
+            if (voiceFeedbackManager != null) {
+                voiceFeedbackManager.notifyDrowsinessAlertFired(false);
+            }
+            if (voiceFeedbackManager == null || !voiceFeedbackManager.isVoiceSessionActive()) {
+                triggerVisualAlert();
+            }
             drowsinessTracker.resetYawns();
             //resetting yawns after a visual alert is triggered
 
