@@ -439,6 +439,120 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+
+            <!-- Choose Sound Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/selectSoundCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/alertPreferences"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Audio Alert Sound Preferences"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"/>
+
+                    <RadioGroup
+                        android:id="@+id/soundChoices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <RadioButton
+                            android:id="@+id/sound1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Happy Birthday"/>
+
+                        <RadioButton
+                            android:id="@+id/sound2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sneeze"/>
+
+                        <RadioButton
+                            android:id="@+id/sound3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Piano"/>
+
+                        <RadioButton
+                            android:id="@+id/sound4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mysterious"/>
+
+                        <RadioButton
+                            android:id="@+id/sound5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Holloween"/>
+
+                        <RadioButton
+                            android:id="@+id/sound6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Police Siren"/>
+
+                        <RadioButton
+                            android:id="@+id/sound7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="War Horn"/>
+
+                        <RadioButton
+                            android:id="@+id/sound8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ding Ding"/>
+
+                        <RadioButton
+                            android:id="@+id/sound9"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Doorbell"/>
+
+                        <RadioButton
+                            android:id="@+id/sound10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Scary Loud Alarm"/>
+
+                    </RadioGroup>
+
+                    <!-- Preview Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preview Sound"
+                        android:layout_marginTop="16dp"
+                        app:cornerRadius="8dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+
             <!-- Alert Records Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/alertRecords"
@@ -451,7 +565,7 @@
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/alertPreferences"
+                app:layout_constraintTop_toBottomOf="@id/selectSoundCard"
                 app:strokeColor="#E0E0E0"
                 app:strokeWidth="2dp">
 

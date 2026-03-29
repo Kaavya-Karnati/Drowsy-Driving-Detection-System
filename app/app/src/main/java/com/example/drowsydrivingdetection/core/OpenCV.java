@@ -385,8 +385,11 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
                 mediaPlayer = null;
             }
 
+            //Ahmed: look for the sound the user chose before and if they didn't use the default sound.
+            int selectedSound = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE).getInt("selected_sound", R.raw.chime_final);
+            //Ahmed: make a player to play that sound
             try {
-                mediaPlayer = MediaPlayer.create(this, R.raw.chime_final);
+                mediaPlayer = MediaPlayer.create(this, selectedSound);
                 if (mediaPlayer != null) {
                     mediaPlayer.setLooping(true);
                     mediaPlayer.start();

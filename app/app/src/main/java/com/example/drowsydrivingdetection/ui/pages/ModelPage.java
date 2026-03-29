@@ -375,20 +375,24 @@ public class ModelPage extends AppCompatActivity {
     // Kaavya: plays audio alert and fades in the WAKE UP banner for 3 seconds when eyes have been closed >= 3s
     private void triggerAudioAlert() {
         Log.e("AUDIO ALERT", "AUDIO ALERT");
+
         runOnUiThread(() -> {
             if (mediaPlayer != null) {
                 mediaPlayer.release();
                 mediaPlayer = null;
             }
+
+            //Ahmed: look for the sound the user chose before and if they didn't use the default sound.
+            int selectedSound = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE).getInt("selected_sound", R.raw.chime_final);
+            //Ahmed: make a player to play that sound
             try {
-                mediaPlayer = MediaPlayer.create(this, R.raw.chime_final);
+                mediaPlayer = MediaPlayer.create(this, selectedSound);
                 mediaPlayer.setLooping(true);
                 mediaPlayer.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // Show WAKE UP banner (stays visible while eyes remain closed)
             visualAlertHandler.removeCallbacksAndMessages(null);
             visualAlertPopUp.setAlpha(0f);
             visualAlertPopUp.setVisibility(View.VISIBLE);

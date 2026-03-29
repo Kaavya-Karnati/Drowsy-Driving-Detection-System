@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.widget.RadioGroup;
+import android.widget.RadioButton;
+import android.media.MediaPlayer;
+
 import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -61,6 +65,11 @@ public class ProfileActivity extends NavActivity {
     private TextInputEditText editName;
     private TextInputEditText editEmail;
 
+    private RadioGroup soundChoices;
+    private Button btnPreview;
+    private MediaPlayer previewPlayer;
+    private int selectedSound;
+
     private ProfileViewModel viewModel;
 
     // Opens the photo gallery and receives the selected image
@@ -104,6 +113,11 @@ public class ProfileActivity extends NavActivity {
         setupBottomNavigation();
         loadUserData();
         setupListeners();
+
+        //Ahmed: get a sound ready to play
+        loadSound();
+        //Ahmed: pick which sound to use
+        selectSound();
     }
 
     private void initializeViews() {
@@ -129,6 +143,11 @@ public class ProfileActivity extends NavActivity {
         profilePicture = findViewById(R.id.profilePicture);
         passBanner = findViewById(R.id.passBanner);
         errorBanner = findViewById(R.id.errorBanner);
+
+        //Ahmed: list of sounds
+        soundChoices = findViewById(R.id.soundChoices);
+        //Ahmed: play sound
+        btnPreview = findViewById(R.id.btnPreview);
     }
 
     private void loadUserData() {
@@ -155,6 +174,71 @@ public class ProfileActivity extends NavActivity {
         if (data.profilePhotoUri != null) {
             profilePicture.setImageURI(Uri.parse(data.profilePhotoUri));
         }
+    }
+
+    //Ahmed: choose a sound and save it and play it when you press preview button
+    private void selectSound() {
+        soundChoices.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                selectedSound = sounds(checkedId); //Ahmed: pick a sound
+                saveSound(selectedSound); //Ahmed: save sound
+            }
+        });
+
+        btnPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                previewSound(); //Ahmed: play sound
+            }
+        });
+    }
+
+    //Ahmed: connect button to sound
+    private int sounds(int id) {
+        if (id == R.id.sound1) return R.raw.sound1;
+        if (id == R.id.sound2) return R.raw.sound2;
+        if (id == R.id.sound3) return R.raw.sound3;
+        if (id == R.id.sound4) return R.raw.sound4;
+        if (id == R.id.sound5) return R.raw.sound5;
+        if (id == R.id.sound6) return R.raw.sound6;
+        if (id == R.id.sound7) return R.raw.sound7;
+        if (id == R.id.sound8) return R.raw.sound8;
+        if (id == R.id.sound9) return R.raw.chime_final;
+        if (id == R.id.sound10) return R.raw.audio_alert;
+        return R.raw.chime_final; //Ahmed: default sound
+    }
+
+    //Ahmed: play sound one time
+    private void previewSound() {
+        if (previewPlayer != null) previewPlayer.release(); // stop sound
+        previewPlayer = MediaPlayer.create(this, selectedSound);
+        previewPlayer.start();
+    }
+
+    //Ahmed: save sound
+    private void saveSound(int resId) {
+        getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE)
+                .edit()
+                .putInt("selected_sound", resId)
+                .apply();
+    }
+
+    //Ahmed: load saved sound
+    private void loadSound() {
+        int saved = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE).getInt("selected_sound", R.raw.chime_final);
+        selectedSound = saved;
+
+        if (saved == R.raw.sound1) soundChoices.check(R.id.sound1);
+        else if (saved == R.raw.sound2) soundChoices.check(R.id.sound2);
+        else if (saved == R.raw.sound3) soundChoices.check(R.id.sound3);
+        else if (saved == R.raw.sound4) soundChoices.check(R.id.sound4);
+        else if (saved == R.raw.sound5) soundChoices.check(R.id.sound5);
+        else if (saved == R.raw.sound6) soundChoices.check(R.id.sound6);
+        else if (saved == R.raw.sound7) soundChoices.check(R.id.sound7);
+        else if (saved == R.raw.sound8) soundChoices.check(R.id.sound8);
+        else if (saved == R.raw.audio_alert) soundChoices.check(R.id.sound10);
+        else soundChoices.check(R.id.sound9); //Ahmed: default sound
     }
 
     @Override
