@@ -30,7 +30,8 @@ public class RegistrationViewModel extends AndroidViewModel {
             String confirmPassword,
             String securityAnswer1,
             String securityAnswer2,
-            String securityAnswer3
+            String securityAnswer3,
+            String emergencyNumber
     ) {
         //validate inputs
         if (isNullOrEmpty(firstName)) {
@@ -81,6 +82,10 @@ public class RegistrationViewModel extends AndroidViewModel {
             return RegistrationResult.error("Please answer Security Question 3");
         }
         // end
+        //Ahmed: check if user entered an emergency contact number
+        if (isNullOrEmpty(emergencyNumber)) {
+            return RegistrationResult.error("Please enter an emergency contact number");
+        }
 
         //check if email is already registered
         String existingEmail = sharedPreferences.getString("registered_email", null);
@@ -89,7 +94,7 @@ public class RegistrationViewModel extends AndroidViewModel {
         }
 
         //register user
-        boolean registered = registerUser(firstName, lastName, email, password, securityAnswer1, securityAnswer2, securityAnswer3);
+        boolean registered = registerUser(firstName, lastName, email, password, securityAnswer1, securityAnswer2, securityAnswer3, emergencyNumber);
 
         if (!registered) {
             return RegistrationResult.error("Error creating account. Please try again.");
@@ -110,7 +115,8 @@ public class RegistrationViewModel extends AndroidViewModel {
             String password,
             String securityAnswer1,
             String securityAnswer2,
-            String securityAnswer3
+            String securityAnswer3,
+            String emergencyNumber
     ) {
         // Hash the password with BCrypt
         String hashedPassword = SecurityUtils.hashPassword(password);
@@ -133,6 +139,7 @@ public class RegistrationViewModel extends AndroidViewModel {
         editor.putString("securityAnswer1", securityAnswer1);
         editor.putString("securityAnswer2", securityAnswer2);
         editor.putString("securityAnswer3", securityAnswer3);
+        editor.putString("emergencyContact" + email, emergencyNumber);
         editor.putInt("audio_alert", 0);
         editor.putInt("visual_alert", 0);
         editor.apply();

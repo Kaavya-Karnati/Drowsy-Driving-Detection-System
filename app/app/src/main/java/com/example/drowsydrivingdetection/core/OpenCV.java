@@ -83,6 +83,16 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     private YOLODetector yoloDetector;
     private DrowsinessTracker drowsinessTracker;
+
+
+    //Ahmed: true if text sent
+    private boolean emergencyTTriggered = false;
+    //Ahmed: when eyes are closed
+    private long closed = 0;
+    //Ahmed: 10 seconds
+    private static final long timer = 10000;
+
+
     private MediaPlayer mediaPlayer;
     private boolean audioAlertTriggered = false;
     private boolean visualAlertTriggered = false;
@@ -106,6 +116,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     // determines how many threads device has, later this is passed into the model for maximum performance
     int availableThreads = Runtime.getRuntime().availableProcessors();
+    private static final int ALL_PERMISSION = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +173,7 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
         3. Sets visibility and camera to proper listener
          */
         OpenCVCamera = findViewById(R.id.my_camera);
-        getCameraPermissions();
+        checkPermissions();
         OpenCVCamera.setVisibility(SurfaceView.VISIBLE);
         OpenCVCamera.setCvCameraViewListener(this);
     }
@@ -187,13 +198,25 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     // Request permission for camera (if not already accepted)
     // If you need to test, just hold down on the app and click App Info and in permissions just disable it if you already had it -Anthony
-    private void getCameraPermissions() {
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { // Check if permission is granted
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION); // If not, request it
-        } else {
-            OpenCVCamera.setCameraPermissionGranted(); // If it is, tell OpenCV's camera that we have permission to use it
-            OpenCVCamera.enableView();
+
+    //Ahmed: replaced old one that only checked camera permission, this checks camera, text, location permissions
+    private void checkPermissions() {
+        String[] permissions = new String[]{
+                Manifest.permission.CAMERA,
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        };
+
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(permissions, ALL_PERMISSION);
+                return;
+            }
         }
+
+        OpenCVCamera.setCameraPermissionGranted();
+        OpenCVCamera.enableView();
     }
 
     private void saveAlertCount() {
@@ -231,14 +254,32 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // Check request code from getCameraPermissions() to see which one it is. If we implement the Google Maps API we could also change these to check for more than just camera -Anthony
-        if (requestCode == CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == ALL_PERMISSION) {
+            boolean grantCamera = false;
+            boolean grantText = false;
+
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.CAMERA) &&
+                        grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    grantCamera = true;
+                }
+                if (permissions[i].equals(Manifest.permission.SEND_SMS) &&
+                        grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    grantText = true;
+                }
+            }
+
+            if (grantCamera) {
                 OpenCVCamera.setCameraPermissionGranted();
                 OpenCVCamera.enableView();
             } else {
                 Toast.makeText(this, "Camera permission required", Toast.LENGTH_LONG).show();
                 finish();
+            }
+
+            if (grantText) {
+                //Ahmed: sends text if permission is granted
+                triggerText();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -325,6 +366,24 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
             if (yoloDetector != null && drowsinessTracker != null) {
                 CleanDetectionResult result = yoloDetector.detectAndParse(imageInputBuffer, imageW, imageH);
                 drowsinessTracker.addFrame(result);
+
+                //Ahmed: emergency text check
+                if (drowsinessTracker.shouldTriggerAudioAlert()) {
+                    if (closed == 0) {
+                        closed = System.currentTimeMillis();
+                    }
+                    long duration = System.currentTimeMillis() - closed;
+
+                    if (duration >= timer && !emergencyTTriggered) {
+                        emergencyTTriggered = true;
+                        triggerText();
+                    }
+                }
+                else {
+                    closed = 0;
+                    emergencyTTriggered = false;
+                }
+
                 checkAndTriggerAlerts();
 
                 runOnUiThread(() -> {
@@ -348,6 +407,55 @@ public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.Cv
 
         return rgba;
     }
+
+    //send emergency text, got from when I did it in the ModelPage.java in Ahmed-3 branch
+    private void triggerText() {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Emergency text message triggered because eyes were closed too long!", Toast.LENGTH_LONG).show();
+        });
+        try {
+            sharedPreferences = getSharedPreferences("DrowsyDriverPrefs", MODE_PRIVATE);
+            String email = sharedPreferences.getString("userEmail", null);
+            String phone = sharedPreferences.getString("emergencyContact" + email, null);
+
+            if (phone == null || phone.isEmpty()) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "No emergency contact", Toast.LENGTH_SHORT).show();
+                });
+                return;
+            }
+
+            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.SEND_SMS}, 101);
+                return;
+            }
+            android.location.LocationManager lm = (android.location.LocationManager) getSystemService(android.content.Context.LOCATION_SERVICE);
+            android.location.Location location = null;
+            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED || androidx.core.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                android.location.Location gps = lm.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
+                android.location.Location net = lm.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
+                location = gps;
+                if (location == null) {
+                    location = net;
+                }
+            }
+
+            String message = "EMERGENCY: The driver is drowsy. Please check on them now!";
+
+            if (location != null) {
+                message += "\nLast Known Location: https://maps.google.com/?q=" + location.getLatitude() + "," + location.getLongitude();
+            }
+            else {
+                message += "\nLocation unavailable";
+            }
+            android.telephony.SmsManager textM = android.telephony.SmsManager.getDefault();
+            textM.sendTextMessage(phone, null, message, null, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void checkAndTriggerAlerts() {
         if (drowsinessTracker == null) {

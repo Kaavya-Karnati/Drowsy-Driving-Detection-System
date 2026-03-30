@@ -28,6 +28,9 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText securityQuestion3;
     private TextView passBanner;
     private TextView errorBanner;
+    //Ahmed: This is the text box where the user can type in a emergency contact number
+    private TextInputEditText emergencyContact;
+
     // end
 
     private RegistrationViewModel viewModel;
@@ -63,6 +66,7 @@ public class RegistrationActivity extends AppCompatActivity {
         securityQuestion3 = findViewById(R.id.securityQuestion3);
         passBanner = findViewById(R.id.passBanner);
         errorBanner = findViewById(R.id.errorBanner);
+        emergencyContact = findViewById(R.id.emergencyContact);
         // end
     }
 
@@ -94,7 +98,16 @@ public class RegistrationActivity extends AppCompatActivity {
         String securityAnswer1 = this.securityQuestion1.getText().toString().trim();
         String securityAnswer2 = this.securityQuestion2.getText().toString().trim();
         String securityAnswer3 = this.securityQuestion3.getText().toString().trim();
+        //Ahmed: get the phone number
+        String emergencyNumber = this.emergencyContact.getText().toString().trim();
         //end
+
+        //Ahmed: if the user didn't type in a emergency contact number
+        if (emergencyNumber.isEmpty()) {
+            showError("Please enter an emergency contact number");
+            this.emergencyContact.requestFocus();
+            return;
+        }
 
         RegistrationViewModel.RegistrationResult result = viewModel.handleRegistration(
                 firstName,
@@ -104,7 +117,8 @@ public class RegistrationActivity extends AppCompatActivity {
                 confirmPassword,
                 securityAnswer1,
                 securityAnswer2,
-                securityAnswer3
+                securityAnswer3,
+                emergencyNumber
         );
 
         if (result == null) {
@@ -155,6 +169,10 @@ public class RegistrationActivity extends AppCompatActivity {
             this.securityQuestion2.requestFocus();
         } else if (message.contains("Security Question 3")) {
             this.securityQuestion3.requestFocus();
+        }
+        //Ahmed: if the emergency number is wrong, focus on that box
+        else if (message.contains("emergency contact")) {
+            this.emergencyContact.requestFocus();
         }
     }
 
